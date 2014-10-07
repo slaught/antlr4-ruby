@@ -123,10 +123,6 @@ fileHeader(grammarFileName, ANTLRVersion) ::= <<
 >>
 
 Parser(parser, funcs, atn, sempredFuncs, superClass) ::= <<
-<Parser_(ctor="parser_ctor", ...)>
->>
-
-Parser_(parser, funcs, atn, sempredFuncs, ctor, superClass) ::= <<
 <if(superClass)>
 # Parser_ if(superclass)
 require '<superClass>' 
@@ -134,25 +130,33 @@ require '<superClass>'
 <endif>
 
 class <parser.name> \< <if(superClass)><superClass><else>Parser<endif> 
-    grammarFileName = '<parser.grammarFileName; format="java-escape">'
+    attr_accessor :grammarFileName 
+    @grammarFileName = '<parser.grammarFileName; format="java-escape">'
 
-    atn = ATNDeserializer.new().deserialize(serializedATN())
-    decisionsToDFA = atn.decisionToState.each_with_index.map {|i,ds|  DFA.new(ds,i) }
-	
-    sharedContextCache = PredictionContextCache.new()
-	
+    <atn>
+
     EOF = <TokenLabelType()>.EOF
 	<if(parser.tokens)>
     <parser.tokens:{k | <k>=<parser.tokens.(k)>}; separator="\n", wrap, anchor>
 	<endif>
 
-    tokenNames = [ <parser.tokenNames:{t | <t>}; null="\"\<INVALID>\"", separator=", ", wrap, anchor> ]
+    @tokenNames = [ <parser.tokenNames:{t | <t>}; null="\"\<INVALID>\"", separator=", ", wrap, anchor> ]
 
     <parser.rules:{r | RULE_<r.name> = <r.index>}; separator="\n", wrap, anchor>
 
-    ruleNames =  [ <parser.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor> ]
-	
-    <parser:(ctor)()>
+    @ruleNames =  [ <parser.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor> ]
+    attr_accessor  :atn, :decisionsToDFA,:sharedContextCache 
+    attr_accessor :_predicates, :_interp
+
+    def initialize(input) # input:TokenStream
+        super(input)
+        self.checkVersion('<file.ANTLRVersion>')
+        self._interp = ParserATNSimulator.new(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
+        self._predicates = nil
+        @atn = ATNDeserializer.new().deserialize(self.class.serializedATN())
+        @decisionsToDFA = @atn.decisionToState.each_with_index.map {|i,ds|  DFA.new(ds,i) }
+        @sharedContextCache = PredictionContextCache.new()
+    end
 
     <namedActions.members>
 
@@ -176,7 +180,6 @@ class <parser.name> \< <if(superClass)><superClass><else>Parser<endif>
     <sempredFuncs.values; separator="\n">
 <endif>
 
-<atn>
 
 end # class <parser.name> 
 >>
@@ -220,14 +223,6 @@ end
 <endif>
 >>
 
-parser_ctor(p) ::= <<
-def initialize(input) # input:TokenStream
-    super(input)
-    self.checkVersion('<file.ANTLRVersion>')
-    self._interp = ParserATNSimulator.new(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
-    self._predicates = nil
-end
->>
 
 /* This generates a private method since the actionIndex is generated, making an
  * overriding implementation impossible to maintain.
@@ -798,31 +793,35 @@ require 'stringio'
 
 Lexer(lexer, atn, actionFuncs, sempredFuncs, superClass) ::= <<
 class <lexer.name> \< <if(superClass)><superClass><else>Lexer<endif>
+    attr_accessor :grammarFileName
+    @grammarFileName = '<lexer.grammarFileName>'
 
+    <atn>
 
-    atn = ATNDeserializer.new().deserialize(serializedATN())
-    
-    decisionsToDFA = atn.decisionToState.each_with_index.map {|i,ds|  DFA.new(ds,i) }
     
     <lexer.tokens:{k | <k> = <lexer.tokens.(k)>}; separator="\n", wrap, anchor>
     
     <rest(lexer.modes):{m| <m> = <i>}; separator="\n">
     
-    modeNames = [ <lexer.modes:{m| "<m>"}; separator=", ", wrap, anchor> ]
+    attr_accessor :modeNames, :tokenNames, :ruleNames
+    @modeNames = [ <lexer.modes:{m| "<m>"}; separator=", ", wrap, anchor> ]
     
-    tokenNames = [ "\<INVALID>",
+    @tokenNames = [ "\<INVALID>",
             <lexer.tokenNames:{t | <t>}; separator=", ", wrap, anchor> ]
     
-    ruleNames = [ <lexer.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor> ]
-    
-    grammarFileName = '<lexer.grammarFileName>'
-    
+    @ruleNames = [ <lexer.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor> ]
+
+    attr_accessor :atn, :decisionsToDFA 
+    attr_accessor :_interp, :_actions, :_predicates 
+
     def initialize(input=nil)
         super(input)
         self.checkVersion("<lexerFile.ANTLRVersion>")
-        self._interp = LexerATNSimulator.new(self, self.atn, self.decisionsToDFA, PredictionContextCache.new())
-        self._actions = None
-        self._predicates = None
+        self._interp = LexerATNSimulator.new(self, @@atn, @@decisionsToDFA, PredictionContextCache.new())
+        self._actions = nil
+        self._predicates = nil
+        @atn = ATNDeserializer.new().deserialize(self.class.serializedATN())
+        @decisionsToDFA = atn.decisionToState.each_with_index.map {|i,ds|  DFA.new(ds,i) }
     end
       
     <namedActions.members>
@@ -834,7 +833,7 @@ end
 
 SerializedATN(model) ::= <<
 <! only one segment, can be inlined !>
-  def serializedATN()
+  def self.serializedATN()
       "<model.serialized; wrap={" \\<\n>      "}>"
   end		
 >>

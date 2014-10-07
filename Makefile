@@ -21,9 +21,9 @@ syntax_check:
 	$(RUBY_SYNTAX) t/PjmInvoiceParser.rb
 
 run_test:
-	$(RUBY) -It t/PjmInvoiceLexer.rb   
-	$(RUBY) -It t/PjmInvoiceListener.rb 
-	$(RUBY) -It t/PjmInvoiceParser.rb
+	$(RUBY) -Ilib:t t/PjmInvoiceLexer.rb   
+	$(RUBY) -Ilib:t t/PjmInvoiceListener.rb 
+	$(RUBY) -Ilib:t t/PjmInvoiceParser.rb
 
 add:
 	git add tool/resources/org/antlr/v4/tool/templates/codegen/Ruby/Ruby.stg
