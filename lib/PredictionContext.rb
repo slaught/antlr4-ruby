@@ -263,11 +263,11 @@ end
 #  Return {@link #EMPTY} if {@code outerContext} is empty or null.
 #/
 
-module PredictionContextFucntions 
+module PredictionContextFunctions 
 
   def self.included(klass)
-    klass.send(:include, PredictionContextFucntions::Methods )
-    klass.send(:extend, PredictionContextFucntions::Methods )
+    klass.send(:include, PredictionContextFunctions::Methods )
+    klass.send(:extend, PredictionContextFunctions::Methods )
   end
 
 module Methods

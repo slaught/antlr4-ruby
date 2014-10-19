@@ -5,9 +5,10 @@ require 'Token'
 require 'atn/ATNType'
 require 'atn/ATNState' 
 
+require 'java_symbols'
 
 class ATN
-
+    include JavaSymbols
     INVALID_ALT_NUMBER = 0
 
     # Used for runtime deserialization of ATNs from strings#/

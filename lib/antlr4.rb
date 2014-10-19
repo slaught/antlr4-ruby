@@ -1,50 +1,41 @@
+require 'Token' 
+require 'FileStream'
+require 'TokenStream' 
+require 'BufferedTokenStream'
+require 'CommonTokenStream'
+require 'Lexer'
+require 'Parser'
+require 'dfa/DFA'
+require 'atn/ATN'
+require 'atn/ATNDeserializer'
+require 'atn/LexerATNSimulator'
+require 'atn/ParserATNSimulator' 
+require 'atn/PredictionMode'
+require 'PredictionContext'
+require 'ParserRuleContext'
+require 'tree/Tree' # import ParseTreeListener, ParseTreeVisitor, ParseTreeWalker, TerminalNode, ErrorNode, RuleNode
+require 'error'    #  Errors import RecognitionException, IllegalStateException, NoViableAltException
+require 'error/ErrorStrategy' # import BailErrorStrategy
+require 'error/DiagnosticErrorListener' # import DiagnosticErrorListener
 
-class Lexer
-#  attr_accessor :atn, :decisionsToDFA
-#  attr_accessor :tokenNames, :ruleNames
-end
 
-class Parser
-
-#  attr_accessor :_predicates, :_actions, :_interp 
-#  attr_accessor :grammarFileName, :atn, :decisionsToDFA
-#  attr_accessor :sharedContextCache, :tokenNames, :ruleNames
-
-end
-
-class ATNDeserializer
-end
-
-class ParseTreeListener
-end
-
-class Token
-    INVALID_TYPE = 0
-
-    # During lookahead operations, this "token" signifies we hit rule end ATN
-    # state
-    # and did not follow it despite needing to.
-    EPSILON = -2
-
-    MIN_USER_TOKEN_TYPE = 1
-
-    def self.EOF 
-        -1 
+class String
+  def is_uppercase?
+    self == self.upcase
+  end
+  def escapeWhitespace(escapeSpaces=false)
+    if escapeSpaces then
+      c = "\xB7"
+    else
+      c = " "
     end
-
-    # All tokens go to the parser (unless skip() is called in that rule)
-    # on a particular "channel".  The parser tunes to a particular channel
-    # so that whitespace etc... can go to the parser on a "hidden" channel.
-
-    DEFAULT_CHANNEL = 0
-
-    # Anything on different channel than DEFAULT_CHANNEL is not parsed
-    # by parser.
-
-    HIDDEN_CHANNEL = 1
-
-
+    sub(" ", c).sub("\t","\\t").sub("\n","\\n").sub("\r","\\r")
+  end
 end
 
-class ParserRuleContext
+class Hash
+  def get(x,y)
+    return fetch(x) if self.has_key? x
+    return y
+  end
 end

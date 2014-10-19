@@ -1,9 +1,12 @@
 
 #from antlr4.atn.Transition import Transition
-
 INITIAL_NUM_TRANSITIONS = 4
 
+require 'java_symbols'
+
+
 class ATNState
+    include JavaSymbols
 
     # constants for serialization
     INVALID_TYPE = 0

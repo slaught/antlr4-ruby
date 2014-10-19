@@ -40,7 +40,7 @@ class ATNSimulator
     #  more time I think and doesn't save on the overall footprint
     #  so it's not worth the complexity.</p>
     #/
-    include PredictionContextFucntions
+    include PredictionContextFunctions
 
     attr_accessor :atn, :sharedContextCache
     def initialize(atn, sharedContextCache)

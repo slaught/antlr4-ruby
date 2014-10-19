@@ -17,48 +17,11 @@ require 'Token'
 
 require 'atn/SemanticContext'
 
+require 'java_symbols'
+
 class Transition 
+    include JavaSymbols
     # constants for serialization
-    @@EPSILON = 1
-    def self.EPSILON
-       @@EPSILON
-    end
-    @@RANGE = 2
-    def self.RANGE
-       @@RANGE
-    end
-    @@RULE = 3
-    def self.RULE
-       @@RULE
-    end
-    @@PREDICATE = 4
-    def self.PREDICATE
-       @@PREDICATE
-    end # e.g., {isType(input.LT(1))}?
-    @@ATOM = 5
-    def self.ATOM
-       @@ATOM
-    end
-    @@ACTION = 6
-    def self.ACTION
-       @@ACTION
-    end
-    @@SET = 7
-    def self.SET
-       @@SET
-    end # ~(A|B) or ~atom, wildcard, which convert to next 2
-    @@NOT_SET = 8
-    def self.NOT_SET
-       @@NOT_SET
-    end
-    @@WILDCARD = 9
-    def self.WILDCARD
-       @@WILDCARD
-    end
-    @@PRECEDENCE = 10
-    def self.PRECEDENCE
-       @@PRECEDENCE
-    end
     EPSILON			= 1
     RANGE			= 2
     RULE			= 3

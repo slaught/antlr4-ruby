@@ -13,9 +13,10 @@ require 'atn/ATNConfig'
 require 'atn/ATNConfigSet'
 require 'atn/ATNState'
 require 'atn/SemanticContext'
+require 'java_symbols'
 
-class PredictionMode #(Enum):
-    include Enumerable 
+class PredictionMode 
+    include JavaSymbols
     #
     # The SLL(*) prediction mode. This prediction mode ignores the current
     # parser context when making predictions. This is the fastest prediction
@@ -75,7 +76,6 @@ class PredictionMode #(Enum):
     # behavior for syntactically-incorrect inputs.</p>
     #
     LL_EXACT_AMBIG_DETECTION = 2
-
 
     #
     # Computes the SLL prediction termination condition.

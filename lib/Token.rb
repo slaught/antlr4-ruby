@@ -1,39 +1,25 @@
 # A token has properties: text, type, line, character position in the line
 # (so we can ignore tabs), token channel, index, and source from which
 # we obtained this token.
+require 'java_symbols'
 
 class Token
+    include JavaSymbols
+
     INVALID_TYPE = 0
-    def self.INVALID_TYPE 
-       INVALID_TYPE 
-    end
     # During lookahead operations, this "token" signifies we hit rule end ATN state
     # and did not follow it despite needing to.
     EPSILON = -2
-    def self.EPSILON
-      EPSILON 
-    end
     MIN_USER_TOKEN_TYPE = 1
-    def self.MIN_USER_TOKEN_TYPE 
-      MIN_USER_TOKEN_TYPE 
-    end
     EOF = -1
-    def self.EOF
-      EOF
-    end
     # All tokens go to the parser (unless skip() is called in that rule)
     # on a particular "channel".  The parser tunes to a particular channel
     # so that whitespace etc... can go to the parser on a "hidden" channel.
     DEFAULT_CHANNEL = 0
-    def self.DEFAULT_CHANNEL 
-      DEFAULT_CHANNEL 
-    end
     # Anything on different channel than DEFAULT_CHANNEL is not parsed
     # by parser.
     HIDDEN_CHANNEL = 1
-    def self.HIDDEN_CHANNEL 
-      HIDDEN_CHANNEL 
-    end
+
     attr_accessor :source, :type, :channel, :start, :stop, :tokenIndex
     attr_accessor :line, :column , :text
 # A token has properties: text, type, line, character position in the line
@@ -70,10 +56,6 @@ class CommonToken < Token
     # An empty {@link Pair} which is used as the default value of
     # {@link #source} for tokens that do not have a source.
     EMPTY_SOURCE = [nil, nil]
-    def self.EMPTY_SOURCE 
-      EMPTY_SOURCE   
-    end
-
 
     def initialize(source = EMPTY_SOURCE, type = nil, channel=Token.DEFAULT_CHANNEL, start=-1, stop=-1)
         super()

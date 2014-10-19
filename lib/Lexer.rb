@@ -12,10 +12,18 @@
 #from antlr4.Token import Token
 #from antlr4.error.Errors import IllegalStateException, LexerNoViableAltException, RecognitionException
 
+require 'CommonTokenFactory'
+require 'atn/LexerATNSimulator'
+require 'InputStream'
+require 'Recognizer'
+require 'error'
+require 'Token'
 require 'TokenSource'
 
-class Lexer < TokenSource
+require 'java_symbols' 
 
+class Lexer < TokenSource
+    include JavaSymbols
     DEFAULT_MODE = 0
     MORE = -2
     SKIP = -3

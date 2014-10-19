@@ -58,9 +58,10 @@
 
 require 'TokenStream'
 require 'CommonTokenStream'
-
+require 'java_symbols'
 
 class XPathLexer < Lexer
+    include JavaSymbols
 
     @@serializedATN = \
         "\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\2\n\64\b\1\4\2\t\2" + \
@@ -125,6 +126,12 @@ class XPath
 
     WILDCARD = "*" # word not operator/separator
     NOT = "!" # word for invert operator
+    def self.WILDCARD
+      XPath::WILDCARD
+    end
+    def self.NOT
+      XPath::NOT
+    end
 
     def initialize(parser, path)
         self.parser = parser
@@ -336,7 +343,7 @@ end
 class XPathWildcardAnywhereElement < XPathElement
 
     def initialize()
-        super(XPath.WILDCARD)
+        super(XPath::WILDCARD)
     end
 
     def evaluate(t)
@@ -351,7 +358,7 @@ end
 class XPathWildcardElement < XPathElement
 
     def initialize()
-        super(XPath.WILDCARD)
+        super(XPath::WILDCARD)
     end
 
 

@@ -20,7 +20,7 @@ class ATNConfigSet
     attr_accessor :conflictingAlts, :hasSemanticContext, :dipsIntoOuterContext
     attr_accessor :cachedHashCode
 
-    include PredictionContextFucntions
+    include PredictionContextFunctions
     def initialize(fullCtx=true)
         # All configs but hashed by (s, i, _, pi) not including context. Wiped out
         # when we go readonly as this set becomes a DFA state.
