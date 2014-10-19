@@ -1,0 +1,3 @@
+class TokenStream
+end
+
