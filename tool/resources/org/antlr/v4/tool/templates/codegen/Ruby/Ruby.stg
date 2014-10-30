@@ -131,7 +131,9 @@ require '<superClass>'
 
 class <parser.name> \< <if(superClass)><superClass><else>Parser<endif> 
     attr_accessor :grammarFileName 
-    @grammarFileName = '<parser.grammarFileName; format="java-escape">'
+    attr_accessor :atn, :decisionsToDFA,:sharedContextCache 
+    attr_accessor :predicates, :interp
+    attr_accessor :ruleNames, :tokenNames
 
     <atn>
 
@@ -140,22 +142,20 @@ class <parser.name> \< <if(superClass)><superClass><else>Parser<endif>
     <parser.tokens:{k | <k>=<parser.tokens.(k)>}; separator="\n", wrap, anchor>
 	<endif>
 
-    @tokenNames = [ <parser.tokenNames:{t | <t>}; null="\"\<INVALID>\"", separator=", ", wrap, anchor> ]
-
     <parser.rules:{r | RULE_<r.name> = <r.index>}; separator="\n", wrap, anchor>
-
-    @ruleNames =  [ <parser.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor> ]
-    attr_accessor  :atn, :decisionsToDFA,:sharedContextCache 
-    attr_accessor :_predicates, :_interp
 
     def initialize(input) # input:TokenStream
         super(input)
         self.checkVersion('<file.ANTLRVersion>')
-        self._interp = ParserATNSimulator.new(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
-        self._predicates = nil
+        self.predicates = nil
+        @grammarFileName = '<parser.grammarFileName; format="java-escape">'
+        @tokenNames = [ <parser.tokenNames:{t | <t>}; null="\"\<INVALID>\"", separator=", ", wrap, anchor> ]
+        @ruleNames =  [ <parser.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor> ]
+
         @atn = ATNDeserializer.new().deserialize(self.class.serializedATN())
-        @decisionsToDFA = @atn.decisionToState.each_with_index.map {|i,ds|  DFA.new(ds,i) }
+        @decisionsToDFA = @atn.decisionToState.each_with_index.map {|ds,i|  DFA.new(ds,i) }
         @sharedContextCache = PredictionContextCache.new()
+        self.interp = ParserATNSimulator.new(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
     end
 
     <namedActions.members>
@@ -165,12 +165,12 @@ class <parser.name> \< <if(superClass)><superClass><else>Parser<endif>
 
 <if(sempredFuncs)>
     def sempred(localctx, ruleIndex, predIndex)
-        if self._predicates.nil? then
-            self._predicates = Hash.new
+        if self.predicates.nil? then
+            self.predicates = Hash.new
         end
 <parser.sempredFuncs.values:{f |
-        self._predicates[<f.ruleIndex>] = self.<f.name>_sempred}; separator="\n        ">
-        pred = self._predicates[ruleIndex] 
+        self.predicates[<f.ruleIndex>] = self.<f.name>_sempred}; separator="\n        ">
+        pred = self.predicates[ruleIndex] 
         if pred.nil? then
             raise Exception.new("No predicate with index: #{ruleIndex}")
         else
@@ -187,14 +187,14 @@ end # class <parser.name>
 dumpActions(recog, argFuncs, actionFuncs, sempredFuncs) ::= <<
 <if(actionFuncs)>
 def action(localctx, ruleIndex, actionIndex)
-	if self._actions.nil? then
+	if self.actions.nil? then
 		actions = Hash.new
 <recog.actionFuncs.values:{f|
 		actions[<f.ruleIndex>] = self.<f.name>_action }; separator="\n">
-		self._actions = actions
+		self.actions = actions
   end
-	action = self._actions[ruleIndex]
-	if not action.nil? then 
+	action = self.actions[ruleIndex]
+	if action then 
 		action(localctx, actionIndex)
 	else
 		raise Exception.new("No registered action for: #{ruleIndex}")
@@ -205,13 +205,13 @@ def action(localctx, ruleIndex, actionIndex)
 <endif>
 <if(sempredFuncs)>
 def sempred(self, localctx, ruleIndex, predIndex)
-    if self._predicates.nil? then 
+    if self.predicates.nil? then 
         preds = Hash.new
 <recog.sempredFuncs.values:{f|
         preds[<f.ruleIndex>] = self.<f.name>_sempred}; separator="\n">
-        self._predicates = preds
+        self.predicates = preds
     end
-    pred = self._predicates[ruleIndex]
+    pred = self.predicates[ruleIndex]
     if not pred.nil? then
         return pred(localctx, predIndex)
     else
@@ -266,8 +266,8 @@ RuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,namedActions,fina
 <altLabelCtxs:{l | <altLabelCtxs.(l)>}; separator="\n">
 
 def <currentRule.name>(<currentRule.args:{a | <a.name>, } >)
-    localctx = <parser.name>.<currentRule.ctxType>(self, self._ctx, self.state<currentRule.args:{a | , <a.name>}>)
-    self.enterRule(localctx, <currentRule.startState>, self.RULE_<currentRule.name>)
+    localctx = <parser.name>::<currentRule.ctxType>.new(self, self.ctx, self.state<currentRule.args:{a | , <a.name>}>)
+    self.enterRule(localctx, <currentRule.startState>, <parser.name>.RULE_<currentRule.name>)
     <namedActions.init>
     <locals; separator="\n">
     begin
@@ -279,8 +279,8 @@ def <currentRule.name>(<currentRule.args:{a | <a.name>, } >)
     <else>
     rescue RecognitionException => re
         localctx.exception = re
-        self._errHandler.reportError(self, re)
-        self._errHandler.recover(self, re)
+        self.errHandler.reportError(self, re)
+        self.errHandler.recover(self, re)
     <endif>
     ensure 
         <finallyAction>
@@ -299,12 +299,12 @@ LeftRecursiveRuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,
 <altLabelCtxs:{l | <altLabelCtxs.(l)>}; separator="\n">
 
 def <currentRule.name>(_p=0<if(currentRule.args)>, <args:{a | , <a>}><endif>)
-    _parentctx = self._ctx
+    _parentctx = self.ctx
     _parentState = self.state
-    localctx = <parser.name>.<currentRule.ctxType>(self, self._ctx, _parentState<args:{a | , <a.name>}>)
+    localctx = <parser.name>::<currentRule.ctxType>.new(self, self.ctx, _parentState<args:{a | , <a.name>}>)
     _prevctx = localctx
     _startState = <currentRule.startState>
-    self.enterRecursionRule(localctx, <currentRule.startState>, self.RULE_<currentRule.name>, _p)
+    self.enterRecursionRule(localctx, <currentRule.startState>, <parser.name>.RULE_<currentRule.name>, _p)
     <namedActions.init>
     <locals; separator="\n">
     begin
@@ -313,8 +313,8 @@ def <currentRule.name>(_p=0<if(currentRule.args)>, <args:{a | , <a>}><endif>)
         <namedActions.after>
     rescue RecognitionException => re
         localctx.exception = re
-        self._errHandler.reportError(self, re)
-        self._errHandler.recover(self, re)
+        self.errHandler.reportError(self, re)
+        self.errHandler.recover(self, re)
     ensure
         <finallyAction>
         self.unrollRecursionContexts(_parentctx)
@@ -324,7 +324,7 @@ end
 >>
 
 CodeBlockForOuterMostAlt(currentOuterMostAltCodeBlock, locals, preamble, ops) ::= <<
-<if(currentOuterMostAltCodeBlock.altLabel)>localctx = <parser.name>.<currentOuterMostAltCodeBlock.altLabel; format="cap">Context.new(self, localctx)<endif>
+<if(currentOuterMostAltCodeBlock.altLabel)>localctx = <parser.name>::<currentOuterMostAltCodeBlock.altLabel; format="cap">Context.new(self, localctx)<endif>
 self.enterOuterAlt(localctx, <currentOuterMostAltCodeBlock.alt.altNum>)
 <CodeBlockForAlt(currentAltCodeBlock=currentOuterMostAltCodeBlock, ...)>
 >>
@@ -337,10 +337,10 @@ CodeBlockForAlt(currentAltCodeBlock, locals, preamble, ops) ::= <<
 
 LL1AltBlock(choice, preamble, alts, error) ::= <<
 self.state = <choice.stateNumber>
-<!_errHandler.sync(this);!>
-<if(choice.label)><labelref(choice.label)> = _input.LT(1)<endif>
+<!errHandler.sync(this);!>
+<if(choice.label)><labelref(choice.label)> = input.LT(1)<endif>
 <preamble; separator="\n">
-token = self._input.LA(1)
+token = self.input.LA(1)
 <choice.altLook,alts:{look,alt| <cases(ttypes=look)>
     <alt>
 	}; separator="\nels">
@@ -352,8 +352,8 @@ end #LL1AltBlock
 
 LL1OptionalBlock(choice, alts, error) ::= <<
 self.state = <choice.stateNumber>
-<!_errHandler.sync(this);!>
-token = self._input.LA(1)
+<!errHandler.sync(this);!>
+token = self.input.LA(1)
 <choice.altLook,alts:{look,alt| <cases(ttypes=look)>
     <alt>
     pass}; separator="\nels">
@@ -365,7 +365,7 @@ end # LL1OptionalBlock
 
 LL1OptionalBlockSingleAlt(choice, expr, alts, preamble, error, followExpr) ::= <<
 self.state = <choice.stateNumber>
-<!_errHandler.sync(this);!>
+<!errHandler.sync(this);!>
 <preamble; separator="\n">
 if <expr> then  # Ll1Optional Bloc Single Alt
     <alts; separator="\n">
@@ -375,40 +375,40 @@ end #LL1OptionalBlockSingleAlt
 
 LL1StarBlockSingleAlt(choice, loopExpr, alts, preamble, iteration) ::= <<
 self.state = <choice.stateNumber>
-self._errHandler.sync(self)
+self.errHandler.sync(self)
 <preamble; separator="\n">
 while <loopExpr> do
     <alts; separator="\n">
     self.state = <choice.loopBackStateNumber>
-    self._errHandler.sync(self)
+    self.errHandler.sync(self)
     <iteration>
 end
 >>
 
 LL1PlusBlockSingleAlt(choice, loopExpr, alts, preamble, iteration) ::= <<
 self.state = <choice.blockStartStateNumber> <! alt block decision !>
-self._errHandler.sync(self)
+self.errHandler.sync(self)
 <preamble; separator="\n">
-# Trying to use Rubism. This will probably break
+# Trying to use Rubyism. This will probably break
 begin  # while true do
     <alts; separator="\n">
     self.state = <choice.stateNumber> <! loopback/exit decision !>
-    self._errHandler.sync(self)
+    self.errHandler.sync(self)
     <iteration>
 #    if not (<loopExpr>) then
 #        break
 #    end
-end until not <loopExpr>  
+end until not (<loopExpr>)
 >>
 
 // LL(*) stuff
 
 AltBlock(choice, preamble, alts, error) ::= <<
 self.state = <choice.stateNumber>
-<!_errHandler.sync(this);!>
-<if(choice.label)><labelref(choice.label)> = _input.LT(1)<endif>
+<!errHandler.sync(this);!>
+<if(choice.label)><labelref(choice.label)> = input.LT(1)<endif>
 <preamble; separator="\n">
-la_ = self._interp.adaptivePredict(self._input,<choice.decision>,self._ctx)
+la_ = self.interp.adaptivePredict(self.input,<choice.decision>,self.ctx)
 <alts:{alt |
 if la_ == <i> then
     <alt>
@@ -418,8 +418,8 @@ end
 
 OptionalBlock(choice, alts, error) ::= <<
 self.state = <choice.stateNumber>
-<!_errHandler.sync(this);!>
-la_ = self._interp.adaptivePredict(self._input,<choice.decision>,self._ctx)
+<!errHandler.sync(this);!>
+la_ = self.interp.adaptivePredict(self.input,<choice.decision>,self.ctx)
 <alts:{alt |
 if la_ == <i><if(!choice.ast.greedy)>+1<endif>
     <alt>
@@ -429,22 +429,22 @@ end
 
 StarBlock(choice, alts, sync, iteration) ::= <<
 self.state = <choice.stateNumber>
-self._errHandler.sync(self)
-_alt = self._interp.adaptivePredict(self._input,<choice.decision>,self._ctx)
+self.errHandler.sync(self)
+_alt = self.interp.adaptivePredict(self.input,<choice.decision>,self.ctx)
 while _alt!=<choice.exitAlt> and _alt!=ATN.INVALID_ALT_NUMBER do
     if _alt==1<if(!choice.ast.greedy)>+1<endif> then
         <iteration>
         <alts> <! should only be one !>
     end
     self.state = <choice.loopBackStateNumber>
-    self._errHandler.sync(self)
-    _alt = self._interp.adaptivePredict(self._input,<choice.decision>,self._ctx)
+    self.errHandler.sync(self)
+    _alt = self.interp.adaptivePredict(self.input,<choice.decision>,self.ctx)
 end
 >>
 
 PlusBlock(choice, alts, error) ::= <<
 self.state = <choice.blockStartStateNumber> <! alt block decision !>
-self._errHandler.sync(self)
+self.errHandler.sync(self)
 _alt = 1<if(!choice.ast.greedy)>+1<endif>
 while _alt!=<choice.exitAlt> and _alt!=ATN.INVALID_ALT_NUMBER do
     <alts:{alt|
@@ -455,8 +455,8 @@ if _alt == <i><if(!choice.ast.greedy)>+1<endif> then
         <error>
     end
     self.state = <choice.loopBackStateNumber> <! loopback/exit decision !>
-    self._errHandler.sync(self)
-    _alt = self._interp.adaptivePredict(self._input,<choice.decision>,self._ctx)
+    self.errHandler.sync(self)
+    _alt = self.interp.adaptivePredict(self.input,<choice.decision>,self.ctx)
 end
 >>
 
@@ -508,7 +508,7 @@ self.state = <r.stateNumber>
 
 MatchToken(m) ::= <<
 self.state = <m.stateNumber>
-<if(m.labels)><m.labels:{l | <labelref(l)> = }><endif>self.match(self.<m.name>)
+<if(m.labels)><m.labels:{l | <labelref(l)> = }><endif> match(<parser.name>::<m.name>)
 >>
 
 MatchSet(m, expr, capture) ::= "<CommonSetStuff(m, expr, capture, false)>"
@@ -517,10 +517,10 @@ MatchNotSet(m, expr, capture) ::= "<CommonSetStuff(m, expr, capture, true)>"
 
 CommonSetStuff(m, expr, capture, invert) ::= <<
 self.state = <m.stateNumber>
-<if(m.labels)><m.labels:{l | <labelref(l)> = }>self._input.LT(1)<endif>
+<if(m.labels)><m.labels:{l | <labelref(l)> = }>self.input.LT(1)<endif>
 <capture>
-<if(invert)>if <m.varName> \<= 0 or <expr><else>if not <expr> <endif> then 
-<if(m.labels)><m.labels:{l |     <labelref(l)> = }><else>    <endif>self._errHandler.recoverInline(self)
+<if(invert)>if <m.varName> \<= 0 or <expr><else>if not (<expr>) <endif> then 
+<if(m.labels)><m.labels:{l |     <labelref(l)> = }><else>    <endif>self.errHandler.recoverInline(self)
 end
 self.consume()
 >>
@@ -538,7 +538,7 @@ ArgAction(a, chunks) ::= "<chunks>"
 
 SemPred(p, chunks, failChunks) ::= <<
 self.state = <p.stateNumber>
-if not <chunks> then
+if not (<chunks>) then
     raise FailedPredicateException.new(self, <p.predicate><if(failChunks)>, <failChunks><elseif(p.msg)>, <p.msg><endif>)
 end
 >>
@@ -584,12 +584,12 @@ TokenPropertyRef_int(t) ::= "(<ctx(t)>.<t.label> ? <ctx(t)>.<t.label>.text.to_i 
 
 RulePropertyRef_start(r) ::= "(<ctx(r)>.<r.label> ? <ctx(r)>.<r.label>.start : nil )"
 RulePropertyRef_stop(r)	 ::= "(<ctx(r)>.<r.label> ? <ctx(r)>.<r.label>.stop : nil )"
-RulePropertyRef_text(r)	 ::= "(<ctx(r)>.<r.label> ?  self._input.getText((<ctx(r)>.<r.label>.start,<ctx(r)>.<r.label>.stop)) : nil )"
+RulePropertyRef_text(r)	 ::= "(<ctx(r)>.<r.label> ?  self.input.getText([<ctx(r)>.<r.label>.start,<ctx(r)>.<r.label>.stop]) : nil )"
 RulePropertyRef_ctx(r)	 ::= "<ctx(r)>.<r.label>"
 
 ThisRulePropertyRef_start(r) ::= "localctx.start"
 ThisRulePropertyRef_stop(r)	 ::= "localctx.stop"
-ThisRulePropertyRef_text(r)	 ::= "self._input.getText((localctx.start, self._input.LT(-1)))"
+ThisRulePropertyRef_text(r)	 ::= "self.input.getText([localctx.start, self.input.LT(-1)])"
 ThisRulePropertyRef_ctx(r)	 ::= "localctx"
 
 NonLocalAttrRef(s)		 	 ::= "getInvokingContext(<s.ruleIndex>).<s.name>"
@@ -598,8 +598,8 @@ SetNonLocalAttr(s, rhsChunks)  ::= "getInvokingContext(<s.ruleIndex>).<s.name> =
 AddToLabelList(a) ::= "<ctx(a.label)>.<a.listName>.push(<labelref(a.label)>)"
 
 TokenDecl(t) ::= "self.<t.name> = nil  # <TokenLabelType()>"
-TokenTypeDecl(t) ::= "self.<t.name> = 0 # <TokenLabelType()> type"
-TokenListDecl(t) ::= "self.<t.name> = Array.new # of <TokenLabelType()>s"
+TokenTypeDecl(t) ::= "<t.name> = 0 # <TokenLabelType()> type"
+TokenListDecl(t) ::= "<t.name> = Array.new # of <TokenLabelType()>s"
 RuleContextDecl(r) ::= "self.<r.name> = nil # <r.ctxName>"
 RuleContextListDecl(rdecl) ::= "self.<rdecl.name> = Array.new # of <rdecl.ctxName>s"
 
@@ -643,7 +643,7 @@ if ( needList ) {
 */
 ContextRuleGetterDecl(r)       ::= <<
 def <r.name>() 
-    getTypedRuleContext(<parser.name>.<r.ctxName>,0)
+    getTypedRuleContext(<parser.name>::<r.ctxName>,0)
 end
 
 >>
@@ -652,16 +652,16 @@ end
 // should never be called
 ContextRuleListGetterDecl(r)   ::= <<
   # This is a failure: ContextRuleListGetterDecl was called
-  # getTypedRuleContexts(<parser.name>.<r.ctxName>)
+  # getTypedRuleContexts(<parser.name>::<r.ctxName>)
 >>
 */
 
 ContextRuleListIndexedGetterDecl(r)   ::= <<
 def <r.name>(i=nil) 
     if i.nil? 
-        getTypedRuleContexts(<parser.name>.<r.ctxName>)
+        getTypedRuleContexts(<parser.name>::<r.ctxName>)
     else
-        getTypedRuleContext(<parser.name>.<r.ctxName>,i)
+        getTypedRuleContext(<parser.name>::<r.ctxName>,i)
     end
 end
 >>
@@ -678,12 +678,14 @@ ImplicitRuleLabel(ruleName)	  ::= "_<ruleName>"
 ImplicitSetLabel(id)		  ::= "_tset<id>"
 ListLabelName(label)		  ::= "<label>"
 
-CaptureNextToken(d) ::= "<d.varName> = self._input.LT(1)"
-CaptureNextTokenType(d) ::= "<d.varName> = self._input.LA(1)"
+CaptureNextToken(d) ::= "<d.varName> = self.input.LT(1)"
+CaptureNextTokenType(d) ::= "<d.varName> = self.input.LA(1)"
 
 StructDecl(struct,ctorAttrs,attrs,getters,dispatchMethods,interfaces,extensionMembers,
            superClass={ParserRuleContext}) ::= <<
 class <struct.name> \< <superClass>
+    attr_accessor :parser 
+    <attrs:{a | attr_accessor :<a>}; separator="\n">
     def initialize(parser, parent=nil, invokingState=-1 <struct.ctorAttrs:{a | , <a.name>=nil}>)
         super(parent, invokingState)
         self.parser = parser
@@ -752,30 +754,30 @@ labelref(x) ::= "<if(!x.isLocal)>localctx.<endif><x.name>"
 ctx(actionChunk) ::= "localctx"
 
 // used for left-recursive rules
-recRuleAltPredicate(ruleName,opPrec)  ::= "self.precpred(self._ctx, <opPrec>)"
+recRuleAltPredicate(ruleName,opPrec)  ::= "self.precpred(self.ctx, <opPrec>)"
 recRuleSetReturnAction(src,name)	  ::= "$<name>=$<src>.<name>"
-recRuleSetStopToken()                 ::= "self._ctx.stop = self._input.LT(-1)"
+recRuleSetStopToken()                 ::= "self.ctx.stop = self.input.LT(-1)"
 
 recRuleAltStartAction(ruleName, ctxName, label) ::= <<
-localctx = <parser.name>.<ctxName>Context(self, _parentctx, _parentState)
+localctx = <parser.name>::<ctxName>Context.new(self, _parentctx, _parentState)
 <if(label)>localctx.<label> = _prevctx<endif>
-self.pushNewRecursionContext(localctx, _startState, self.RULE_<ruleName>)
+self.pushNewRecursionContext(localctx, _startState, <parser.name>.RULE_<ruleName>)
 >>
 
 recRuleLabeledAltStartAction(ruleName, currentAltLabel, label) ::= <<
-localctx = <parser.name>.<currentAltLabel; format="cap">Context(self, <parser.name>.<ruleName; format="cap">Context(self, _parentctx, _parentState))
+localctx = <parser.name>::<currentAltLabel; format="cap">Context.new(self, <parser.name>::<ruleName; format="cap">Context.new(self, _parentctx, _parentState))
 <if(label)>localctx.<label> = _prevctx<endif>
-self.pushNewRecursionContext(localctx, _startState, self.RULE_<ruleName>)
+self.pushNewRecursionContext(localctx, _startState, <parser.name>.RULE_<ruleName>)
 >>
 
 recRuleReplaceContext(ctxName) ::= <<
-localctx = <parser.name>.<ctxName>Context(self, localctx)
-self._ctx = localctx
+localctx = <parser.name>::<ctxName>Context.new(self, localctx)
+self.ctx = localctx
 _prevctx = localctx
 >>
 
 recRuleSetPrevCtx() ::= <<
-if not self._parseListeners.nil?  then 
+if self.parseListeners  then 
     self.triggerExitRuleEvent()
 end
 _prevctx = localctx
@@ -793,8 +795,12 @@ require 'stringio'
 
 Lexer(lexer, atn, actionFuncs, sempredFuncs, superClass) ::= <<
 class <lexer.name> \< <if(superClass)><superClass><else>Lexer<endif>
+    include JavaSymbols
+
     attr_accessor :grammarFileName
-    @grammarFileName = '<lexer.grammarFileName>'
+    attr_accessor :atn, :decisionsToDFA 
+    attr_accessor :actions, :predicates 
+    attr_accessor :modeNames, :tokenNames, :ruleNames
 
     <atn>
 
@@ -803,25 +809,22 @@ class <lexer.name> \< <if(superClass)><superClass><else>Lexer<endif>
     
     <rest(lexer.modes):{m| <m> = <i>}; separator="\n">
     
-    attr_accessor :modeNames, :tokenNames, :ruleNames
-    @modeNames = [ <lexer.modes:{m| "<m>"}; separator=", ", wrap, anchor> ]
-    
-    @tokenNames = [ "\<INVALID>",
-            <lexer.tokenNames:{t | <t>}; separator=", ", wrap, anchor> ]
-    
-    @ruleNames = [ <lexer.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor> ]
-
-    attr_accessor :atn, :decisionsToDFA 
-    attr_accessor :_interp, :_actions, :_predicates 
-
     def initialize(input=nil)
         super(input)
+        @grammarFileName = '<lexer.grammarFileName>'
+        @modeNames = [ <lexer.modes:{m| "<m>"}; separator=", ", wrap, anchor> ]
+    
+        @tokenNames = [ "\<INVALID>",
+            <lexer.tokenNames:{t | <t>}; separator=", ", wrap, anchor> ]
+    
+        @ruleNames = [ <lexer.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor> ]
+
         self.checkVersion("<lexerFile.ANTLRVersion>")
-        self._interp = LexerATNSimulator.new(self, @@atn, @@decisionsToDFA, PredictionContextCache.new())
-        self._actions = nil
-        self._predicates = nil
+        self.actions = nil
+        self.predicates = nil
         @atn = ATNDeserializer.new().deserialize(self.class.serializedATN())
-        @decisionsToDFA = atn.decisionToState.each_with_index.map {|i,ds|  DFA.new(ds,i) }
+        @decisionsToDFA = @atn.decisionToState.each_with_index.map {|ds,i|  DFA.new(ds,i) }
+        self.interp = LexerATNSimulator.new(self, @atn, @decisionsToDFA, PredictionContextCache.new())
     end
       
     <namedActions.members>
@@ -834,7 +837,7 @@ end
 SerializedATN(model) ::= <<
 <! only one segment, can be inlined !>
   def self.serializedATN()
-      "<model.serialized; wrap={" \\<\n>      "}>"
+  "<model.serialized; wrap={"\\<\n>  "}>".chars
   end		
 >>
 
