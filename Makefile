@@ -13,7 +13,7 @@ build:
 test: build gen_test syntax_check run_test
 
 gen_test:
-	(cd t; java org.antlr.v4.Tool PjmInvoice.g4)
+	(cd t; java org.antlr.v4.Tool -Dlanguage=Ruby PjmInvoice.g4)
 
 syntax_check: 
 	$(RUBY_SYNTAX) t/PjmInvoiceLexer.rb   
@@ -28,4 +28,15 @@ run_test:
 add:
 	git add tool/resources/org/antlr/v4/tool/templates/codegen/Ruby/Ruby.stg
 	git add tool/src/org/antlr/v4/codegen/RubyTarget.java
+
+test1:
+	rbx -It -Ilib RubyTest.rb pjm_msrs_Week_Bill_L_2014-07-26.pjmcsv
+
+test2: 
+	rbx -It:lib t1.rb
+
+
+
+
+
 
