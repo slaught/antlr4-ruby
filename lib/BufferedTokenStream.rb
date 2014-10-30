@@ -294,7 +294,7 @@ class BufferedTokenStream < TokenStream
         if stop >= self.tokens.length
             stop = self.tokens.length-1
         end
-        StringIO.new() do |buf|
+        StringIO.open  do |buf|
             for i in start..stop do
                 t = self.tokens[i]
                 break if t.type==Token.EOF

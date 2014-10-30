@@ -145,7 +145,7 @@ class ATNConfigSet
         return self.hashConfigs()
     end
     def hashConfigs
-        StringIO.new() do |buf|
+        StringIO.open  do |buf|
           self.configs.each { |cfg| 
               buf.write(cfg.to_s)
           }
@@ -184,8 +184,8 @@ class ATNConfigSet
         self.configLookup = nil # can't mod, no need for lookup cache
     end
     def to_s
-        StringIO.new() do |buf|
-            buf.write(self.configs.to_s)
+        StringIO.open  do |buf|
+            buf.write("[ #{@configs.map{|x| x.class} } ]@#{@configs.length}")
             if self.hasSemanticContext
                 buf.write(",hasSemanticContext=")
                 buf.write(self.hasSemanticContext.to_s)

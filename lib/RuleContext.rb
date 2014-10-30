@@ -89,7 +89,7 @@ class RuleContext < RuleNode
         if self.getChildCount() == 0
             return ""
         end
-        StringIO.new() do |builder|
+        StringIO.open  do |builder|
             self.getChildren().each {|child| builder.write(child.getText()) }
             return builder.string()
         end
@@ -204,7 +204,7 @@ class RuleContext < RuleNode
    #  }
 
     def toString(ruleNames, stop) #->str#ruleNames:list, stop:RuleContext)->str:
-        StringIO.new() do |buf|
+        StringIO.open  do |buf|
             p = self
             buf.write("[")
             while (not p.nil?) and p != stop do

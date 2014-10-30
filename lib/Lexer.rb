@@ -309,7 +309,7 @@ class Lexer < TokenSource
     end
 
     def getErrorDisplay(s)
-        StringIO.new() do |buf|
+        StringIO.open  do |buf|
             s.chars.each{|c| buf.write(self.getErrorDisplayForChar(c)) }
             return buf.string()
         end

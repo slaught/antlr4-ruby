@@ -240,7 +240,7 @@ class ArrayPredictionContext < PredictionContext
         if self.isEmpty()
             return "[]"
         end
-        StringIO.new() do |buf|
+        StringIO.open  do |buf|
             buf.write("[")
             for i in 0..self.returnStates.length-1 do
                 buf.write(", ") if i>0

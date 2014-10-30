@@ -17,7 +17,7 @@ class Trees
         if t.getChildCount()==0 then
             return s
         end
-        StringIO.new() do |buf|
+        StringIO.open  do |buf|
             buf.write("(")
             buf.write(s)
             buf.write(' ')

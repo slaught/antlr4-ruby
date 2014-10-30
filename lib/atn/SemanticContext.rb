@@ -114,7 +114,7 @@ class Predicate < SemanticContext
         return parser.sempred(localctx, self.ruleIndex, self.predIndex)
     end
     def hash
-        StringIO.new() do |buf|
+        StringIO.open  do |buf|
             buf.write(self.ruleIndex.to_s)
             buf.write("/")
             buf.write(self.predIndex.to_s)

@@ -77,12 +77,17 @@ class ATNConfig
     def hash
         "#{@state.stateNumber}/#{@alt}/#{@context}/#{@semanticContext}".hash
     end
-    def to_s 
-        StringIO.new() do |buf|
+    def toString(recog=nil, showAlt=true)
+        to_s(recog,showAlt)
+    end
+    def to_s(recog=nil, showAlt=true) 
+        StringIO.open  do |buf|
             buf.write('(')
             buf.write(self.state.to_s)
-            buf.write(",")
-            buf.write(self.alt.to_s)
+            if showAlt then
+              buf.write(",")
+              buf.write(self.alt.to_s)
+            end
             if not self.context.nil? 
                 buf.write(",[")
                 buf.write(self.context.to_s)

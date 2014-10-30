@@ -115,10 +115,10 @@ class DFAState
     end
 
     def to_s
-        StringIO.new do |buf|
+        StringIO.open do |buf|
             buf.write(self.stateNumber.to_s)
             buf.write(":")
-            buf.write(self.configs.to_s)
+            buf.write(self.configs.to_s ) 
             if self.isAcceptState then
                 buf.write("=>")
                 if self.predicates then

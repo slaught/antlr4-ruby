@@ -15,7 +15,7 @@ class DFASerializer
 
     def to_s
         return nil if self.dfa.s0.nil? 
-        StringIO.new do |buf|
+        StringIO.open do |buf|
             for s in self.dfa.sortedStates()
                 n = 0
                 if not s.edges.nil? 

@@ -143,7 +143,7 @@ class IntervalSet
         end
         "{#{intervals.to_s}}"
     end
-#        StringIO.new() do |buf|
+#        StringIO.open  do |buf|
 #            if length > 1 then
 #                buf.write("{")
 #            first = true
