@@ -1,9 +1,8 @@
 # The basic notion of a tree has a parent, a payload, and a list of children.
 #  It is the most abstract interface for all the trees used by ANTLR.
-#/
-#from antlr4.Token import Token
+#
 
-INVALID_INTERVAL = [-1, -2]
+INVALID_INTERVAL = Range.new(-1, -2)
 
 class Tree
 end
@@ -23,7 +22,36 @@ end
 class ErrorNode < TerminalNode
 end
 
+
+# This interface defines the basic notion of a parse tree visitor. Generated
+# visitors implement this interface and the {@code XVisitor} interface for
+# grammar {@code X}.
 class ParseTreeVisitor
+	 # Visit a parse tree, and return a user-defined result of the operation.
+	 #
+	 # @param tree The {@link ParseTree} to visit.
+	 # @return The result of visiting the parse tree.
+	def visit(tree) # tree:ParseTree 
+  end
+	# Visit the children of a node, and return a user-defined result of the
+	# operation.
+	# @param node The {@link RuleNode} whose children should be visited.
+	# @return The result of visiting the children of the node.
+	def visitChildren(node) # node:RuleNode 
+  end
+
+	# Visit a terminal node, and return a user-defined result of the operation.
+	#
+	# @param node The {@link TerminalNode} to visit.
+	# @return The result of visiting the node.
+	def visitTerminal(node) # node:TerminalNode 
+  end
+  #Visit an error node, and return a user-defined result of the operation.
+  #
+	# @param node The {@link ErrorNode} to visit.
+	# @return The result of visiting the node.
+	def visitErrorNode(node) # node:ErrorNode 
+  end
 end
 
 class ParseTreeListener
@@ -39,6 +67,7 @@ class ParseTreeListener
     def exitEveryRule(ctx)
     end
 end
+
 module NodeImpl
 
   def self.included(klass)
@@ -46,14 +75,23 @@ module NodeImpl
     # klass.send(:extend, NodeImpl::Methods)
     # klass.send(:extend, NodeImpl::ClassMethods)
   end
-module Methods
-
+  module Methods
     def initialize(symbol)
-        self.parentCtx = nil
-        self.symbol = symbol
+        @parentCtx = nil
+        @symbol = symbol
     end
-
-#    attr_accessor :symbol, :parentCtx
+    def symbol
+      @symbol
+    end
+    def symbol=(value)
+      @symbol = value
+    end
+    def parentCtx
+      @parentCtx
+    end
+    def parentCtx=(value)
+      @parentCtx = value
+    end
 
 #    def []=(key, value)
 #        super(key, value)
@@ -104,60 +142,8 @@ module Methods
 end
 
 class TerminalNodeImpl < TerminalNode
-
     include NodeImpl
 
-    attr_accessor :symbol, :parentCtx
-#    def initialize(symbol)
-#        self.parentCtx = nil
-#        self.symbol = symbol
-#    end
-#
-#    def __setattr__(self, key, value):
-#        super().__setattr__(key, value)
-#    end
-#
-#    def getChild(i)
-#        nil
-#    end
-#
-#    def getSymbol()
-#        self.symbol
-#    end
-#
-#    def getParent()
-#        self.parentCtx
-#    end
-#
-#    def getPayload()
-#        return self.symbol
-#    end
-#
-#    def getSourceInterval()
-#        return INVALID_INTERVAL if self.symbol.nil? 
-#        tokenIndex = self.symbol.tokenIndex
-#        return (tokenIndex, tokenIndex)
-#    end
-#
-#    def getChildCount()
-#        return 0
-#    end
-
-#    def accept(visitor)
-#        return visitor.visitTerminal(self)
-#    end
-#
-#    def getText()
-#        return self.symbol.text
-#    end
-#
-#    def to_s
-#        if self.symbol.type == Token.EOF then
-#            "<EOF>"
-#        else
-#            self.symbol.text
-#        end
-#    end
 end
 # Represents a token that was consumed during resynchronization
 #  rather than during a valid match operation. For example,
@@ -167,11 +153,6 @@ end
 
 class ErrorNodeImpl < ErrorNode
     include NodeImpl 
-    attr_accessor :symbol, :parentCtx
-
-    def initialize(token)
-        super(token)
-    end
 
     def accept(visitor)
         return visitor.visitErrorNode(self)

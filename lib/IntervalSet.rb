@@ -1,43 +1,57 @@
-#from io import StringIO
 # from antlr4.Token import Token
 
-require 'stringio'
 require 'Token'
+require 'set'
 
+
+class Range
+  def length
+      size
+  end
+  def stop
+    last
+  end
+  def start
+    first
+  end
+end
+
+require 'forwardable'
 
 class IntervalSet
+    extend Forwardable
 
-    attr_accessor :intervals , :readOnly 
+    attr_accessor :intervals , :readonly 
     attr_accessor :_internal 
     def initialize 
-        self.intervals = nil
-        self.readOnly = false
+        self.intervals = Array.new
+        self.readonly = false
         @_internal = Set.new
-        
     end
-
+    def_delegators :@intervals, :each, :map 
     include Enumerable
 
-    def each(&block)
-       #_internal.each(block)
-      self.intervals.each(block)
-    end
+
+#    def each(&block)
+#       #_internal.each(block)
+#      self.intervals.each(block)
+#    end
 #        if self.intervals is not None:
 #            for i in self.intervals:
 #                for c in i:
 #                    yield c
 #
 #    end
-    def []=(item)
-      @_internal[item]
-    end
+#    def []=(item)
+#      @_internal[item]
+#    end
     def addOne(v)
         self.addRange(v..v)
     end
 
     def addRange(v)
-        if self.intervals.nil? then
-            self.intervals = Array.new
+        type_check(v, Range)
+        if self.intervals.empty? then 
             self.intervals.push(v)
         else
             # find insert pos
@@ -49,11 +63,11 @@ class IntervalSet
                     return
                 # contiguous range -> adjust
                 elsif v.stop==i.start 
-                    self.intervals[k] = v.start..i.stop-1
+                    self.intervals[k] = v.start..i.stop
                     return
                 # overlapping range -> adjust and reduce
                 elsif v.start<=i.stop
-                    self.intervals[k] = [i.start,v.start].min .. ([i.stop,v.stop].max -1)
+                    self.intervals[k] = [i.start,v.start].min() ..  ([i.stop,v.stop].max())
                     self.reduce(k)
                     return
                 end
@@ -83,47 +97,50 @@ class IntervalSet
                 self.intervals.pop(k+1)
                 self.reduce(k)
             elsif l.stop >= r.start
-                self.intervals[k] = l.start..r.stop-1
+                self.intervals[k] = l.start..r.stop
                 self.intervals.pop(k+1)
             end
         end
     end
     def member?(item)
-        return false if self.intervals.nil? 
-        for i in self.intervals do
-            if i.member? item 
+        return false if self.intervals.empty?
+        self.intervals.each  do |i|
+            if i.member? item  then
                return true
             end
         end
-        return false
+        false
     end
 
     def length
         xlen = 0
-        for i in self.intervals do
-            xlen = xlen + i.length 
+        self.intervals.each do |i|
+          xlen = xlen + i.length 
         end
         return xlen
     end
   
     def remove(v)
-        if not self.intervals.nil? then
+        if not self.intervals.empty? then
             k = 0
             for i in self.intervals do
                 # intervals is ordered
                 if v<i.start then
                     return
                 # check for single value range
-                elsif v==i.start and v==i.stop-1
+#                elsif v==i.start and v==i.stop-1
+                elsif v==i.start and v==i.stop
                     self.intervals.pop(k)
                     return
                 # check for lower boundary
                 elsif v==i.start
-                    self.intervals[k] = i.start+1..i.stop-1
+#                    self.intervals[k] = i.start+1..i.stop-1
+                    self.intervals[k] = i.start+1..i.stop
                     return
                 # check for upper boundary
                 elsif v==i.stop-1
-                    self.intervals[k] = i.start..i.stop-1-1
+#                    self.intervals[k] = i.start..i.stop-1-1
+                    self.intervals[k] = i.start..i.stop
                     return
                 # split existing range
                 elsif v<i.stop-1
@@ -138,25 +155,26 @@ class IntervalSet
     end
 
     def toString(tokenNames)
-        if self.intervals.nil? then
+        if self.intervals.nil? or self.intervals.empty? then
             return "{}"
         end
-        "{#{intervals.to_s}}"
+#        "{#{intervals.to_s}}"
+       StringIO.open  do |buf|
+            if length > 1 then
+                buf.write("{")
+            end
+            x = intervals.map { |i|
+                i.map { |j| 
+                    self.elementName(tokenNames, j).inspect
+                }.join(', ')
+            }.join(", ")
+            buf.write(x) 
+            if length > 1 then 
+                buf.write("}")
+            end
+            return buf.string() 
+       end
     end
-#        StringIO.open  do |buf|
-#            if length > 1 then
-#                buf.write("{")
-#            first = true
-#            for i in self.intervals do
-#                for j in i do
-#                    if not first:
-#                        buf.write(u", ")
-#                    buf.write(self.elementName(tokenNames, j))
-#                    first = false
-#            if len(self)>1:
-#                buf.write(u"}")
-#            return buf.getvalue()
-#       end
     def elementName(tokenNames, a)
         if a==Token.EOF then
             return "<EOF>"
