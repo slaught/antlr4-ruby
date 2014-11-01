@@ -686,16 +686,16 @@ StructDecl(struct,ctorAttrs,attrs,getters,dispatchMethods,interfaces,extensionMe
 class <struct.name> \< <superClass>
     attr_accessor :parser 
     <attrs:{a | attr_accessor :<a>}; separator="\n">
-    def initialize(parser, parent=nil, invokingState=-1 <struct.ctorAttrs:{a | , <a.name>=nil}>)
-        super(parent, invokingState)
+    def initialize(parser, parent=nil, invoking_state=-1 <struct.ctorAttrs:{a | , <a.name>=nil}>)
+        super(parent, invoking_state)
         self.parser = parser
         <attrs:{a | <a>}; separator="\n">
-        <struct.ctorAttrs:{a | self.<a.name> = <a.name>}; separator="\n">
+        <struct.ctorAttrs:{a | @<a.name> = <a.name>}; separator="\n">
     end
 
     <getters:{g | <g>}; separator="\n\n">
 
-    def getRuleIndex()
+    def ruleIndex # getRuleIndex()
         <parser.name>.RULE_<struct.derivedFromName>
     end	
 
