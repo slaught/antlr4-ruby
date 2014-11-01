@@ -92,8 +92,8 @@ class ParseTreePatternMatcher
     #
     def compileTreePattern(pattern, patternRuleIndex)
         tokenList = self.tokenize(pattern)
-        tokenSrc = ListTokenSource(tokenList)
-        tokens = CommonTokenStream(tokenSrc)
+        tokenSrc = ListTokenSource.new(tokenList)
+        tokens = CommonTokenStream.new(tokenSrc)
 #        from antlr4.ParserInterpreter import ParserInterpreter
 
         p = self.parser
@@ -295,7 +295,7 @@ class ParseTreePatternMatcher
             # copy inside of <tag>
             tag = pattern[starts[i] + len(self.start) , stops[i]-1]
             ruleOrToken = tag
-            label = None
+            label = nil
             colon = tag.find(':')
             if colon >= 0 then
                 label = tag[0,colon-1]

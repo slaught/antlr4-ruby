@@ -15,7 +15,7 @@ class SemanticContext
     # The default {@link SemanticContext}, which is semantically equivalent to
     # a predicate of the form {@code {true}?}.
     @@NONE = nil
-    def NONE
+    def self.NONE
       @@NONE = SemanticContext.new if @@NONE.nil?  
       @@NONE
     end
@@ -68,8 +68,8 @@ class SemanticContext
         SemanticContext.andContext(self, b)
     end
     def self.andContext(a, b)
-      return b if a.nil? or a === SemanticContext.NONE
-      return a if b.nil? or b === SemanticContext.NONE
+      return b if a.nil? or a.equal? SemanticContext.NONE
+      return a if b.nil? or b.equal? SemanticContext.NONE
       result = AND.new(a, b)
       return result.simplify
     end
@@ -79,7 +79,7 @@ class SemanticContext
     def self.orContext(a, b)
         return b if a.nil? 
         return a if b.nil? 
-        if a === SemanticContext.NONE or b === SemanticContext.NONE
+        if a.equal? SemanticContext.NONE or b.equal? SemanticContext.NONE
             return SemanticContext.NONE
         end
         result = OR.new(a, b)
@@ -123,11 +123,11 @@ class Predicate < SemanticContext
             return buf.string().hash 
         end
     end
-    def eq?(other)
+    def eql?(other)
       self == other
     end
     def ==(other)
-        self === other or other.kind_of?(Predicate) and \
+        self.equal? other or other.kind_of?(Predicate) and \
               self.ruleIndex == other.ruleIndex and \
                self.predIndex == other.predIndex and \
                self.isCtxDependent == other.isCtxDependent
@@ -167,7 +167,7 @@ class PrecedencePredicate < SemanticContext
         self == other
     end
     def ==(other)
-        self === other or other.kind_of?(PrecedencePredicate) and self.precedence == other.precedence
+        self.equal? other or other.kind_of?(PrecedencePredicate) and self.precedence == other.precedence
     end
 end
 # A semantic context which is true whenever none of the contained contexts
@@ -200,7 +200,7 @@ class AND < SemanticContext
       self == other
     end
     def ==(other)
-        self === other or \
+        self.equal? other or \
         other.kind_of? AND and self.opnds == other.opnds
     end
     
@@ -229,17 +229,17 @@ class AND < SemanticContext
         operands = Array.new
         self.opnds.each {|context|
             evaluated = context.evalPrecedence(parser, outerContext)
-            if evaluated === context then
+            if evaluated.equal? context then
                 differs = false
             else
                 differs = true
             end
-#            differs = differs || (! (evaluated === context))
+#            differs = differs || (! (evaluated.equal? context))
             # The AND context is false if any element is false
             return nil if evaluated.nil? 
-            if evaluated === SemanticContext.NONE
+            if evaluated.equal? SemanticContext.NONE
                 # Reduce the result by skipping true elements
-                operands.append(evaluated)
+                operands.push(evaluated)
             end
         }
         if not differs
@@ -297,7 +297,7 @@ class OR < SemanticContext
         self == other
     end
     def ==(other)
-        self ===other or other.kind_of? OR and self.opnds == other.opnds
+        self.equal? other or other.kind_of? OR and self.opnds == other.opnds
     end
     def hash
         "#{self.opnds}/OR".hash
@@ -322,14 +322,14 @@ class OR < SemanticContext
         operands = []
         operands = self.opnds.map {|context|
             evaluated = context.evalPrecedence(parser, outerContext)
-            if evaluated === context then
+            if evaluated.equal? context then
                 differs = false
             else
                 differs = true
             end
-            #differs = differs || not (evaluated === context)
+            #differs = differs || not (evaluated.equal? context)
             # The OR context is true if any element is true
-            return SemanticContext.NONE if evaluate === SemanticContext.NONE
+            return SemanticContext.NONE if evaluate.equal? SemanticContext.NONE
             if not evaluated.nil? then 
                 # Reduce the result by skipping false elements
                 evaluated

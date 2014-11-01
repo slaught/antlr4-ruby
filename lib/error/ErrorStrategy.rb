@@ -183,7 +183,7 @@ class DefaultErrorStrategy < ErrorStrategy
         if self.lastErrorStates.nil? then 
             self.lastErrorStates = []
         end
-        self.lastErrorStates.append(recognizer.state)
+        self.lastErrorStates.push(recognizer.state)
         followSet = self.getErrorRecoverySet(recognizer)
         self.consumeUntil(recognizer, followSet)
     end
@@ -280,7 +280,7 @@ class DefaultErrorStrategy < ErrorStrategy
             if e.startToken.type==Token.EOF then
                 input = "<EOF>"
             else
-                input = tokens.getText(e.startToken, e.offendingToken)
+                input = tokens.getText([e.startToken, e.offendingToken])
             end
         else
             input = "<unknown input>"
@@ -343,7 +343,7 @@ class DefaultErrorStrategy < ErrorStrategy
         tokenName = self.getTokenErrorDisplay(t)
         expecting = self.getExpectedTokens(recognizer)
         msg = "extraneous input #{tokenName} expecting #{expecting.toString(recognizer.tokenNames)}"
-        recognizer.notifyErrorListeners(msg, t, None)
+        recognizer.notifyErrorListeners(msg, t, nil)
     end
     # This method is called to report a syntax error which requires the
     # insertion of a missing token into the input stream. At the time this
@@ -369,7 +369,7 @@ class DefaultErrorStrategy < ErrorStrategy
         expecting = self.getExpectedTokens(recognizer)
         msg = "missing " + expecting.toString(recognizer.tokenNames) \
               + " at " + self.getTokenErrorDisplay(t)
-        recognizer.notifyErrorListeners(msg, t, None)
+        recognizer.notifyErrorListeners(msg, t, nil)
     end
     # <p>The default implementation attempts to recover from the mismatched input
     # by using single token insertion and deletion as described below. If the
@@ -568,10 +568,10 @@ class DefaultErrorStrategy < ErrorStrategy
         return self.escapeWSAndQuote(s)
     end
     def escapeWSAndQuote( s)
-        s = s.replace("\n","\\n")
-        s = s.replace("\r","\\r")
-        s = s.replace("\t","\\t")
-        return "'#{s}'"
+        s.gsub!("\n","\\n")
+        s.gsub!("\r","\\r")
+        s.gsub!("\t","\\t")
+        "'#{s}'"
     end
 
     #  Compute the error recovery set for the current rule.  During

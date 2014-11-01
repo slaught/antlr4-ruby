@@ -43,7 +43,7 @@ class PredictionContext
     # </pre>
     #/
     attr_accessor :cachedHashCode 
-    def initalize(cachedHashCode)
+    def initialize(cachedHashCode)
         self.cachedHashCode = cachedHashCode
     end
 
@@ -561,8 +561,8 @@ def mergeArrays(a, b, rootIsWildcard, mergeCache)
             mergeCache.put(a,b,a_) if mergeCache 
             return a_
         end
-        mergedParents = mergedParents[0,k]
-        mergedReturnStates = mergedReturnStates[0,k]
+        mergedParents = mergedParents[0..k-1]
+        mergedReturnStates = mergedReturnStates[0..k-1]
     end
     capM = ArrayPredictionContext.new(mergedParents, mergedReturnStates)
 
@@ -610,7 +610,7 @@ def getCachedPredictionContext(context, contextCache, visited)
         return existing
     end
     changed = false
-    parents = Array.new context.lenght()
+    parents = Array.new context.length()
     parents.each_index do |i| 
         parent = getCachedPredictionContext(context.getParent(i), contextCache, visited)
         if changed or parent != context.getParent(i)
@@ -619,7 +619,7 @@ def getCachedPredictionContext(context, contextCache, visited)
                 context.each_index {|j| #for j in range(0, len(context)):
                     parents[j] = context.getParent(j)
                 }
-                changed = True
+                changed = true
             end
             parents[i] = parent
         end

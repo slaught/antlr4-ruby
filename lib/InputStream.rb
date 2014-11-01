@@ -66,7 +66,7 @@ class InputStream
             return
         end
         # seek forward
-        self.index = min(_index, self.size)
+        self.index = [_index, self.size].min
     end
 
     def getText(start, stop)
@@ -76,7 +76,7 @@ class InputStream
         if start >= self.size then
             return ""
         else
-            return self.strdata[start,stop]
+            return self.strdata[start..stop] # start = inital, stop == offset?
         end
     end
     

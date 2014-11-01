@@ -85,7 +85,7 @@ class ATNState
             # TODO System.err.format(Locale.getDefault(), "ATN state %d has both epsilon and non-epsilon transitions.\n", stateNumber);
         end
         if index==-1
-            self.transitions.append(trans)
+            self.transitions.push(trans)
         else
             self.transitions.insert(index, trans)
         end

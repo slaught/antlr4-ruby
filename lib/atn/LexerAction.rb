@@ -1,8 +1,10 @@
 
 #from enum import IntEnum
 # need forward declaration
+require 'java_symbols'
 
 class LexerActionType #(IntEnum):
+    include JavaSymbols
     CHANNEL = 0     #The type of a {@link LexerChannelAction} action.
     CUSTOM = 1      #The type of a {@link LexerCustomAction} action.
     MODE = 2        #The type of a {@link LexerModeAction} action.
@@ -30,7 +32,7 @@ class LexerAction
     end
 
     def ==(other)
-        self === other
+        self.equal? other
     end
 end
 
@@ -80,7 +82,7 @@ class LexerTypeAction < LexerAction
     end
 
     def ==(other) 
-        self === other or other.kind_of? LexerTypeAction and self.type == other.type
+        self.equal? other or other.kind_of? LexerTypeAction and self.type == other.type
     end
     def to_s
         return "type(#{self.type})"
@@ -108,7 +110,7 @@ class LexerPushModeAction < LexerAction
     end
 
     def ==(other)
-        self === other or other.kind_of?  LexerPushModeAction and self.mode == other.mode
+        self.equal? other or other.kind_of?  LexerPushModeAction and self.mode == other.mode
     end
 
     def to_s
@@ -180,7 +182,7 @@ class LexerModeAction < LexerAction
     # <p>This action is implemented by calling {@link Lexer#mode} with the
     # value provided by {@link #getMode}.</p>
     def execute(lexer)
-        lexer.mode(self.mode)
+        lexer.mode = self.mode
     end
 
     def hash
@@ -188,7 +190,7 @@ class LexerModeAction < LexerAction
     end
 
     def ==(other)
-        self === other or other.kind_of? LexerModeAction and self.mode == other.mode
+        self.equal? other or other.kind_of? LexerModeAction and self.mode == other.mode
     end
 
     def to_s
@@ -231,7 +233,7 @@ class LexerCustomAction < LexerAction
     end
 
     def ==( other)
-        self === other or other.kind_of?  LexerCustomAction \
+        self.equal? other or other.kind_of?  LexerCustomAction \
         and self.ruleIndex == other.ruleIndex and self.actionIndex == other.actionIndex
     end
 end
@@ -257,7 +259,7 @@ class LexerChannelAction < LexerAction
     end
 
     def ==(other)
-        self === other or other.kind_of? LexerChannelAction \
+        self.equal? other or other.kind_of? LexerChannelAction \
           and self.channel == other.channel
     end
 
@@ -306,7 +308,7 @@ class LexerIndexedCustomAction < LexerAction
     end
 
     def ==(other)
-        self === other or other.kind_of? LexerIndexedCustomAction \
+        self.equal? other or other.kind_of? LexerIndexedCustomAction \
             and self.offset == other.offset and self.action == other.action
     end
 end

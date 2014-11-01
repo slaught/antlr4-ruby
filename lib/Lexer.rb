@@ -184,7 +184,7 @@ class Lexer < TokenSource
             puts "pushMode #{m}"
         end
         self.modeStack.push(self.mode)
-        self.mode(m)
+        self.mode = m
     end
     def popMode
         if self.modeStack.empty? then
@@ -193,7 +193,7 @@ class Lexer < TokenSource
         if self.interp.debug then
             puts  "popMode back to #{self.modeStack.slice(0,self.modeStack.length-1)}"
         end
-        self.mode( self.odeStack.pop() )
+        self.mode = self.odeStack.pop() 
         return self.mode
     end
 

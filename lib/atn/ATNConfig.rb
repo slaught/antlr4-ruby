@@ -62,11 +62,11 @@ class ATNConfig
     #  the same state, they predict the same alternative, and
     #  syntactic/semantic contexts are the same.
     #/
-    def eq?(other)
+    def eql?(other)
         self == other
     end
     def ==(other)
-        return true if self.object_id ==  other.object_id
+        return true if self.equal? other
         return false unless other.kind_of? ATNConfig
 
         return (self.state.stateNumber==other.state.stateNumber      and  
@@ -128,16 +128,16 @@ class LexerATNConfig < ATNConfig
           self.semanticContext, b, self.lexerActionExecutor
         ].map(&:to_s).join('').hash
     end
-    def eq?(other)
+    def eql?(other)
         self == other
     end
     def ==(other)
-        return true if self === other
+        return true if self.equal? other
         return false unless other.kind_of? LexerATNConfig
         if self.passedThroughNonGreedyDecision != other.passedThroughNonGreedyDecision
             return false
         end
-        if self.lexerActionExecutor === other.lexerActionExecutor
+        if self.lexerActionExecutor.equal? other.lexerActionExecutor
             super == other
         else
             false

@@ -188,16 +188,36 @@ class ATNDeserializer
         nmodes = self.readInt()
         1.upto(nmodes) do  #for i in range(0, nmodes)
             s = self.readInt()
-            atn.modeToStartState.append(atn.states[s])
+            atn.modeToStartState.push(atn.states[s])
         end
     end
+#######
+#    List<IntervalSet> sets = new ArrayList<IntervalSet>();
+#    int nsets = toInt(data[p++]);
+#    for (int i=0; i<nsets; i++) {
+#      int nintervals = toInt(data[p]);
+#      p++;
+#      IntervalSet set = new IntervalSet();
+#      sets.add(set);
+#
+#      boolean containsEof = toInt(data[p++]) != 0;
+#      if (containsEof) {
+#        set.add(-1);
+#      }
+#
+#      for (int j=0; j<nintervals; j++) {
+#        set.add(toInt(data[p]), toInt(data[p + 1]));
+#        p += 2;
+#      }
+#    }
+###############
 
     def readSets(atn)
         sets = Array.new
         m = self.readInt()
         1.upto(m) do |i|  #for i in range(0, m)
-            iset = IntervalSet()
-            sets.append(iset)
+            iset = IntervalSet.new()
+            sets.push(iset)
             n = self.readInt()
             containsEof = self.readInt()
             if containsEof !=0 then
@@ -483,14 +503,14 @@ class ATNDeserializer
         low = self.readLong()
         high = self.readLong()
         allBits = (low & 0xFFFFFFFFFFFFFFFF) | (high << 64)
-        return UUID.new(int=allBits)
+        return UUID.create_from_bytes(allBits)
     end
 
     def edgeFactory(atn, type, src, trg, arg1, arg2, arg3, sets)
       target = atn.states[trg]
       if self.edgeFactories.nil? then
           ef = [nil] * 11
-          ef[0] = lambda {|args| nil }
+          ef[0] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target| raise Exception.new("The specified state type 0 is not valid.") }
           ef[Transition.EPSILON] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|  EpsilonTransition.new(target) }
           ef[Transition.RANGE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|
               if arg3 != 0 

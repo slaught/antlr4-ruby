@@ -68,7 +68,7 @@ class ATNConfigSet
             self.dipsIntoOuterContext = true
         end
         existing = self.getOrAdd(config)
-        if existing === config
+        if existing.equal? config
             self.cachedHashCode = -1
             self.configs.push(config)  # track order here
             return true
@@ -122,11 +122,11 @@ class ATNConfigSet
         coll.each {|c| self.add(c) }
         return false
     end
-    def eq?(other)
+    def eql?(other)
       self == other
     end
     def ==(other)
-        self === other or other.kind_of? ATNConfigSet and \
+        self.equal? other or other.kind_of? ATNConfigSet and \
             self.configs and \
             self.configs==other.configs and \
             self.fullCtx == other.fullCtx and \

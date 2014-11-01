@@ -179,7 +179,7 @@ class XPath
                     elements.push(pathElement)
                     i = i + 1
             elsif [XPathLexer.TOKEN_REF, XPathLexer.RULE_REF, XPathLexer.WILDCARD].member? el.type then
-                    elements.push( self.getXPathElement(el, False) )
+                    elements.push( self.getXPathElement(el, false) )
                     i = i + 1
             elsif el.type==Token.EOF then
                     break

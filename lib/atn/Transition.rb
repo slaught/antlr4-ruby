@@ -143,7 +143,7 @@ class RangeTransition < Transition
 
     def makeLabel()
         s = IntervalSet.new()
-        s.addRange(self.start..self.stop + 1)
+        s.addRange(self.start..self.stop)
         return s
     end
 
@@ -272,7 +272,7 @@ class PrecedencePredicateTransition < AbstractPredicateTransition
         super(target)
         self.serializationType = Transition.PRECEDENCE
         self.precedence = precedence
-        self.isEpsilon = True
+        self.isEpsilon = true
     end
 
     def matches( symbol, minVocabSymbol,  maxVocabSymbol)

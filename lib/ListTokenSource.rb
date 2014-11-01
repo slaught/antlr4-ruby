@@ -109,7 +109,7 @@ class ListTokenSource < TokenSource
             if not tokenText.nil? then
                 for c in tokenText do
                     if c  == '\n'
-                        line += 1
+                        line = line + 1
                     end
                 end
             end

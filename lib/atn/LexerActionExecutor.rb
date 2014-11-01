@@ -132,11 +132,11 @@ class LexerActionExecutor
         return self.hashCode
     end
 
-    def eq?(other)
+    def eql?(other)
         self == other
     end
     def ==( other)
-        self === other or other.kind_of? LexerActionExecutor and 
+        self.equal? other or other.kind_of? LexerActionExecutor and 
             self.hashCode == other.hashCode and self.lexerActions == other.lexerActions
      end
 end

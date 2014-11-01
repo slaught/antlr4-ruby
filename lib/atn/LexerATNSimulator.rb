@@ -211,7 +211,7 @@ class LexerATNSimulator < ATNSimulator
     # {@code t}, or {@code null} if the target state for this edge is not
     # already cached
     def getExistingTargetState(s, t)
-        if s.edges is None or t < LexerATNSimulator.MIN_DFA_EDGE or t > LexerATNSimulator.MAX_DFA_EDGE
+        if s.edges.nil?  or t < LexerATNSimulator.MIN_DFA_EDGE or t > LexerATNSimulator.MAX_DFA_EDGE
             return nil
         end
 
@@ -604,7 +604,7 @@ class LexerATNSimulator < ATNSimulator
     end
     def consume(input)
         curChar = input.LA(1)
-        if curChar=='\n'.ord
+        if curChar=="\n".ord then
             self.line = self.line + 1
             self.column = 0
         else

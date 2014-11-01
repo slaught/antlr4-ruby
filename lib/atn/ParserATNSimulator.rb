@@ -471,7 +471,7 @@ class ParserATNSimulator < ATNSimulator
                 end
                 stopIndex = input.index
                 input.seek(startIndex)
-                alts = self.evalSemanticContext(cD.predicates, outerContext, True)
+                alts = self.evalSemanticContext(cD.predicates, outerContext, true)
                 if alts.length==0
                     raise self.noViableAlt(input, outerContext, cD.configs, startIndex)
                 elsif alts.length==1
@@ -479,7 +479,7 @@ class ParserATNSimulator < ATNSimulator
                 else
                     # report ambiguity after predicate evaluation to make sure the correct
                     # set of ambig alts is reported.
-                    self.reportAmbiguity(dfa, cD, startIndex, stopIndex, False, alts, cD.configs)
+                    self.reportAmbiguity(dfa, cD, startIndex, stopIndex, false, alts, cD.configs)
                     return alts.min
                 end
             end
@@ -709,7 +709,7 @@ class ParserATNSimulator < ATNSimulator
         # ensure that the alternative matching the longest overall sequence is
         # chosen when multiple such configurations can match the input.
         
-        skippedStopStates = None
+        skippedStopStates = nil
 
         # First figure out where we can reach on input t
         closure.each do |c|
@@ -790,7 +790,7 @@ class ParserATNSimulator < ATNSimulator
             # already guaranteed to meet this condition whether or not it's
             # required.
             #
-            reach = self.removeAllConfigsNotInRuleStopState(reach, reach === intermediate)
+            reach = self.removeAllConfigsNotInRuleStopState(reach, reach.equal?(intermediate))
         end
         # If skippedStopStates is not null, then it contains at least one
         # configuration. For full-context reach operations, these
@@ -982,7 +982,7 @@ class ParserATNSimulator < ATNSimulator
         for i in 1..nalts do
             if altToPred[i].nil?
                 altToPred[i] = SemanticContext.NONE
-            elsif ! altToPred[i] === SemanticContext.NONE
+            elsif ! altToPred[i].equal? SemanticContext.NONE
                 nPredAlts = nPredAlts + 1
             end
         end
@@ -1068,7 +1068,7 @@ class ParserATNSimulator < ATNSimulator
             return alt
         end
         # Is there a syntactically valid path with a failed pred?
-        if semInvalidConfigs.lenght>0
+        if semInvalidConfigs.length>0
             alt = self.getAltThatFinishedDecisionEntryRule(semInvalidConfigs)
             if alt!=ATN.INVALID_ALT_NUMBER  # syntactically viable path exists
                 return alt
@@ -1125,7 +1125,7 @@ class ParserATNSimulator < ATNSimulator
         predictions = Set.new()
 
         predPredictions.each do |pair|
-            if pair.pred === SemanticContext.NONE
+            if pair.pred.equal? SemanticContext.NONE
                 predictions.add(pair.alt)
                 break if not complete
                 next
@@ -1169,7 +1169,7 @@ class ParserATNSimulator < ATNSimulator
             # run thru all possible stack tops in ctx
             if not config.context.isEmpty() then
                 config.context.each_index do |i|
-                    if config.context.getReturnState(i) === PredictionContext.EMPTY_RETURN_STATE
+                    if config.context.getReturnState(i).equal? PredictionContext.EMPTY_RETURN_STATE
                         if fullCtx
                             configs.add(ATNConfig.new(config.state,nil,PredictionContext.EMPTY,nil,config), self.mergeCache)
                             next
@@ -1538,7 +1538,7 @@ class ParserATNSimulator < ATNSimulator
     # state was not already present.
     #
     def addDFAState(dfa, cD)
-        if cD === self.ERROR
+        if cD.equal? ParserATNSimulator.ERROR
             return cD
         end
 
@@ -1552,7 +1552,7 @@ class ParserATNSimulator < ATNSimulator
             cD.configs.optimizeConfigs(self)
             cD.configs.setReadonly(true)
         end
-        dfa.states[D] = cD
+        dfa.states[cD] = cD
         if self.debug
             puts "adding new DFA state: #{cD}"
         end

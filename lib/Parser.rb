@@ -16,6 +16,8 @@ require 'tree/Tree'
 #from antlr4.error.Errors import UnsupportedOperationException, RecognitionException
 #from antlr4.tree.Tree import ParseTreeListener, TerminalNode, ErrorNode
 
+require 'java_symbols'
+
 class TraceListener < ParseTreeListener
     
     def enterEveryRule(parser, ctx)
@@ -37,6 +39,7 @@ end
 # self is all the parsing support code essentially; most of it is error recovery stuff.#
 class Parser < Recognizer
 
+    include JavaSymbols
     # self field maps from the serialized ATN string to the deserialized {@link ATN} with
     # bypass alternatives.
     #
@@ -364,9 +367,9 @@ class Parser < Recognizer
         end
     end
     # Always called by generated parsers upon entry to a rule. Access field
-    # {@link #_ctx} get the current context.
+    # {@link #ctx} get the current context.
     #
-    def enterRule(localctx, state, ruleIndexint )
+    def enterRule(localctx, state, ruleIndex)
         self.state = state
         self.ctx = localctx
         self.ctx.start = self.input.LT(1)

@@ -20,17 +20,17 @@ class Recognizer
     end
 
     def extractVersion(version)
-        pos = version.find(".")
-        major = version[0,pos-1]
-        version = version[pos+1,version.length]
-        pos = version.find(".")
-        if pos==-1
-            pos = version.find("-")
+        pos = version.index(".")
+        major = version[0..pos-1]
+        version = version[pos+1..version.length]
+        pos = version.index(".")
+        if pos.nil?
+            pos = version.index("-")
         end
         if pos==-1
             pos = version.length
         end
-        minor = version[0,pos-1]
+        minor = version[0..pos-1]
         return major, minor
     end
 

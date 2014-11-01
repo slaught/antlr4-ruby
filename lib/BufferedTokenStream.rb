@@ -74,7 +74,7 @@ class BufferedTokenStream < TokenStream
             end
         else
             # not yet initialized
-            skipEofCheck = False
+            skipEofCheck = false
         end
         if not skipEofCheck and self.LA(1) == Token.EOF then
             raise IllegalStateException.new("cannot consume EOF")

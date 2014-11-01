@@ -154,7 +154,7 @@ class LL1Analyzer
             end
         end
         for t in s.transitions do 
-            if type(t) == RuleTransition then
+            if t.class == RuleTransition then
                 next if calledRuleStack.member? t.target.ruleIndex 
 
                 newContext = SingletonPredictionContext.create(ctx, t.followState.stateNumber)
