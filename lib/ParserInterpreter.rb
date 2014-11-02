@@ -123,8 +123,8 @@ class ParserInterpreter < Parser
         elsif tt==Transition.ATOM
             self.match(transition.label)
         elsif [ Transition.RANGE, Transition.SET, Transition.NOT_SET].member? tt 
-            if not transition.matches(self._input.LA(1), Token.MIN_USER_TOKEN_TYPE, 0xFFFF)
-                self._errHandler.recoverInline(self)
+            if not transition.matches(self.input.LA(1), Token.MIN_USER_TOKEN_TYPE, 0xFFFF)
+                self.errHandler.recoverInline(self)
             end
             self.matchWildcard()
         elsif tt==Transition.WILDCARD
@@ -132,14 +132,14 @@ class ParserInterpreter < Parser
         elsif tt==Transition.RULE
             ruleStartState = transition.target
             ruleIndex = ruleStartState.ruleIndex
-            ctx = InterpreterRuleContext(self._ctx, p.stateNumber, ruleIndex)
+            ctx = InterpreterRuleContext(self.ctx, p.stateNumber, ruleIndex)
             if ruleStartState.isPrecedenceRule
                 self.enterRecursionRule(ctx, ruleStartState.stateNumber, ruleIndex, transition.precedence)
             else
                 self.enterRule(ctx, transition.target.stateNumber, ruleIndex)
             end
         elsif tt==Transition.PREDICATE
-            if not self.sempred(self._ctx, transition.ruleIndex, transition.predIndex)
+            if not self.sempred(self.ctx, transition.ruleIndex, transition.predIndex)
                 raise FailedPredicateException.new(self)
             end
         elsif tt==Transition.ACTION

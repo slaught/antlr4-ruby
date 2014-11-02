@@ -338,6 +338,7 @@ class ParserATNSimulator < ATNSimulator
                 end
 
                 fullCtx = false
+                type_check(ParserRuleContext.EMPTY(), ParserRuleContext)
                 s0_closure = self.computeStartState(dfa.atnStartState, ParserRuleContext.EMPTY, fullCtx)
 
                 if dfa.precedenceDfa
@@ -397,6 +398,7 @@ class ParserATNSimulator < ATNSimulator
     #    conflict + preds
     #
     def execATN(dfa, s0, input, startIndex, outerContext)
+        type_check( outerContext, ParserRuleContext )
         if self.debug or self.debug_list_atn_decisions
             print "execATN decision #{dfa.decision
                   } exec LA(1)==#{self.getLookaheadName(input) 
@@ -851,6 +853,9 @@ class ParserATNSimulator < ATNSimulator
         return result
     end
     def computeStartState(p, ctx, fullCtx)
+        type_check(p, ATNState)
+        type_check(ctx, RuleContext)
+
         # always at least the implicit call to start rule
         initialContext = PredictionContextFromRuleContext(self.atn, ctx)
         configs = ATNConfigSet.new(fullCtx)

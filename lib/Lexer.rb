@@ -33,7 +33,7 @@ class Lexer < TokenSource
     MIN_CHAR_VALUE = "\u0000"
     MAX_CHAR_VALUE = "\uFFFE"
 
-    attr_accessor :input, :factory, :tokenFactorySourcePair, :interp
+    attr_accessor :input, :factory, :tokenFactorySourcePair #, :interp
     attr_accessor :token, :tokenStartCharIndex, :tokenStartLine, :tokenStartColumn 
     attr_accessor  :hitEOF, :channel,:type, :modeStack, :mode, :text
 
@@ -76,7 +76,7 @@ class Lexer < TokenSource
         @type = Token.INVALID_TYPE
 
         @modeStack = Array.new
-        @mode = self.DEFAULT_MODE
+        @mode = Lexer.DEFAULT_MODE
 
         # You can set the text for the current token to override what is in
         #  the input char buffer.  Use setText() or can set self instance var.
@@ -129,7 +129,7 @@ class Lexer < TokenSource
                 continueOuter = false
                 while true do 
                     self.type = Token.INVALID_TYPE
-                    ttype = self.SKIP
+                    ttype = Lexer::SKIP
                     begin
                         ttype = self.interp.match(self.input, self.mode)
                     rescue LexerNoViableAltException => e
@@ -143,11 +143,11 @@ class Lexer < TokenSource
                         self.type = ttype
                   
                     end
-                    if self.type == self.SKIP
+                    if self.type == Lexer::SKIP
                         continueOuter = true
                         break
                     end
-                    if self.type!=self.MORE
+                    if self.type!= Lexer::MORE
                         break
                     end
                 end
@@ -169,16 +169,11 @@ class Lexer < TokenSource
     #  and emits it.
     #/
     def skip
-        self.type = self.SKIP
+        self.type = Lexer::SKIP
     end
-
     def more
-        self.type = self.MORE
+        self.type = Lexer::MORE
     end
-    def mode(m)
-        self.mode = m
-    end
-
     def pushMode(m)
         if self.interp.debug then
             puts "pushMode #{m}"
@@ -337,7 +332,7 @@ class Lexer < TokenSource
     #  to do sophisticated error recovery if you are in a fragment rule.
     #/
     def recover(re) # :RecognitionException):
-        if self._input.LA(1) != Token.EOF then
+        if self.input.LA(1) != Token.EOF then
             if re.kind_of?  LexerNoViableAltException then
                     # skip a char and try again
                     self.interp.consume(self.input)
@@ -346,6 +341,9 @@ class Lexer < TokenSource
                 self.input.consume()
             end
         end
+    end
+    def getRuleNames
+        self.ruleNames
     end
 end
 

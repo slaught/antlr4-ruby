@@ -87,7 +87,7 @@ end
 class NoViableAltException < RecognitionException
 
     def initialize(recognizer, input=nil, startToken=nil, offendingToken=nil, deadEndConfigs=nil, ctx=nil)
-        ctx = recognizer._ctx if ctx.nil? 
+        ctx = recognizer.ctx if ctx.nil?
         offendingToken = recognizer.getCurrentToken() if offendingToken.nil?
         startToken = recognizer.getCurrentToken() if startToken.nil?
         input = recognizer.getInputStream() if input.nil?
@@ -108,7 +108,7 @@ end
 class InputMismatchException < RecognitionException
 
     def initiailze(recognizer)
-        super(nil, recognizer, recognizer.getInputStream(), recognizer._ctx)
+        super(nil, recognizer, recognizer.getInputStream(), recognizer.ctx)
         @offendingToken = recognizer.getCurrentToken()
     end
 end
@@ -123,8 +123,8 @@ class FailedPredicateException < RecognitionException
     attr_accessor :ruleIndex,:predicateIndex, :predicate
     def initialize(recognizer, predicate=nil, message=nil)
         super(self.formatMessage(predicate,message), recognizer,
-                         recognizer.getInputStream(), recognizer._ctx)
-        s = recognizer._interp.atn.states[recognizer.state]
+                         recognizer.getInputStream(), recognizer.ctx)
+        s = recognizer.interp.atn.states[recognizer.state]
         trans = s.transitions[0]
         if trans.kind_of? PredicateTransition then
             @ruleIndex = trans.ruleIndex

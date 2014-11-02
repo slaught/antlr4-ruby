@@ -25,7 +25,8 @@ class ATNDeserializer
 
     attr_accessor :deserializationOptions
     attr_accessor :edgeFactories,:stateFactories,:actionFactories 
-    attr_accessor :data, :pos,:uuid
+    attr_accessor :data, :uuid
+    attr :pos
     def initialize(options=nil)
         if options.nil?
             options = ATNDeserializationOptions.defaultOptions
@@ -57,7 +58,7 @@ class ATNDeserializer
         return idx2 >= idx1
     end
 
-    def deserialize(data )
+    def deserialize(data)
         self.reset(data)
         self.checkVersion()
         self.checkUUID()
@@ -79,14 +80,15 @@ class ATNDeserializer
         end
         return atn
     end
-    def reset(data)
+    def reset(_data)
        #for (int i = 1; i < data.length; i++) {
        #     data[i] = (char)(data[i] - 2);
        # don't adjust the first value since that's the version number
-       temp  = data.map{|c| c.ord - 2 }
-       temp[0] = data[0].ord
+       temp  = _data.map{|c| c.ord - 2 }
+       temp[0] = _data[0].ord
        self.data = temp
-       self.pos = 0
+       @pos = 0
+       #puts "idx =1288 <573>: #{temp[1288].inspect} : #{_data[1288].ord.inspect} | len #{temp.length}, #{_data.length}"
     end
 
     def checkVersion()
@@ -107,6 +109,7 @@ class ATNDeserializer
         idx = self.readInt()
         grammarType = ATNType.fromOrdinal(idx)
         maxTokenType = self.readInt()
+        #puts "(readATN: #{grammarType.inspect} #{maxTokenType.inspect} )"
         return ATN.new(grammarType, maxTokenType)
     end
 
@@ -232,7 +235,9 @@ class ATNDeserializer
         return sets
     end
     def readEdges(atn, sets)
+        #print "Current position: #{self.pos}, "
         nedges = self.readInt()
+        #puts "readEdges n:  #{nedges} #{self.pos}"
         1.upto(nedges) do |i| #for i in range(0, nedges)
             src = self.readInt()
             trg = self.readInt()
@@ -240,7 +245,7 @@ class ATNDeserializer
             arg1 = self.readInt()
             arg2 = self.readInt()
             arg3 = self.readInt()
-            trans = self.edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets)
+            trans = edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets)
             srcState = atn.states[src]
             srcState.addTransition(trans)
         end
@@ -483,8 +488,8 @@ class ATNDeserializer
         end
     end
     def readInt()
-        i = self.data[self.pos]
-        self.pos = self.pos + 1
+        i = @data[self.pos]
+        @pos = @pos + 1
         return i
     end
 

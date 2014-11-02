@@ -26,10 +26,10 @@ class ATNDeserializationOptions
 		      self.defaultOptions
     end
     def isReadOnly
-        self.readOnly
+        self.readonly
     end
 	  def makeReadOnly() 
-    		self.readOnly = true
+    		self.readonly = true
     end
 
     def verifyATN=(verifyATN)

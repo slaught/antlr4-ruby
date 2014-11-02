@@ -6,10 +6,12 @@
 require 'RuleContext'
 require 'double_key_map'
 
+
 class PredictionContext
 
     # Represents {@code $} in local context prediction, which means wildcard.
     # {@code#+x =#}.
+    @@EMPTY = nil
     def self.EMPTY 
       @@EMPTY = EmptyPredictionContext.new if @@EMPTY.nil?
       @@EMPTY
@@ -18,6 +20,9 @@ class PredictionContext
     # doesn't mean wildcard: {@code $ + x = [$,x]}. Here,
     # {@code $} = {@link #EMPTY_RETURN_STATE}.
     EMPTY_RETURN_STATE = 0x7FFFFFFF
+    def self.EMPTY_RETURN_STATE 
+      PredictionContext::EMPTY_RETURN_STATE 
+    end
 
     @@globalNodeCount = 1
     @@id = @@globalNodeCount
@@ -52,7 +57,7 @@ class PredictionContext
         return self.object_id == self.EMPTY.object_id
     end
     def hasEmptyPath
-        return self.getReturnState(self.length - 1) == EMPTY_RETURN_STATE
+        return self.getReturnState(self.length - 1) == PredictionContext::EMPTY_RETURN_STATE 
     end
     def hash
         return self.cachedHashCode
@@ -101,7 +106,7 @@ class SingletonPredictionContext < PredictionContext
     def self.create(parent, returnState)
         if returnState == PredictionContext.EMPTY_RETURN_STATE and parent.nil? 
             # someone can pass in the bits of an array ctx that mean $
-            return SingletonPredictionContext.EMPTY
+            return PredictionContext.EMPTY
         else
             return SingletonPredictionContext.new(parent, returnState)
         end
@@ -111,9 +116,9 @@ class SingletonPredictionContext < PredictionContext
     def initialize( parent, returnState)
         #assert returnState!=ATNState.INVALID_STATE_NUMBER
         if parent.nil? then
-          hashCode = calculateEmptyHashCode
+          hashCode = PredictionContext.calculateEmptyHashCode
         else
-          hashCode = calculateHashCode(parent, returnState) 
+          hashCode = PredictionContext.calculateHashCode(parent, returnState) 
         end
         super(hashCode)
         @parentCtx = parent
@@ -157,7 +162,7 @@ class SingletonPredictionContext < PredictionContext
             up = self.parentCtx.to_s
         end
         if up.length==0
-            if self.returnState == self.EMPTY_RETURN_STATE
+            if self.returnState == PredictionContext::EMPTY_RETURN_STATE 
                 return "$"
             else
                 return self.returnState.to_s
@@ -169,8 +174,8 @@ class SingletonPredictionContext < PredictionContext
 end
 class EmptyPredictionContext < SingletonPredictionContext
 
-    def initialize
-        super(nil, self.EMPTY_RETURN_STATE)
+    def initialize(h=nil) 
+        super(nil, PredictionContext::EMPTY_RETURN_STATE )
     end
 
     def isEmpty
@@ -200,7 +205,7 @@ class ArrayPredictionContext < PredictionContext
     #  returnState == {@link #EMPTY_RETURN_STATE}.
 
     def initialzie(parents, returnStates)
-        super(calculateHashCode(parents, returnStates))
+        super(PredictionContext.calculateHashCode(parents, returnStates))
 #        assert parents is not None and len(parents)>0
 #        assert returnStates is not None and len(returnStates)>0
         self.parents = parents

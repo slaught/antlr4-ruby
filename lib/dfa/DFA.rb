@@ -8,10 +8,13 @@
 
 class DFA
     attr_accessor :atnStartState, :decision, :_states, :s0, :precedenceDfa 
-    def initialize(atnStartState, decision=0)
+    def initialize(atnStartState, _decision=0)
+        raise Exception.new("atnStartState is nil") if atnStartState.nil?
+        type_check(_decision, Fixnum)
+        type_check(atnStartState, ATNState)
         # From which ATN state did we create this DFA?
         @atnStartState = atnStartState
-        @decision = decision
+        @decision = _decision
         # A set of all DFA states. Use {@link Map} so we can get old state back
         #  ({@link Set} only allows you to see if it's there).
         @_states = Hash.new
@@ -110,7 +113,7 @@ class DFA
     end
 
     def to_s
-       toString()
+       super.to_s # toString()
     end
 
     def toString(tokenNames=nil)

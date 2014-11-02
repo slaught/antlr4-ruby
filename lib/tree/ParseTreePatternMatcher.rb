@@ -287,24 +287,24 @@ class ParseTreePatternMatcher
         chunks.push(TextChunk.new(pattern)) if nt==0
 
         if nt>0 and starts[0]>0 then # copy text up to first tag into chunks
-            text = pattern[0,starts[0]-1]
+            text = pattern[0..starts[0]-1]
             chunks.add(TextChunk.new(text))
         end
 
         for i in 0..(nt-1) do
             # copy inside of <tag>
-            tag = pattern[starts[i] + len(self.start) , stops[i]-1]
+            tag = pattern[(starts[i] + self.start.length)..stops[i]-1]
             ruleOrToken = tag
             label = nil
             colon = tag.find(':')
             if colon >= 0 then
-                label = tag[0,colon-1]
-                ruleOrToken = tag[colon+1 , tag.length-1]
+                label = tag[0..colon-1]
+                ruleOrToken = tag[colon+1..tag.length-1]
             end
             chunks.push(TagChunk.new(label, ruleOrToken))
             if i+1 < (starts.length) then
                 # copy from end of <tag> to start of next
-                text = pattern[stops[i] + self.stop.length() , starts[i +1]-1]
+                text = pattern[(stops[i] + self.stop.length())..starts[i+1]-1]
                 chunks.push(TextChunk.new(text))
             end
         end
@@ -312,7 +312,7 @@ class ParseTreePatternMatcher
         if nt > 0 then
             afterLastTag = stops[nt - 1] + self.stop.length
             if afterLastTag < n then # copy text from end of last tag to end
-                text = pattern[afterLastTag , n -1]
+                text = pattern[afterLastTag .. n -1]
                 chunks.push(TextChunk.new(text))
             end
         end

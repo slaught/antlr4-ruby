@@ -69,9 +69,9 @@ end
 class LexerTypeAction < LexerAction
 
     attr_accessor :type
-    def initialize(type)
+    def initialize(_type)
         super(LexerActionType.TYPE)
-        self.type = type
+        self.type = _type
     end
     def execute(lexer)
         lexer.type = self.type
@@ -94,9 +94,9 @@ end
 class LexerPushModeAction < LexerAction
 
     attr_accessor :mode
-    def initialize(mode)
+    def initialize(_mode)
         super(LexerActionType.PUSH_MODE)
-        self.mode = mode
+        self.mode = _mode
     end
 
     # <p>This action is implemented by calling {@link Lexer#pushMode} with the
@@ -174,9 +174,9 @@ end
 # the assigned mode.
 class LexerModeAction < LexerAction
 
-    def initialize(mode)
+    def initialize(_mode)
         super(LexerActionType.MODE)
-        self.mode = mode
+        self.mode = _mode
     end
 
     # <p>This action is implemented by calling {@link Lexer#mode} with the
@@ -217,11 +217,11 @@ class LexerCustomAction < LexerAction
     # {@link Recognizer#action}.
     #/
     attr_accessor :ruleIndex, :actionIndex, :isPositionDependent 
-    def initialize(ruleIndex, actionIndex)
+    def initialize(rule_index, action_index)
         super(LexerActionType.CUSTOM)
-        self.ruleIndex = ruleIndex
-        self.actionIndex = actionIndex
-        self.isPositionDependent = true
+        @ruleIndex = rule_index
+        @actionIndex = action_index
+        @isPositionDependent = true
     end
     # <p>Custom actions are implemented by calling {@link Lexer#action} with the
     # appropriate rule and action indexes.</p>
@@ -244,9 +244,9 @@ class LexerChannelAction < LexerAction
     # Constructs a new {@code channel} action with the specified channel value.
     # @param channel The channel value to pass to {@link Lexer#setChannel}.
     attr_accessor :channel
-    def initialize(channel)
+    def initialize(_channel)
         super(LexerActionType.CHANNEL)
-        self.channel = channel
+        self.channel = _channel
     end
 
     # <p>This action is implemented by calling {@link Lexer#setChannel} with the
@@ -289,11 +289,11 @@ class LexerIndexedCustomAction < LexerAction
     # @param action The lexer action to execute at a particular offset in the
     # input {@link CharStream}.
     attr_accessor :offset, :action, :isPositionDependent 
-    def initialize(offset, action)
+    def initialize(_offset, _action)
         super(action.actionType)
-        self.offset = offset
-        self.action = action
-        self.isPositionDependent = True
+        self.offset = _offset
+        self.action = _action
+        self.isPositionDependent = true
     end
 
     # <p>This method calls {@link #execute} on the result of {@link #getAction}

@@ -31,21 +31,24 @@ class RuleContext < RuleNode
 
     @@EMPTY = nil
     def self.EMPTY
-      @@EMPTY 
+      if @@EMPTY.nil? then
+        @@EMPTY = ParserRuleContext.new()
+      end
+      @@EMPTY
     end
-    def self.set_empty(p)
-      @@EMPTY = p 
-    end
+#    def self.set_empty(p)
+#      @@EMPTY = p 
+#    end
 
     attr_accessor :parentCtx, :invokingState 
-    def initialize(parent=nil, invokingState=-1)
+    def initialize(parent=nil, invoking_state=-1)
         super()
         # What context invoked this rule?
-        self.parentCtx = parent
+        @parentCtx = parent
         # What state invoked the rule associated with this context?
         #  The "return address" is the followState of invokingState
         #  If parent is null, this should be -1.
-        self.invokingState = invokingState
+        @invokingState = invoking_state
     end
 
     def depth
@@ -222,7 +225,7 @@ class RuleContext < RuleNode
                     # ruleName = ruleNames[ri] if ri >= 0 and ri < len(ruleNames) else str(ri)
                     buf.write(ruleName)
                 end
-                if not p.parentCtx.nil? and (not ruleNames.nil? or not p.parentCtx.isEmpty()) then
+                if p.parentCtx and (ruleNames or not p.parentCtx.isEmpty()) then
                     buf.write(" ")
                 end
                 p = p.parentCtx

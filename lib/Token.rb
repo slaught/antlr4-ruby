@@ -70,6 +70,7 @@ class CommonToken < Token
             self.column = source[0].column
         else
             self.column = -1
+            self.line = nil
         end
     end
     # Constructs a new {@link CommonToken} as a copy of another {@link Token}.
@@ -84,14 +85,15 @@ class CommonToken < Token
     #
     # @param oldToken The token to copy.
      #
-#    def clone()
+    def clone()
 #        t = CommonToken(self.source, self.type, self.channel, self.start, self.stop)
 #        t.tokenIndex = self.tokenIndex
 #        t.line = self.line
 #        t.column = self.column
 #        t.text = self.text
 #        return t
-#    end
+      raise NotImplementedError.new("Token.clone not implemented")
+    end
     def text()
         return @text if @text
         input = self.getInputStream()
@@ -109,9 +111,7 @@ class CommonToken < Token
       if txt.nil? then
         txt = "<no text>"
       else 
-        txt = txt.sub("\n","\\n")
-        txt = txt.sub("\r","\\r")
-        txt = txt.sub("\t","\\t")
+        txt = txt.gsub("\n","\\n").gsub("\r","\\r").gsub("\t","\\t")
       end
       if self.channel > 0 then
         c = ",channel=#{channel}"

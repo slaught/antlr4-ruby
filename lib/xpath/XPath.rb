@@ -97,7 +97,7 @@ class XPathLexer < Lexer
         self.modeNames = [ "DEFAULT_MODE" ]
         self.tokenNames = ["<INVALID>", "TOKEN_REF", "RULE_REF", "'//'", "'/'", "'*'", "'!'", "ID", "STRING" ]
         self.ruleNames = [ "ANYWHERE", "ROOT", "WILDCARD", "BANG", "ID", "NameChar", "NameStartChar", "STRING" ]
-        @ATN = ATNSimulator.deserialize(@@serializedATN)
+        @ATN = ATNDeserializer.new.deserialize(@@serializedATN)
         @interp = LexerATNSimulator.new(@ATN, @decisionToDFA, @sharedContextCache)
         @grammarFileName = "XPathLexer.g4"
         @decisionToDFA = @ATN.decisionToState.map{|s| DFA.new(s)  } 
@@ -263,8 +263,8 @@ end
 class XPathElement
 
     attr_accessor :nodeNode, :invert
-    def initialize(nodeName)
-        self.nodeName = nodeName
+    def initialize(nodename)
+        self.nodeName = nodename
         self.invert = false
     end
 
@@ -279,9 +279,9 @@ end
 class XPathRuleAnywhereElement < XPathElement
 
     attr_accessor :ruleIndex
-    def initialize(ruleName, ruleIndex)
-        super(ruleName)
-        self.ruleIndex = ruleIndex
+    def initialize(rule_name, rule_index)
+        super(rule_name)
+        self.ruleIndex = rule_index
     end
 
     def evaluate(t)
@@ -291,8 +291,8 @@ end
 
 class XPathRuleElement <  XPathRuleAnywhereElement 
 
-    def initialize(ruleName, ruleIndex)
-        super(ruleName, ruleIndex)
+    def initialize(rulename, ruleindex)
+        super(rulename, ruleindex)
     end
     def evaluate(t)
         # return all children of t that match nodeName
@@ -310,9 +310,9 @@ end
 class XPathTokenAnywhereElement < XPathElement
 
     attr_accessor :tokenType
-    def initialize(ruleName, tokenType)
-        super(ruleName)
-        self.tokenType = tokenType
+    def initialize(rulename, tokentype)
+        super(rulename)
+        self.tokenType = tokentype
     end
 
     def evaluate(t)
@@ -322,8 +322,8 @@ end
 
 class XPathTokenElement < XPathTokenAnywhereElement
 
-    def initialize(ruleName, tokenType)
-        super(ruleName, tokenType)
+    def initialize(rulename, tokentype)
+        super(rulename, tokentype)
     end
 
     def evaluate(t)

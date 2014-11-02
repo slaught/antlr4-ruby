@@ -37,10 +37,10 @@ class SimState
     end
 
     def reset
-        self.index = -1
-        self.line = 0
-        self.column = -1
-        self.dfaState = nil
+        @index = -1
+        @line = 0
+        @column = -1
+        @dfaState = nil
     end
 end
 
@@ -70,20 +70,24 @@ class LexerATNSimulator < ATNSimulator
     attr_accessor :decisionToDFA, :recog, :startIndex, :line, :column 
     attr_accessor :mode, :prevAccept 
 
-    def initialize(recog, atn, decisionToDFA, sharedContextCache)
-        super(atn, sharedContextCache)
-        self.decisionToDFA = decisionToDFA
-        self.recog = recog
+    def initialize(_recog, _atn, decision_to_dfa, shared_context_cache)
+        super(_atn, shared_context_cache)
+        
+        if decision_to_dfa.nil?  then
+          raise Exception.new("Error: #{self.class} decisionToDFA is nil.")
+        end
+        self.decisionToDFA = decision_to_dfa
+        @recog = _recog
         # The current token's starting index into the character stream.
         #  Shared across DFA to ATN simulation in case the ATN fails and the
         #  DFA did not have a previous accept state. In this case, we use the
         #  ATN-generated exception object.
-        self.startIndex = -1
+        @startIndex = -1
         # line number 1..n within the input#/
-        self.line = 1
+        @line = 1
         # The index of the character relative to the beginning of the line 0..n-1#/
-        self.column = 0
-        self.mode = Lexer.DEFAULT_MODE
+        @column = 0
+        @mode = Lexer.DEFAULT_MODE
         # Used during DFA/ATN exec to record the most recent accept configuration info
         self.prevAccept = SimState.new()
     end
@@ -96,14 +100,14 @@ class LexerATNSimulator < ATNSimulator
         self.startIndex = simulator.startIndex
     end
     def match(input, mode)
-        @match_calls =@match_calls + 1
+        @@match_calls =@@match_calls + 1
         self.mode = mode
         mark = input.mark()
         begin
             self.startIndex = input.index
             self.prevAccept.reset()
             dfa = self.decisionToDFA[mode]
-            if dfa.s0.nil? 
+            if dfa && dfa.s0.nil? 
                 return self.matchATN(input)
             else
                 return self.execATN(input, dfa.s0)
@@ -114,10 +118,10 @@ class LexerATNSimulator < ATNSimulator
     end
     def reset
         self.prevAccept.reset()
-        self.startIndex = -1
-        self.line = 1
-        self.column = 0
-        self.mode = Lexer.DEFAULT_MODE
+        @startIndex = -1
+        @line = 1
+        @column = 0
+        @mode = Lexer.DEFAULT_MODE
     end
     def matchATN(input)
         startState = self.atn.modeToStartState[self.mode]
@@ -302,20 +306,20 @@ class LexerATNSimulator < ATNSimulator
             end
         end
     end
-    def accept(input, lexerActionExecutor, startIndex, index, line, charPos)
+    def accept(input, lexerActionExecutor, start_index, index, _line, charPos)
         if self.debug
             puts "ACTION #{lexerActionExecutor}"
         end
 
         # seek to after last char in token
         input.seek(index)
-        self.line = line
+        self.line = _line
         self.column = charPos
         if input.LA(1) != Token.EOF
             self.consume(input)
         end
         if lexerActionExecutor and self.recog 
-            lexerActionExecutor.execute(self.recog, input, startIndex)
+            lexerActionExecutor.execute(self.recog, input, start_index)
         end
     end
 
@@ -354,7 +358,7 @@ class LexerATNSimulator < ATNSimulator
         if config.state.kind_of? RuleStopState 
             if self.debug
                 if self.recog 
-                  puts "closure at #{self.recog.getRuleNames()[config.state.ruleIndex]} rule stop #{ config}" 
+                  puts "closure at #{self.recog.getRuleNames[config.state.ruleIndex]} rule stop #{ config}" 
                 else
                   puts "closure at rule stop #{ config}" 
                 end

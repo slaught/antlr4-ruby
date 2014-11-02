@@ -16,7 +16,7 @@ class LL1Analyzer
     #  a predicate during analysis if {@code seeThruPreds==false}.
     HIT_PRED = Token.INVALID_TYPE
 
-    attr_accessor :atn, 
+    attr_accessor :atn
     def initialize(atn)
         @atn = atn
     end

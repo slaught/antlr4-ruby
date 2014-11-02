@@ -58,7 +58,7 @@ class Transition
         @@serializationTypes = newhash
     end
 
-    attr_accessor :target, :isEpsilon, :label, :serializationType 
+    attr_accessor :target, :isEpsilon, :label, :serializationType, :ruleIndex
     def initialize(target)
         # The target of this transition.
         raise Exception.new("target cannot be null.") if target.nil?
@@ -66,6 +66,7 @@ class Transition
         # Are we epsilon, action, sempred?
         self.isEpsilon = false
         self.label = nil
+        @ruleIndex = 0
     end
 end
 
@@ -74,9 +75,9 @@ end
 class AtomTransition < Transition
 
     attr_accessor :label_
-    def initialize(target, label)
-        super(target)
-        @label_ = label # The token type or character value; or, signifies special label.
+    def initialize(_target, _label)
+        super(_target)
+        @label_ = _label # The token type or character value; or, signifies special label.
         @label = self.makeLabel()
         @serializationType = Transition.ATOM
     end
@@ -98,11 +99,11 @@ end
 class RuleTransition < Transition
 
     attr_accessor :ruleIndex, :precedence, :followState
-    def initialize(ruleStart, ruleIndex, precedence, followState)
-        super(ruleStart)
-        self.ruleIndex = ruleIndex # ptr to the rule definition object for this rule ref
-        self.precedence = precedence
-        self.followState = followState # what node to begin computations following ref to rule
+    def initialize(rule_start, rule_index, _precedence, follow_state)
+        super(rule_start)
+        self.ruleIndex = rule_index # ptr to the rule definition object for this rule ref
+        self.precedence = _precedence
+        self.followState = follow_state # what node to begin computations following ref to rule
         self.serializationType = Transition.RULE
         self.isEpsilon = true
     end
@@ -115,8 +116,8 @@ end
 
 class EpsilonTransition < Transition
 
-    def initialize(target)
-        super(target)
+    def initialize(_target)
+        super(_target)
         self.serializationType = Transition.EPSILON
         self.isEpsilon = true
     end
@@ -133,11 +134,11 @@ end
 class RangeTransition < Transition
 
     attr_accessor :start, :stop
-    def initialize(target, start, stop)
-        super(target)
+    def initialize(_target, _start, _stop)
+        super(_target)
         self.serializationType = Transition.RANGE
-        self.start = start
-        self.stop = stop
+        self.start = _start
+        self.stop = _stop
         self.label = self.makeLabel()
     end
 
@@ -158,8 +159,8 @@ end
 
 class AbstractPredicateTransition < Transition
 
-    def initialize(target)
-        super(target)
+    def initialize(_target)
+        super(_target)
     end
 
 end
@@ -167,12 +168,12 @@ end
 class PredicateTransition < AbstractPredicateTransition
 
     attr_accessor :ruleIndex, :predIndex, :isCtxDependent 
-    def initialize(target, ruleIndex, predIndex, isCtxDependent)
-        super(target)
+    def initialize(_target, rule_index, pred_index, is_ctx_dependent)
+        super(_target)
         self.serializationType = Transition.PREDICATE
-        self.ruleIndex = ruleIndex
-        self.predIndex = predIndex
-        self.isCtxDependent = isCtxDependent # e.g., $i ref in pred
+        self.ruleIndex = rule_index
+        self.predIndex = pred_index
+        self.isCtxDependent = is_ctx_dependent # e.g., $i ref in pred
         self.isEpsilon = true
     end
 
@@ -193,12 +194,12 @@ class ActionTransition < Transition
 
     
     attr_accessor :ruleIndex, :actionIndex, :isCtxDependent 
-    def initialize(target, ruleIndex, actionIndex=-1, isCtxDependent=false)
-        super(target)
+    def initialize(_target, rule_index, action_index=-1, is_ctx_dependent=false)
+        super(_target)
         self.serializationType = Transition.ACTION
-        self.ruleIndex = ruleIndex
-        self.actionIndex = actionIndex
-        self.isCtxDependent = isCtxDependent # e.g., $i ref in pred
+        self.ruleIndex = rule_index
+        self.actionIndex = action_index
+        self.isCtxDependent = is_ctx_dependent # e.g., $i ref in pred
         self.isEpsilon = true
     end
     def matches( symbol, minVocabSymbol,  maxVocabSymbol)
@@ -212,9 +213,9 @@ end
 # A transition containing a set of values.
 class SetTransition < Transition
 
-    def initialize(target, set)
-        super(target)
-        self.serializationType = self.SET
+    def initialize(_target, set)
+        super(_target)
+        self.serializationType = Transition.SET
         if not set.nil? 
             self.label = set
         else
@@ -233,8 +234,8 @@ end
 
 class NotSetTransition < SetTransition
 
-    def initialize(target, set)
-        super(target, set)
+    def initialize(_target, set)
+        super(_target, set)
         self.serializationType = Transition.NOT_SET
     end
 
@@ -251,8 +252,8 @@ end
 
 class WildcardTransition < Transition
 
-    def initialize(target)
-        super(target)
+    def initialize(_target)
+        super(_target)
         self.serializationType = Transition.WILDCARD
     end
 
@@ -268,8 +269,8 @@ end
 class PrecedencePredicateTransition < AbstractPredicateTransition
 
     attr_accessor :precedence 
-    def initialize(target, precedence)
-        super(target)
+    def initialize(_target, precedence)
+        super(_target)
         self.serializationType = Transition.PRECEDENCE
         self.precedence = precedence
         self.isEpsilon = true

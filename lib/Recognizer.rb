@@ -9,16 +9,20 @@ require 'error'
 
 class Recognizer
 
-    attr_accessor :listeners, :interp, :stateNumber
+    attr_accessor :listeners, :interp #, :stateNumber
     attr_accessor :tokenTypeMapCache, :ruleIndexMapCache 
+    attr_accessor :state
     def initialize
         @listeners = [ ConsoleErrorListener.INSTANCE ]
         @interp = nil
-        @stateNumber = -1
+        @state       = -1
         @tokenTypeMapCache = Hash.new
         @ruleIndexMapCache = Hash.new
     end
 
+    def getState
+      @state
+    end
     def extractVersion(version)
         pos = version.index(".")
         major = version[0..pos-1]
@@ -27,7 +31,7 @@ class Recognizer
         if pos.nil?
             pos = version.index("-")
         end
-        if pos==-1
+        if pos.nil?
             pos = version.length
         end
         minor = version[0..pos-1]
@@ -64,7 +68,7 @@ class Recognizer
     # <p>Used for XPath and tree pattern compilation.</p>
     #
     def getRuleIndexMap
-        ruleNames = self.getRuleNames()
+        ruleNames = self.ruleNames
         if ruleNames.nil? then
             raise UnsupportedOperationException.new("The current recognizer does not provide a list of rule names.")
         end
@@ -116,9 +120,9 @@ class Recognizer
                 s = "<" + str(t.type) + ">"
             end
         end
-        s = s.sub("\n","\\n")
-        s = s.sub("\r","\\r")
-        s = s.sub("\t","\\t")
+        s = s.gsub("\n","\\n")
+        s = s.gsub("\r","\\r")
+        s = s.gsub("\t","\\t")
         return "'" + s + "'"
     end
 
@@ -136,9 +140,9 @@ class Recognizer
         return true
     end
 
-    def state
-        return self.stateNumber
-    end
+#    def state
+#        @stateNumber
+#    end
 
     # Indicate that the recognizer has changed internal state that is
     #  consistent with the ATN state passed in.  This way we always know
@@ -147,9 +151,9 @@ class Recognizer
     #  invoking rules. Combine this and we have complete ATN
     #  configuration information.
 
-    def state=(atnState)
-        self.stateNumber = atnState
-    end
+#    def state=(atnState)
+#        @stateNumber = atnState
+#    end
 end
 
 #import unittest

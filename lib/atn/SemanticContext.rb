@@ -98,10 +98,10 @@ end
 class Predicate < SemanticContext
 
     attr_accessor :ruleIndex, :predIndex, :isCtxDependent 
-    def initialize(ruleIndex=-1, predIndex=-1, isCtxDependent=false)
-        self.ruleIndex = ruleIndex
-        self.predIndex = predIndex
-        self.isCtxDependent = isCtxDependent # e.g., $i ref in pred
+    def initialize(rule_index=-1, pred_index=-1, is_ctx_dependent=false)
+        self.ruleIndex = rule_index
+        self.predIndex = pred_index
+        self.isCtxDependent = is_ctx_dependent # e.g., $i ref in pred
     end
 
     def eval(parser, outerContext)
@@ -140,16 +140,16 @@ end
 class PrecedencePredicate < SemanticContext
 
     attr_accessor :precedence 
-    def initialize(precedence=0)
-        self.precedence = precedence
+    def initialize(_precedence=0)
+        self.precedence = _precedence
     end
 
-    def eval(parser, outerContext)
-        return parser.precpred(outerContext, self.precedence)
+    def eval(parser, outer_context)
+        return parser.precpred(outer_context, self.precedence)
     end
 
-    def evalPrecedence(parser, outerContext)
-        if parser.precpred(outerContext, self.precedence)
+    def evalPrecedence(parser, outer_context)
+        if parser.precpred(outer_context, self.precedence)
             return SemanticContext.NONE
         else
             return nil

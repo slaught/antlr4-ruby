@@ -179,7 +179,7 @@ class DefaultErrorStrategy < ErrorStrategy
             recognizer.consume()
         end
 
-        self.lastErrorIndex = recognizer._input.index
+        self.lastErrorIndex = recognizer.input.index
         if self.lastErrorStates.nil? then 
             self.lastErrorStates = []
         end
@@ -236,8 +236,7 @@ class DefaultErrorStrategy < ErrorStrategy
     def sync(recognizer)
         # If already recovering, don't try to sync
         return if self.inErrorRecoveryMode(recognizer)
-      
-        s = recognizer._interp.atn.states[recognizer.state]
+        s = recognizer.interp.atn.states[recognizer.state]
         la = recognizer.getTokenStream().LA(1)
         # try cheaper subset first; might get lucky. seems to shave a wee bit off
         if la==Token.EOF or recognizer.atn.nextTokens(s).member? la
@@ -249,7 +248,7 @@ class DefaultErrorStrategy < ErrorStrategy
             return
         end
 
-        possibleStates = [ATNState.BLOCK_START, ATNState.STAR_BLOCK_START, ATNState.PLUS_BLOCK_START, ATNState.STAR_LOOP_ENTRY] 
+        possibleStates = [ATNState::BLOCK_START, ATNState::STAR_BLOCK_START, ATNState::PLUS_BLOCK_START, ATNState::STAR_LOOP_ENTRY] 
         if possibleStates.member? s.stateType then
            # report error and recover if possible
            if self.singleTokenDeletion(recognizer).nil? 
@@ -257,7 +256,7 @@ class DefaultErrorStrategy < ErrorStrategy
            else
                 return
            end
-        elsif [ATNState.PLUS_LOOP_BACK, ATNState.STAR_LOOP_BACK].member?  s.stateType then
+        elsif [ATNState::PLUS_LOOP_BACK, ATNState::STAR_LOOP_BACK].member?  s.stateType then
             self.reportUnwantedToken(recognizer)
             expecting = recognizer.getExpectedTokens()
             whatFollowsLoopIterationOrRule = expecting.addSet(self.getErrorRecoverySet(recognizer))
@@ -298,6 +297,9 @@ class DefaultErrorStrategy < ErrorStrategy
     # @param e the recognition exception
     #
     def reportInputMismatch(recognizer, e)
+        if e.recognizer.nil? then
+          e.recognizer = recognizer
+        end
         msg = "mismatched input " + self.getTokenErrorDisplay(e.offendingToken) \
               + " expecting " + e.getExpectedTokens().toString(recognizer.tokenNames)
         recognizer.notifyErrorListeners(msg, e.offendingToken, e)
@@ -313,7 +315,7 @@ class DefaultErrorStrategy < ErrorStrategy
     # @param e the recognition exception
     #
     def reportFailedPredicate(recognizer, e)
-        ruleName = recognizer.ruleNames[recognizer._ctx.ruleIndex]
+        ruleName = recognizer.ruleNames[recognizer.ctx.ruleIndex]
         msg = "rule #{ruleName} #{e.message}"
         recognizer.notifyErrorListeners(e.offendingToken, msg, e)
     end
@@ -458,10 +460,10 @@ class DefaultErrorStrategy < ErrorStrategy
         # if current token is consistent with what could come after current
         # ATN state, then we know we're missing a token; error recovery
         # is free to conjure up and insert the missing token
-        atn = recognizer._interp.atn
+        atn = recognizer.interp.atn
         currentState = atn.states[recognizer.state]
         nextToken = currentState.transitions[0].target
-        expectingAtLL2 = atn.nextTokens(nextToken, recognizer._ctx)
+        expectingAtLL2 = atn.nextTokens(nextToken, recognizer.ctx)
         if expectingAtLL2.member? currentSymbolType then
             self.reportMissingToken(recognizer)
             return true
@@ -667,10 +669,10 @@ class DefaultErrorStrategy < ErrorStrategy
     #  at run-time upon error to avoid overhead during parsing.
     #
     def getErrorRecoverySet(recognizer)
-        atn = recognizer._interp.atn
-        ctx = recognizer._ctx
+        atn = recognizer.interp.atn
+        ctx = recognizer.ctx
         recoverSet = IntervalSet.new()
-        while not ctx.nil? and ctx.invokingState>=0 do
+        while ctx and ctx.invokingState >= 0 do
             # compute what follows who invoked us
             invokingState = atn.states[ctx.invokingState]
             rt = invokingState.transitions[0]
@@ -727,7 +729,7 @@ class BailErrorStrategy < DefaultErrorStrategy
     #  original {@link RecognitionException}.
     #
     def recover(recognizer, e)
-        context = recognizer._ctx
+        context = recognizer.ctx
         while not context.nil?  do
             context.exception = e
             context = context.parentCtx

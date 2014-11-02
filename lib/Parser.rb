@@ -20,18 +20,32 @@ require 'java_symbols'
 
 class TraceListener < ParseTreeListener
     
-    def enterEveryRule(parser, ctx)
-        puts "enter   " + parser.ruleNames[ctx.ruleIndex] + ", LT(1)=" + parser._input.LT(1).text
+    attr :parser
+    def initialize(parser=nil)
+        super()
+        if parser then
+          @parser = parser 
+        end
+    end
+    def enterEveryRule(ctx)
+#        puts "enter   " + parser.ruleNames[ctx.ruleIndex] + ", LT(1)=" + parser.input.LT(1).text
+#        if parser.ruleNames[ctx.ruleIndex] == 'nl' then
+#              puts parser.input.LT(1).text.inspect
+#        end
+        puts "enter   #{parser.ruleNames[ctx.ruleIndex]}, LT(1)=#{parser.input.LT(1).text.to_s}"
     end
 
-    def visitTerminal(parser, node)
-        puts "consume " + node.symbol + " rule " + parser.ruleNames[parser._ctx.ruleIndex]
+    def visitTerminal(node)
+#        puts "consume " + node.symbol + " rule " + parser.ruleNames[parser.ctx.ruleIndex]
+        puts "consume #{node.symbol} rule #{parser.ruleNames[parser.ctx.ruleIndex]}"
+#        puts "consume #{node.class} #{parser.ctx.class} #{parser.ctx.ruleIndex} "
     end
-    def visitErrorNode(parser, node)
+    def visitErrorNode(node)
     end
 
-    def exitEveryRule(parser, ctx)
-        puts "exit    " + parser.ruleNames[ctx.ruleIndex] + ", LT(1)=" + parser._input.LT(1).text
+    def exitEveryRule(ctx)
+#        puts "exit    " + parser.ruleNames[ctx.ruleIndex] + ", LT(1)=" + parser.input.LT(1).text
+        puts "exit    #{parser.ruleNames[ctx.ruleIndex]}, LT(1)=#{parser.input.LT(1).text}"
     end
 end
 
@@ -49,6 +63,7 @@ class Parser < Recognizer
 
     attr_accessor :input,:errHandler,:precedenceStack ,:ctx, :buildParseTrees
     attr_accessor :tracer, :parseListeners, :syntaxErrors 
+    attr_accessor :tokenNames
     def initialize(input)
         super()
         # The input stream.
@@ -348,12 +363,12 @@ class Parser < Recognizer
         if o.type != Token.EOF then
             self.getInputStream().consume()
         end
-        hasListener = self.parseListeners and @parseListeners.lenght>0 
+        hasListener = self.parseListeners and @parseListeners.length>0 
         if self.buildParseTrees or hasListener then
             if self.errHandler.inErrorRecoveryMode(self) then
                 node = self.ctx.addErrorNode(o)
             else
-                node = self._ctx.addTokenNode(o)
+                node = self.ctx.addTokenNode(o)
             end
             @parseListeners.each {|listener| listener.visitTerminal(node) }
         end
@@ -379,7 +394,7 @@ class Parser < Recognizer
 
     def exitRule()
         self.ctx.stop = self.input.LT(-1)
-        # trigger event on _ctx, before it reverts to parent
+        # trigger event on ctx, before it reverts to parent
         self.triggerExitRuleEvent()
         self.state = self.ctx.invokingState
         self.ctx = self.ctx.parentCtx
@@ -437,7 +452,7 @@ class Parser < Recognizer
         self.precedenceStack.pop()
         self.ctx.stop = self.input.LT(-1)
         retCtx = self.ctx # save current ctx (return value)
-        # unroll so _ctx is as it was before call to recursive method
+        # unroll so ctx is as it was before call to recursive method
         if not self.parseListeners.empty? then
             while self.ctx != parentCtx do
                 self.triggerExitRuleEvent()
@@ -494,20 +509,23 @@ class Parser < Recognizer
         ctx = self.ctx
         s = atn.states[self.state]
         following = atn.nextTokens(s)
-        if following.member? symbol then
+        print "\nisExpectedToken: #{following.toString(tokenNames)}: #{s}"
+        if following.member?(symbol) then
+            puts " true "
             return true
         end
         if not following.member? Token.EPSILON then
+            puts " FAIL "
             return false
         end
-        while ctx and ctx.invokingState>=0 and following.member? Token.EPSILON do
+        while ctx and ctx.invokingState >= 0 and following.member?(Token.EPSILON) do
             invokingState = atn.states[ctx.invokingState]
             rt = invokingState.transitions[0]
             following = atn.nextTokens(rt.followState)
-            return true if following.member? symbol
+            return true if following.member?(symbol)
             ctx = ctx.parentCtx
         end
-        if following.member? Token.EPSILON and symbol == Token.EOF
+        if following.member?( Token.EPSILON) and symbol == Token.EOF
             return true
         else
             return false
@@ -547,7 +565,7 @@ class Parser < Recognizer
     #  this is very useful for error messages.
     #
     def getRuleInvocationStack(p=nil)
-        p = self._ctx if p.nil? 
+        p = self.ctx if p.nil? 
         stack = Array.new
         while p do
             # compute what follows who invoked us
@@ -590,7 +608,7 @@ class Parser < Recognizer
             if self.tracer 
                 self.removeParseListener(self.tracer)
             end
-            self.tracer = TraceListener.new()
+            self.tracer = TraceListener.new(self)
             self.addParseListener(self.tracer)
         end
     end

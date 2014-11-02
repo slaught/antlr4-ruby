@@ -7,7 +7,7 @@ require 'Token'
 
 class InputStream 
     
-    attr_accessor :index, :strdate, :name, :size
+    attr_accessor :index, :strdata, :name, :size, :data
     def initialize(data)
         @name = "<empty>"
         @strdata = data

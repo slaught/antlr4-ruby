@@ -28,18 +28,18 @@ class ListTokenSource < TokenSource
     #
     # @exception NullPointerException if {@code tokens} is {@code null}
     attr_accessor :tokens, :sourceName, :pos, :eofToken, :factory
-    def initialize(tokens, sourceName=nil)
+    def initialize(_tokens, source_name=nil)
         raise ReferenceError.new("tokens cannot be null") if tokens.nil? 
-        self.tokens = tokens
-        self.sourceName = sourceName
+        @tokens = _tokens
+        @sourceName = source_name
         # The index into {@link #tokens} of token to return by the next call to
         # {@link #nextToken}. The end of the input is indicated by this value
         # being greater than or equal to the number of items in {@link #tokens}.
-        self.pos = 0
+        @pos = 0
         # This field caches the EOF token for the token source.
-        self.eofToken = nil
+        @eofToken = nil
         # This is the backing field for {@link #getTokenFactory} and
-        self.factory = CommonTokenFactory.DEFAULT
+        @factory = CommonTokenFactory.DEFAULT
     end
 
 

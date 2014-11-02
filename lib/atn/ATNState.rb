@@ -75,6 +75,7 @@ class ATNState
 
     def to_s 
         self.stateNumber.to_s
+        serializationNames[self.stateNumber]
     end
 
     def addTransition(trans, index=-1)
@@ -95,21 +96,38 @@ end
 class BasicState < ATNState
     def initialize 
         super()
-        self.stateType = self.BASIC
+        self.stateNumber = ATNState::BASIC
+        self.stateType = ATNState.BASIC
     end
 end
 
 class DecisionState < ATNState
-
+  
+    attr_accessor :decision ,:nonGreedy 
     def initialize 
         super()
         self.decision = -1
         self.nonGreedy = false
+        
     end
 end
+    INVALID_TYPE = 0
+    BASIC = 1
+    RULE_START = 2
+    BLOCK_START = 3
+    PLUS_BLOCK_START = 4
+    STAR_BLOCK_START = 5
+    TOKEN_START = 6
+    RULE_STOP = 7
+    BLOCK_END = 8
+    STAR_LOOP_BACK = 9
+    STAR_LOOP_ENTRY = 10
+    PLUS_LOOP_BACK = 11
+    LOOP_END = 12
 #  The start of a regular {@code (...)} block.
 class BlockStartState < DecisionState
 
+    attr_accessor :endState
     def initialize 
         super()
         self.endState = nil
@@ -120,16 +138,17 @@ class BasicBlockStartState < BlockStartState
 
     def initialize 
         super()
-        self.stateType = self.BLOCK_START
+        self.stateType = ATNState.BLOCK_START
     end
 end
 
 # Terminal node of a simple {@code (a|b|c)} block.
 class BlockEndState < ATNState
 
+    attr_accessor :startState 
     def initialize 
         super()
-        self.stateType = self.BLOCK_END
+        self.stateType = ATNState.BLOCK_END
         self.startState = nil
     end
 end
@@ -141,17 +160,19 @@ end
 #
 class RuleStopState < ATNState
 
+    attr_accessor :stopState
     def initialize 
         super()
-        self.stateType = self.RULE_STOP
+        self.stateType = ATNState.RULE_STOP
     end
 end
 
 class RuleStartState < ATNState
 
+    attr_accessor :stopState, :isPrecedenceRule 
     def initialize 
         super()
-        self.stateType = self.RULE_START
+        self.stateType = ATNState.RULE_START
         self.stopState = nil
         self.isPrecedenceRule = false
     end
@@ -164,7 +185,7 @@ class PlusLoopbackState < DecisionState
 
     def initialize 
         super()
-        self.stateType = self.PLUS_LOOP_BACK
+        self.stateType = ATNState.PLUS_LOOP_BACK
     end
 end
 
@@ -175,9 +196,10 @@ end
 #
 class PlusBlockStartState < BlockStartState
 
+    attr_accessor :loopBackState 
     def initialize 
         super()
-        self.stateType = self.PLUS_BLOCK_START
+        self.stateType = ATNState.PLUS_BLOCK_START
         self.loopBackState = nil
     end
 end
@@ -187,7 +209,7 @@ class StarBlockStartState < BlockStartState
 
     def initialize 
         super()
-        self.stateType = self.STAR_BLOCK_START
+        self.stateType = ATNState.STAR_BLOCK_START
     end
 end
 
@@ -195,16 +217,17 @@ class StarLoopbackState < ATNState
 
     def initialize 
         super()
-        self.stateType = self.STAR_LOOP_BACK
+        self.stateType = ATNState.STAR_LOOP_BACK
     end
 end
 
 
 class StarLoopEntryState < DecisionState
 
+    attr_accessor :loopBackState, :precedenceRuleDecision 
     def initialize 
         super()
-        self.stateType = self.STAR_LOOP_ENTRY
+        self.stateType = ATNState.STAR_LOOP_ENTRY
         self.loopBackState = nil
         # Indicates whether this state can benefit from a precedence DFA during SLL decision making.
         self.precedenceRuleDecision = nil
@@ -213,10 +236,11 @@ end
 
 # Mark the end of a * or + loop.
 class LoopEndState < ATNState
-
+    
+    attr_accessor :loopBackState 
     def initialize 
         super()
-        self.stateType = self.LOOP_END
+        self.stateType = ATNState.LOOP_END
         self.loopBackState = nil
     end
 end
@@ -226,6 +250,6 @@ class TokensStartState < DecisionState
 
     def initialize 
         super()
-        self.stateType = self.TOKEN_START
+        self.stateType = ATNState.TOKEN_START
     end
 end

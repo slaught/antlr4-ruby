@@ -9,12 +9,18 @@ require 'atn/ATNConfig'
 #require 'atn/SemanticContext'
 require 'error'
 
+require 'forwardable'
+
 class ATNConfigSet
     # The reason that we need this is because we don't want the hash map to use
     # the standard hash code and equals. We need all configurations with the same
     # {@code (s,i,_,semctx)} to be equal. Unfortunately, this key effectively doubles
     # the number of objects associated with ATNConfigs. The other solution is to
     # use a hash table that lets us specify the equals/hashcode operation.
+    extend Forwardable
+
+    def_delegators :@configs, :size, :each, :map, :length
+
 
     attr_accessor :configLookup, :fullCtx, :readonly, :configs, :uniqueAlt
     attr_accessor :conflictingAlts, :hasSemanticContext, :dipsIntoOuterContext
@@ -48,8 +54,6 @@ class ATNConfigSet
         self.dipsIntoOuterContext = false
         self.cachedHashCode = -1
     end
-#    def __iter__(self)
-#        return self.configs.__iter__()
     # Adding a new config means merging contexts with existing configs for
     # {@code (s, i, pi, _)}, where {@code s} is the
     # {@link ATNConfig#state}, {@code i} is the {@link ATNConfig#alt}, and
@@ -153,10 +157,13 @@ class ATNConfigSet
         end
     end
 
-    def length
-        return self.configs.length
-    end
+#    def length
+#        return self.configs.length
+#    end
 
+    def empty?
+        self.configs.empty?
+    end
     def isEmpty
         return self.configs.empty?
     end

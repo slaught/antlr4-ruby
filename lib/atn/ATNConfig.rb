@@ -20,7 +20,7 @@ class ATNConfig
     def self.createConfigState(config, state)
         new(state,nil,nil,nil,config)
     end
-
+    attr_accessor :reachesIntoOuterContext
     attr_accessor :state, :alt, :context, :semanticContext
     def initialize(state=nil, alt=nil, context=nil, semantic=nil, config=nil)
         if not config.nil?  then
@@ -110,6 +110,7 @@ end
 
 class LexerATNConfig < ATNConfig
 
+    attr_accessor :passedThroughNonGreedyDecision, :lexerActionExecutor 
     def initialize(state, alt=nil, context=nil, semantic=SemanticContext.NONE, lexerActionExecutor=nil, config=nil)
         super(state, alt, context, semantic, config)
         if not config.nil? then 

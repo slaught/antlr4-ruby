@@ -33,20 +33,21 @@ require 'tree/Tree'
 class ParserRuleContext < RuleContext
 
     attr_accessor :children, :start, :stop, :exception
-    def initialize(parent= nil, invokingStateNumber= nil)
-        super(parent, invokingStateNumber)
+    attr_accessor :parser
+    def initialize(parent= nil, invoking_state_number= nil)
+        super(parent, invoking_state_number)
         #* If we are debugging or building a parse tree for a visitor,
         #  we need to track all of the tokens and rule invocations associated
         #  with this rule's context. This is empty for parsing w/o tree constr.
         #  operation because we don't the need to track the details about
         #  how we parse this rule.
         #/
-        self.children =nil
-        self.start = nil
-        self.stop = nil
+        @children = Array.new
+        @start = nil
+        @stop = nil
         # The exception that forced this rule to return. If the rule successfully
         # completed, this is {@code null}.
-        self.exception =nil
+        @exception =nil
     end
 
     #* COPY a ctx (I'm deliberately not using copy constructor)#/
@@ -152,13 +153,13 @@ class ParserRuleContext < RuleContext
     end
 end
 
-RuleContext.set_empty(ParserRuleContext.new())
+# RuleContext.set_empty(ParserRuleContext.new())
 
 class InterpreterRuleContext < ParserRuleContext
 
     attr_accessor :ruleIndex
-    def initialize(parent, invokingStateNumber, ruleIndex)
+    def initialize(parent, invokingStateNumber, rule_index)
         super(parent, invokingStateNumber)
-        self.ruleIndex = ruleIndex
+        @ruleIndex = rule_index
     end
 end

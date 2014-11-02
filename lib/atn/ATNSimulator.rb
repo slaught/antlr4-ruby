@@ -44,6 +44,7 @@ class ATNSimulator
 
     attr_accessor :atn, :sharedContextCache
     def initialize(atn, sharedContextCache)
+        raise Exception.new("ATN is nil") if atn.nil?
         self.atn = atn
         self.sharedContextCache = sharedContextCache
     end
