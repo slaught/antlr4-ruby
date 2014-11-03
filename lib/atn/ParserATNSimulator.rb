@@ -336,7 +336,7 @@ class ParserATNSimulator < ATNSimulator
                 # closure block that determines whether a precedence rule
                 # should continue or complete.
                 #
-                if not dfa.precedenceDfa and dfa.atnStartState.kind_of?  StarLoopEntryState then
+                if not dfa.precedenceDfa and dfa.atnStartState.kind_of?(StarLoopEntryState) then
                     if dfa.atnStartState.precedenceRuleDecision 
                         dfa.setPrecedenceDfa(true)
                     end
