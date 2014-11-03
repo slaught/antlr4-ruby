@@ -8,13 +8,11 @@ Usage
 To use the Ruby language codegen for Antlrv4 do the following.
 
 1. Create the jar file.
-```bash
-% make antlr4-ruby.jar
-```
+    ```% make antlr4-ruby.jar ```
+
 2. Put the jar file in your java class path 
 
-
-3. Use either the _options_ section  or the -D switch
+3. Use either the _options_ section  or the _-Dlanguage=_ switch
 
 ```
   options {  language = Ruby ; }
