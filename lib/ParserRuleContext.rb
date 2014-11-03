@@ -151,6 +151,13 @@ class ParserRuleContext < RuleContext
             return [self.start.tokenIndex, self.stop.tokenIndex]
         end
     end
+    def to_s
+        p = nil
+        if parentCtx then
+          p = parentCtx.to_s
+        end
+        "#{self.class}:[#{invokingState}]#{p}"  
+    end
 end
 
 # RuleContext.set_empty(ParserRuleContext.new())

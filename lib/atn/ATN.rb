@@ -122,9 +122,9 @@ class ATN
         end
         expected = IntervalSet.new()
         expected.addSet(following)
-        puts expected.to_s
+        #puts expected.to_s
         expected.remove(Token.EPSILON)
-        puts expected.to_s
+        #puts expected.to_s
         while ( ctx and ctx.invokingState >= 0 and following.member?(Token.EPSILON) ) do
             invokingState = self.states[ctx.invokingState]
             rt = invokingState.transitions[0]

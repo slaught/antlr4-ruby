@@ -120,7 +120,7 @@ class ATNDeserializer
         1.upto(nstates) do |i| 
             stype = self.readInt()
             # ignore bad type of states
-            if stype==ATNState.INVALID_TYPE
+            if stype==ATNState::INVALID_TYPE
                 atn.addState(nil)
                 next
             end
@@ -129,7 +129,7 @@ class ATNDeserializer
                 ruleIndex = -1
             end
             s = self.stateFactory(stype, ruleIndex)
-            if stype == ATNState.LOOP_END # special case
+            if stype == ATNState::LOOP_END # special case
                 loopBackStateNumber = self.readInt()
                 loopBackStateNumbers.push([s, loopBackStateNumber])
             elsif s.kind_of? BlockStartState
@@ -556,19 +556,19 @@ class ATNDeserializer
     def stateFactory(type, ruleIndex)
         if self.stateFactories.nil? 
             sf = [nil] * 13
-            sf[ATNState.INVALID_TYPE] = lambda {  nil }
-            sf[ATNState.BASIC] = lambda { BasicState.new } 
-            sf[ATNState.RULE_START] = lambda { RuleStartState.new }
-            sf[ATNState.BLOCK_START] = lambda { BasicBlockStartState.new }
-            sf[ATNState.PLUS_BLOCK_START] = lambda { PlusBlockStartState.new }
-            sf[ATNState.STAR_BLOCK_START] = lambda { StarBlockStartState.new }
-            sf[ATNState.TOKEN_START] = lambda { TokensStartState.new }
-            sf[ATNState.RULE_STOP] = lambda { RuleStopState.new }
-            sf[ATNState.BLOCK_END] = lambda { BlockEndState.new }
-            sf[ATNState.STAR_LOOP_BACK] = lambda { StarLoopbackState.new }
-            sf[ATNState.STAR_LOOP_ENTRY] = lambda { StarLoopEntryState.new }
-            sf[ATNState.PLUS_LOOP_BACK] = lambda { PlusLoopbackState.new }
-            sf[ATNState.LOOP_END] = lambda { LoopEndState.new }
+            sf[ATNState::INVALID_TYPE] = lambda {  nil }
+            sf[ATNState::BASIC] = lambda { BasicState.new } 
+            sf[ATNState::RULE_START] = lambda { RuleStartState.new }
+            sf[ATNState::BLOCK_START] = lambda { BasicBlockStartState.new }
+            sf[ATNState::PLUS_BLOCK_START] = lambda { PlusBlockStartState.new }
+            sf[ATNState::STAR_BLOCK_START] = lambda { StarBlockStartState.new }
+            sf[ATNState::TOKEN_START] = lambda { TokensStartState.new }
+            sf[ATNState::RULE_STOP] = lambda { RuleStopState.new }
+            sf[ATNState::BLOCK_END] = lambda { BlockEndState.new }
+            sf[ATNState::STAR_LOOP_BACK] = lambda { StarLoopbackState.new }
+            sf[ATNState::STAR_LOOP_ENTRY] = lambda { StarLoopEntryState.new }
+            sf[ATNState::PLUS_LOOP_BACK] = lambda { PlusLoopbackState.new }
+            sf[ATNState::LOOP_END] = lambda { LoopEndState.new }
             self.stateFactories = sf
         end
         if type> self.stateFactories.length() or self.stateFactories[type].nil?

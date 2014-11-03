@@ -60,7 +60,7 @@ class ParserInterpreter < Parser
     # Begin parsing at startRuleIndex#
     def parse(startRuleIndex)
         startRuleStartState = self.atn.ruleToStartState[startRuleIndex]
-        rootContext = InterpreterRuleContext.new(nil, ATNState.INVALID_STATE_NUMBER, startRuleIndex)
+        rootContext = InterpreterRuleContext.new(nil, ATNState::INVALID_STATE_NUMBER, startRuleIndex)
         if startRuleStartState.isPrecedenceRule
             self.enterRecursionRule(rootContext, startRuleStartState.stateNumber, startRuleIndex, 0)
         else
@@ -68,7 +68,7 @@ class ParserInterpreter < Parser
         end
         while true
             p = self.getATNState()
-            if p.stateType==ATNState.RULE_STOP 
+            if p.stateType==ATNState::RULE_STOP 
                 # pop; return from rule
                 if self.ctx.length==0
                     if startRuleStartState.isPrecedenceRule

@@ -265,6 +265,7 @@ class ParserATNSimulator < ATNSimulator
 
     attr_accessor :decisionToDFA, :startIndex
     attr_accessor :parser, :predictionMode, :input, :outerContext, :mergeCache
+    attr_accessor :_dfa
 
     def initialize(parser, atn, decisionToDFA, sharedContextCache)
         super(atn, sharedContextCache)
@@ -294,14 +295,17 @@ class ParserATNSimulator < ATNSimulator
     def adaptivePredict(input, decision, outerContext)
         if self.debug or self.debug_list_atn_decisions then
             s1 = "adaptivePredict decision #{decision} exec LA(1)==" 
-            s2 = "#{elf.getLookaheadName(input)} line #{input.LT(1).line}:#{input.LT(1).column}"
-            print s1 + s2
+            s2 = "#{self.getLookaheadName(input)} line #{input.LT(1).line}:#{input.LT(1).column}"
+            puts  "#{s1}#{s2}"
         end
+#        type_check(TokenStream, input)
+#        type_check(ParserRuleContext, outerContext)
         self.input = input
         self.startIndex = input.index
         self.outerContext = outerContext
         
         dfa = self.decisionToDFA[decision]
+        @_dfa = dfa
         m = input.mark()
         index = input.index
 
@@ -322,9 +326,10 @@ class ParserATNSimulator < ATNSimulator
                     outerContext = ParserRuleContext.EMPTY
                 end
                 if self.debug or self.debug_list_atn_decisions
-                    print "predictATN decision #{dfa.decision
+                    puts  "predictATN decision #{dfa.decision
                        } exec LA(1)==#{self.getLookaheadName(input)
-                       }, outerContext=#{outerContext.toString(self.parser)}"
+                       }, outerContext=#{outerContext.to_s}"
+#                       }, outerContext=#{outerContext.toString(self.parser)}"
                 end
                 # If this is not a precedence DFA, we check the ATN start state
                 # to determine if this ATN start state is the decision for the
@@ -365,6 +370,7 @@ class ParserATNSimulator < ATNSimulator
             self.mergeCache = nil# wack cache after each prediction
             input.seek(index)
             input.release(m)
+            @_dfa = nil
         end
     end
     # Performs ATN simulation to compute a predicted alternative based
@@ -730,10 +736,11 @@ class ParserATNSimulator < ATNSimulator
                 next
             end
             #for trans in c.state.transitions do 
-            c.state.transitions do |trans|
+            c.state.transitions.each do |trans|
                 target = self.getReachableTarget(trans, t)
                 if target 
-                    intermediate.add(ATNConfig(state=target, config=c), self.mergeCache)
+                  puts "computeReachSet: add reachable target"
+                    intermediate.add(ATNConfig.createConfigState(c,target), self.mergeCache)
                 end
             end
         end
@@ -1239,6 +1246,21 @@ class ParserATNSimulator < ATNSimulator
                     end
                     closureBusy.add(c)
 
+                    if @_dfa && @_dfa.isPrecedenceDfa() then
+                      outermostPrecedenceReturn = t.outermostPrecedenceReturn()
+                      if outermostPrecedenceReturn == @_dfa.atnStartState.ruleIndex then
+                         c.setPrecedenceFilterSuppressed(true)
+                      end
+                    end
+#          if (_dfa != null && _dfa.isPrecedenceDfa()) {
+#            int outermostPrecedenceReturn = ((EpsilonTransition)t).outermostPrecedenceReturn();
+#            if (outermostPrecedenceReturn == _dfa.atnStartState.ruleIndex) {
+#              c.setPrecedenceFilterSuppressed(true);
+#            }
+#          }
+
+
+
                     c.reachesIntoOuterContext =c.reachesIntoOuterContext + 1
                     configs.dipsIntoOuterContext = true # TODO: can remove? only care when we add to set per middle of this method
                     # !assert newDepth > - 2**63
@@ -1430,13 +1452,13 @@ class ParserATNSimulator < ATNSimulator
                 puts "#{t} ttype out of range: #{self.parser.tokenNames}"
                 puts self.parser.getInputStream().getTokens().to_s
             else
-                return self.parser.tokensNames[t] + "<#{t}>"
+                return self.parser.tokenNames[t] + "<#{t}>"
             end
         end
         return t.to_s
     end
     def getLookaheadName(input)
-        return self.getTokenName(input.LA(1))
+        return getTokenName(input.LA(1))
     end
     # Used for debugging in adaptivePredict around execATN but I cut
     #  it out for clarity now that alg. works well. We can leave this
@@ -1460,7 +1482,7 @@ class ParserATNSimulator < ATNSimulator
                     trans = "#{neg}Set #{t.set}"
                 end
             end
-            STDERR.puts "#{c.toString(self.parser, true)}:#{trans}"
+            # STDERR.puts "#{c.toString(self.parser, true)}:#{trans}"
         end
     end
     def noViableAlt(input, outerContext, configs, startIndex)
