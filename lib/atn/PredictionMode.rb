@@ -196,8 +196,8 @@ class PredictionMode
             # now we have combined contexts for configs with dissimilar preds
         end
         # pure SLL or combined SLL+LL mode parsing
-        altsets = cls.getConflictingAltSubsets(configs)
-        cls.hasConflictingAltSet(altsets) and not cls.hasStateAssociatedWithOneAlt(configs)
+        altsets = getConflictingAltSubsets(configs)
+        hasConflictingAltSet(altsets) and not hasStateAssociatedWithOneAlt(configs)
     end
     # Checks if any configuration in {@code configs} is in a
     # {@link RuleStopState}. Configurations meeting this condition have reached

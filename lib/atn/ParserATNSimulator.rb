@@ -739,7 +739,6 @@ class ParserATNSimulator < ATNSimulator
             c.state.transitions.each do |trans|
                 target = self.getReachableTarget(trans, t)
                 if target 
-                  puts "computeReachSet: add reachable target"
                     intermediate.add(ATNConfig.createConfigState(c,target), self.mergeCache)
                 end
             end

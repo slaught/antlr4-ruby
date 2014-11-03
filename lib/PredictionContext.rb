@@ -54,7 +54,7 @@ class PredictionContext
 
     # This means only the {@link #EMPTY} context is in set.
     def isEmpty
-        return self.object_id == self.EMPTY.object_id
+        self.equal? PredictionContext.EMPTY
     end
     def hasEmptyPath
         return self.getReturnState(self.length - 1) == PredictionContext::EMPTY_RETURN_STATE 
@@ -88,13 +88,13 @@ class PredictionContextCache
         if ctx==PredictionContext.EMPTY
             return PredictionContext.EMPTY
         end
-        existing = self.cache.get(ctx)
+        existing = self.cache[ctx]
         return existing if not existing.nil? 
         self.cache[ctx] = ctx
         return ctx
     end
     def get(ctx)
-        return self.cache.get(ctx)
+        return self.cache[ctx]
     end
     def length
         return self.cache.length

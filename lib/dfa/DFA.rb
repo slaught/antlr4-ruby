@@ -26,6 +26,9 @@ class DFA
         # {@link #setPrecedenceDfa}.
         @precedenceDfa = false
     end
+    def isPrecedenceDfa
+        @precedenceDfa
+    end
     # Get the start state for a specific precedence value.
     #
     # @param precedence The current precedence.
