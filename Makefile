@@ -2,6 +2,16 @@
 RUBY=rbx 
 RUBY_SYNTAX=$(RUBY) -c
 
+BUILD_DIR=BUILD
+
+$(BUILD_DIR): 
+	mkdir $(BUILD_DIR)
+  
+antlr4-ruby.jar: $(BUILD_DIR)
+	javac -d $(BUILD_DIR) tool/src/org/antlr/v4/codegen/RubyTarget.java
+	cp -r tool/resources/ $(BUILD_DIR)
+	jar cf $@  -C $(BUILD_DIR) org
+
 
 all: test
 	echo "done"
