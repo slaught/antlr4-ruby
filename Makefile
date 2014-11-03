@@ -35,6 +35,8 @@ test1:
 test2: 
 	rbx -It:lib t1.rb
 
+test3:
+	rbx -It -Ilib RubyTest.rb test1 pjm_msrs_Week_Bill_L_2014-07-26.pjmcsv
 
 
 
