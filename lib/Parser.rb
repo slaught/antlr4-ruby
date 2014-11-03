@@ -28,23 +28,16 @@ class TraceListener < ParseTreeListener
         end
     end
     def enterEveryRule(ctx)
-#        puts "enter   " + parser.ruleNames[ctx.ruleIndex] + ", LT(1)=" + parser.input.LT(1).text
-#        if parser.ruleNames[ctx.ruleIndex] == 'nl' then
-#              puts parser.input.LT(1).text.inspect
-#        end
         puts "enter   #{parser.ruleNames[ctx.ruleIndex]}, LT(1)=#{parser.input.LT(1).text.to_s}"
     end
 
     def visitTerminal(node)
-#        puts "consume " + node.symbol + " rule " + parser.ruleNames[parser.ctx.ruleIndex]
         puts "consume #{node.symbol} rule #{parser.ruleNames[parser.ctx.ruleIndex]}"
-#        puts "consume #{node.class} #{parser.ctx.class} #{parser.ctx.ruleIndex} "
     end
     def visitErrorNode(node)
     end
 
     def exitEveryRule(ctx)
-#        puts "exit    " + parser.ruleNames[ctx.ruleIndex] + ", LT(1)=" + parser.input.LT(1).text
         puts "exit    #{parser.ruleNames[ctx.ruleIndex]}, LT(1)=#{parser.input.LT(1).text}"
     end
 end
@@ -509,13 +502,13 @@ class Parser < Recognizer
         ctx = self.ctx
         s = atn.states[self.state]
         following = atn.nextTokens(s)
-        print "\nisExpectedToken: #{following.toString(tokenNames)}: #{s}"
+#        print "\nisExpectedToken: #{following.toString(tokenNames)}: #{s}"
         if following.member?(symbol) then
-            puts " true "
+#            puts " true "
             return true
         end
         if not following.member? Token.EPSILON then
-            puts " FAIL "
+#            puts " FAIL "
             return false
         end
         while ctx and ctx.invokingState >= 0 and following.member?(Token.EPSILON) do
