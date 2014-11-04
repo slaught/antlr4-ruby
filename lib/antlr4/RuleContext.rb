@@ -27,9 +27,6 @@ class RuleContext < RuleNode
       end
       @@EMPTY
     end
-#    def self.set_empty(p)
-#      @@EMPTY = p 
-#    end
 
     attr_accessor :parentCtx, :invokingState 
     def initialize(parent=nil, invoking_state=-1)
@@ -61,7 +58,7 @@ class RuleContext < RuleNode
     # satisfy the ParseTree / SyntaxTree interface
 
     def getSourceInterval
-        return INVALID_INTERVAL
+        return Antlr4::INVALID_INTERVAL
     end
 
     def getRuleContext

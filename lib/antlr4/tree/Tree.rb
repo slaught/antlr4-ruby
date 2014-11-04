@@ -2,8 +2,6 @@
 #  It is the most abstract interface for all the trees used by ANTLR.
 #
 
-INVALID_INTERVAL = Range.new(-1, -2)
-
 class Tree
 end
 
@@ -114,7 +112,7 @@ module NodeImpl
     end
 
     def getSourceInterval()
-        return INVALID_INTERVAL if self.symbol.nil? 
+        return Antlr4::INVALID_INTERVAL if self.symbol.nil?
         tokenIndex = self.symbol.tokenIndex
         return [tokenIndex, tokenIndex]
     end

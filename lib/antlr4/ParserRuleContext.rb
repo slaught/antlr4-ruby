@@ -138,7 +138,7 @@ class ParserRuleContext < RuleContext
 
     def getSourceInterval
         if self.start.nil? or self.stop.nil? then
-            return INVALID_INTERVAL
+            return Antlr4::INVALID_INTERVAL
         else
             return [self.start.tokenIndex, self.stop.tokenIndex]
         end
