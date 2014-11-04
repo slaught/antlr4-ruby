@@ -41,24 +41,6 @@
 # <p>
 # Whitespace is not allowed.</p>
 #
-#from xmlrpc.client import boolean
-#from antlr4 import CommonTokenStream, DFA, PredictionContextCache, Lexer, LexerATNSimulator, ParserRuleContext, \
-#    TerminalNode
-#from antlr4.InputStream import InputStream
-#from antlr4.Parser import Parser
-#from antlr4.Recognizer import Recognizer
-#from antlr4.RuleContext import RuleContext
-##from antlr4.Token import Token
-##from antlr4.atn.ATNSimulator import ATNSimulator
-#from antlr4.error.ErrorListener import ErrorListener
-#from antlr4.error.Errors import LexerNoViableAltException
-#from antlr4.tree.Tree import ParseTree
-#from antlr4.tree.Trees import Trees
-#
-
-require 'TokenStream'
-require 'CommonTokenStream'
-require 'java_symbols'
 
 class XPathLexer < Lexer
     include JavaSymbols

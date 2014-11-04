@@ -1,9 +1,4 @@
-# Map a predicate to a predicted alternative.#/
-require 'stringio'
-#from io import StringIO
-#from antlr4.atn.ATNConfigSet import ATNConfigSet
-#from antlr4.atn.SemanticContext import SemanticContext
-
+# Map a predicate to a predicted alternative.
 
 class PredPrediction
     attr_accessor :pred, :alt

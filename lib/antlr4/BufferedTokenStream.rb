@@ -1,10 +1,3 @@
-#from io import StringIO
-#from antlr4.Token import Token
-#from antlr4.error.Errors import IllegalStateException
-require 'Token'
-require 'error'
-
-require 'TokenStream'
 
 class BufferedTokenStream < TokenStream
 

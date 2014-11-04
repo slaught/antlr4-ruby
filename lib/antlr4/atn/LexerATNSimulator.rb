@@ -13,22 +13,6 @@
 #  then the ATN does the accept and the DFA simulator that invoked it
 #  can simply return the predicted token type.</p>
 
-require 'Lexer'
-require 'PredictionContext'
-require 'InputStream'
-require 'Token'
-require 'atn/ATN'
-require 'atn/ATNConfig'
-require 'atn/ATNSimulator'
-require 'atn/ATNConfigSet'
-require 'atn/ATNState'
-require 'atn/LexerActionExecutor'
-require 'atn/Transition'
-require 'dfa/DFAState'
-require 'error'
-
-require 'java_symbols'
-
 class SimState
 
     attr_accessor :index, :line, :column, :dfaState

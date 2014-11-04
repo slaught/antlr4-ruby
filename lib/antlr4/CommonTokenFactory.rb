@@ -1,8 +1,5 @@
 # This default implementation of {@link TokenFactory} creates
 # {@link CommonToken} objects.
-require 'Token'
-
-require 'TokenFactory'
 
 class CommonTokenFactory < TokenFactory
     #

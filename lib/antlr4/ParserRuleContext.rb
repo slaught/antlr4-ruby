@@ -21,14 +21,6 @@
 #  group values such as this aggregate.  The getters/setters are there to
 #  satisfy the superclass interface.
 
-require 'RuleContext'
-require 'Token'
-require 'tree/Tree'
-
-#from antlr4.RuleContext import RuleContext
-#from antlr4.Token import Token
-#from antlr4.tree.Tree import ParseTreeListener, ParseTree, TerminalNodeImpl, ErrorNodeImpl, TerminalNode, \
-#    INVALID_INTERVAL
 
 class ParserRuleContext < RuleContext
 

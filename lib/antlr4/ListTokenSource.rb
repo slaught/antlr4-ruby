@@ -5,14 +5,6 @@
 # <p>If the final token in the list is an {@link Token#EOF} token, it will be used
 # as the EOF token for every call to {@link #nextToken} after the end of the
 # list is reached. Otherwise, an EOF token will be created.</p>
-#
-#from antlr4.CommonTokenFactory import CommonTokenFactory
-#from antlr4.Lexer import TokenSource
-#from antlr4.Token import Token
-
-require 'CommonTokenFactory'
-require 'TokenSource'
-require 'Token'
 
 class ListTokenSource < TokenSource
 

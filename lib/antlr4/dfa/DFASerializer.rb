@@ -1,9 +1,4 @@
-
-# A DFA walker that knows how to dump them to serialized strings.#/
-require 'stringio'
-#from antlr4 import DFA
-#from antlr4.Utils import str_list
-#from antlr4.dfa.DFAState import DFAState
+# A DFA walker that knows how to dump them to serialized strings.
 
 class DFASerializer
 

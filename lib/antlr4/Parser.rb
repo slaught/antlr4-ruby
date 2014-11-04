@@ -1,22 +1,3 @@
-require 'TokenStream'
-require 'TokenFactory'
-require 'error'
-require 'error/ErrorStrategy'
-require 'InputStream'
-require 'Recognizer'
-require 'RuleContext'
-require 'ParserRuleContext'
-require 'Token'
-require 'Lexer'
-require 'tree/ParseTreePatternMatcher'
-require 'tree/Tree'
-#from antlr4.error.ErrorStrategy import DefaultErrorStrategy
-#from antlr4.atn.ATNDeserializer import ATNDeserializer
-#from antlr4.atn.ATNDeserializationOptions import ATNDeserializationOptions
-#from antlr4.error.Errors import UnsupportedOperationException, RecognitionException
-#from antlr4.tree.Tree import ParseTreeListener, TerminalNode, ErrorNode
-
-require 'java_symbols'
 
 class TraceListener < ParseTreeListener
     

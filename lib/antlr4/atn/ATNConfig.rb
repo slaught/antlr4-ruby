@@ -4,16 +4,6 @@
 #  chain used to arrive at the state.  The semantic context is
 #  the tree of semantic predicates encountered before reaching
 #  an ATN state.
-#from io import StringIO
-#from antlr4.PredictionContext import PredictionContext
-##from antlr4.atn.ATNState import ATNState, DecisionState
-#from antlr4.atn.LexerActionExecutor import LexerActionExecutor
-#from antlr4.atn.SemanticContext import SemanticContext
-
-require 'PredictionContext'
-require 'atn/ATNState'
-#require 'atn/LexerActionExecutor'
-#require 'atn/SemanticContext'
 
 class ATNConfig
 

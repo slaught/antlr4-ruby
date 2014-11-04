@@ -1,24 +1,3 @@
-require 'Token' 
-require 'FileStream'
-require 'TokenStream' 
-require 'BufferedTokenStream'
-require 'CommonTokenStream'
-require 'Lexer'
-require 'Parser'
-require 'dfa/DFA'
-require 'atn/ATN'
-require 'atn/ATNDeserializer'
-require 'atn/LexerATNSimulator'
-require 'atn/ParserATNSimulator' 
-require 'atn/PredictionMode'
-require 'PredictionContext'
-require 'ParserRuleContext'
-require 'tree/Tree' # import ParseTreeListener, ParseTreeVisitor, ParseTreeWalker, TerminalNode, ErrorNode, RuleNode
-require 'error'    #  Errors import RecognitionException, IllegalStateException, NoViableAltException
-require 'error/ErrorStrategy' # import BailErrorStrategy
-require 'error/DiagnosticErrorListener' # import DiagnosticErrorListener
-
-require 'java_symbols'
 
 module Antlr4
   INVALID_INTERVAL = Range.new(-1, -2)
@@ -30,6 +9,9 @@ class Range
   end
   def start
     first
+  end
+  def length
+      size
   end
 end
 

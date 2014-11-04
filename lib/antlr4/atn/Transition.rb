@@ -9,15 +9,6 @@
 #  on the other hand need to update the labels as it adds transitions to
 #  the states. We'll use the term Edge for the DFA to distinguish them from
 #  ATN transitions.</p>
-#
-#from antlr4.IntervalSet import IntervalSet
-#from antlr4.Token import Token
-require 'IntervalSet'
-require 'Token'
-
-require 'atn/SemanticContext'
-
-require 'java_symbols'
 
 class Transition 
     include JavaSymbols

@@ -1,12 +1,5 @@
 #  This is an InputStream that is loaded from a file all at once
 #  when you construct the object.
-
-#import codecs
-#import unittest
-#from antlr4.InputStream import InputStream
-require 'InputStream'
-
-
 class FileStream < InputStream
 
     def initialize(fileName, encoding=nil)
@@ -19,9 +12,3 @@ class FileStream < InputStream
         @name = fileName
     end
 end
-
-#class TestFileStream(unittest.TestCase):
-#
-#    def testStream(self):
-#        stream = FileStream("FileStream.py")
-#        self.assertTrue(stream.size>0)

@@ -1,12 +1,3 @@
-#from antlr4.PredictionContext import PredictionContextCache, PredictionContext, getCachedPredictionContext
-#from antlr4.atn.ATN import ATN
-#from antlr4.atn.ATNConfigSet import ATNConfigSet
-#from antlr4.dfa.DFAState import DFAState
-
-require 'PredictionContext'
-require 'atn/ATN'
-require 'atn/ATNConfigSet'
-require 'dfa/DFAState'
 
 class ATNSimulator
 

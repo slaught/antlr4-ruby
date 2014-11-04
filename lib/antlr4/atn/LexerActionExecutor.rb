@@ -5,10 +5,6 @@
 # efficiently, ensuring that actions appearing only at the end of the rule do
 # not cause bloating of the {@link DFA} created for the lexer.</p>
 
-require 'InputStream'
-#from antlr4.atn.LexerAction import LexerAction, LexerIndexedCustomAction
-require 'atn/LexerAction' 
-
 class LexerActionExecutor
 
     attr_accessor :hashCode, :lexerActions

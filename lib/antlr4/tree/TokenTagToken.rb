@@ -2,9 +2,6 @@
 # {@code <ID>}. These tokens are created for {@link TagChunk} chunks where the
 # tag corresponds to a lexer rule or token type.
 #
-#from antlr4.Token import CommonToken
-require 'Token'
-
 
 class TokenTagToken < CommonToken
 

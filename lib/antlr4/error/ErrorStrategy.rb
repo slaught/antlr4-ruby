@@ -28,13 +28,6 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 #  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-#import sys
-# require 'IntervalSet' #from antlr4.IntervalSet import IntervalSet
-
-#require 'antlr4/Token' #from antlr4.Token import Token
-#require 'atn.ATNState' #from antlr4.atn.ATNState import ATNState
-#from antlr4.error.Errors import RecognitionException, NoViableAltException, InputMismatchException, \
-#    FailedPredicateException, ParseCancellationException
 
 class ErrorStrategy
 

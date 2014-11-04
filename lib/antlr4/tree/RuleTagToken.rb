@@ -1,6 +1,3 @@
-# from antlr4.Token import Token
-
-require 'Token'
 
 class RuleTagToken < Token
     # Constructs a new instance of {@link RuleTagToken} with the specified rule

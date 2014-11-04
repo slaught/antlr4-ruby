@@ -1,11 +1,3 @@
-#from io import StringIO
-#from antlr4.RuleContext import RuleContext
-#from antlr4.atn.ATN import ATN
-#from antlr4.atn.ATNState import ATNState
-
-require 'RuleContext'
-require 'double_key_map'
-
 
 class PredictionContext
 

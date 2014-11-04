@@ -1,7 +1,6 @@
 # A token has properties: text, type, line, character position in the line
 # (so we can ignore tabs), token channel, index, and source from which
 # we obtained this token.
-require 'java_symbols'
 
 class Token
     include JavaSymbols

@@ -1,23 +1,3 @@
-# from antlr4.Token import Token
-
-require 'Token'
-require 'set'
-
-
-class Range
-  def length
-      size
-  end
-  def stop
-    last
-  end
-  def start
-    first
-  end
-end
-
-require 'forwardable'
-
 class IntervalSet
     extend Forwardable
 
@@ -31,20 +11,6 @@ class IntervalSet
     def_delegators :@intervals, :each, :map 
     include Enumerable
 
-
-#    def each(&block)
-#       #_internal.each(block)
-#      self.intervals.each(block)
-#    end
-#        if self.intervals is not None:
-#            for i in self.intervals:
-#                for c in i:
-#                    yield c
-#
-#    end
-#    def []=(item)
-#      @_internal[item]
-#    end
     def addOne(v)
         self.addRange(v..v)
     end
@@ -185,92 +151,3 @@ class IntervalSet
         end
     end
 end
-#class TestIntervalSet(unittest.TestCase):
-#
-#    def testEmpty(self):
-#        s = IntervalSet()
-#        self.assertIsNone(s.intervals)
-#        self.assertFalse(30 in s)
-#
-#    def testOne(self):
-#        s = IntervalSet()
-#        s.addOne(30)
-#        self.assertTrue(30 in s)
-#        self.assertFalse(29 in s)
-#        self.assertFalse(31 in s)
-#
-#    def testTwo(self):
-#        s = IntervalSet()
-##        s.addOne(30)
-#        s.addOne(40)
-#        self.assertTrue(30 in s)
-#        self.assertTrue(40 in s)
-#        self.assertFalse(35 in s)
-#
-#    def testRange(self):
-#        s = IntervalSet()
-#        s.addRange(range(30,41))
-#        self.assertTrue(30 in s)
-#        self.assertTrue(40 in s)
-#        self.assertTrue(35 in s)
-#
-##    def testDistinct1(self):
-#        s = IntervalSet()
-#        s.addRange(range(30,32))
-#        s.addRange(range(40,42))
-#        self.assertEquals(2,len(s.intervals))
-#        self.assertTrue(30 in s)
-#        self.assertTrue(40 in s)
-#        self.assertFalse(35 in s)
-#
-#    def testDistinct2(self):
-#        s = IntervalSet()
-#        s.addRange(range(40,42))
-#        s.addRange(range(30,32))
-##        self.assertEquals(2,len(s.intervals))
-#        self.assertTrue(30 in s)
-#        self.assertTrue(40 in s)
-#        self.assertFalse(35 in s)
-#
-#    def testContiguous1(self):
-#        s = IntervalSet()
-#        s.addRange(range(30,36))
-#        s.addRange(range(36,41))
-#        self.assertEquals(1,len(s.intervals))
-#        self.assertTrue(30 in s)
-#        self.assertTrue(40 in s)
-#        self.assertTrue(35 in s)
-#
-#    def testContiguous2(self):
-#        s = IntervalSet()
-#        s.addRange(range(36,41))
-#        s.addRange(range(30,36))
-#        self.assertEquals(1,len(s.intervals))
-#        self.assertTrue(30 in s)
-#        self.assertTrue(40 in s)
-#
-#    def testOverlapping1(self):
-#        s = IntervalSet()
-#        s.addRange(range(30,40))
-#        s.addRange(range(35,45))
-#        self.assertEquals(1,len(s.intervals))
-##        self.assertTrue(30 in s)
-#        self.assertTrue(44 in s)
-#
-#    def testOverlapping2(self):
-##        s = IntervalSet()
-#        s.addRange(range(35,45))
-#        s.addRange(range(30,40))
-#        self.assertEquals(1,len(s.intervals))
-#        self.assertTrue(30 in s)
-#        self.assertTrue(44 in s)
-#
-#    def testOverlapping3(self):
-#        s = IntervalSet()
-#        s.addRange(range(30,32))
-#        s.addRange(range(40,42))
-#        s.addRange(range(50,52))
-#        s.addRange(range(20,61))
-#        self.assertEquals(1,len(s.intervals))
-#        self.assertTrue(20 in s)
-#        self.assertTrue(60 in s)

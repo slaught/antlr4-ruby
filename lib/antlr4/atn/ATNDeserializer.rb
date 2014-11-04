@@ -1,14 +1,3 @@
-#from uuid import UUID
-require 'stringio'
-require 'Token'
-require 'atn/ATN'
-require 'atn/ATNType'
-require 'atn/ATNState'
-require 'atn/Transition'
-require 'atn/LexerAction'
-require 'atn/ATNDeserializationOptions'
-
-require 'uuid'
 # This is the earliest supported serialized UUID.
 BASE_SERIALIZED_UUID = UUID.new("AADB8D7E-AEEF-4415-AD2B-8204D6CF042E")
 

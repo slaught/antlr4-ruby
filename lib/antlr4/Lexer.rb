@@ -1,26 +1,7 @@
-
 # A lexer is recognizer that draws input symbols from a character stream.
 #  lexer grammars result in a subclass of self object. A Lexer object
 #  uses simplified match() and error recovery mechanisms in the interest
 #  of speed.
-#/
-#from io import StringIO
-#from antlr4.CommonTokenFactory import CommonTokenFactory
-#from antlr4.atn.LexerATNSimulator import LexerATNSimulator
-#from antlr4.InputStream import InputStream
-#from antlr4.Recognizer import Recognizer
-#from antlr4.Token import Token
-#from antlr4.error.Errors import IllegalStateException, LexerNoViableAltException, RecognitionException
-
-require 'CommonTokenFactory'
-require 'atn/LexerATNSimulator'
-require 'InputStream'
-require 'Recognizer'
-require 'error'
-require 'Token'
-require 'TokenSource'
-
-require 'java_symbols' 
 
 class Lexer < TokenSource
     include JavaSymbols

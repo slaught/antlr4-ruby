@@ -1,13 +1,4 @@
 
-#from antlr4.atn.ATNConfigSet import ATNConfigSet
-#from antlr4.atn.ATNState import DecisionState
-#from antlr4.dfa.DFAState import DFAState
-#from antlr4.error.Errors import IllegalStateException
-        #from antlr4.dfa.DFASerializer import DFASerializer
-        #from antlr4.dfa.DFASerializer import LexerDFASerializer
-
-require 'dfa/DFASerializer'
-
 class DFA
     attr_accessor :atnStartState, :decision, :_states, :s0, :precedenceDfa 
     def initialize(atnStartState, _decision=0)

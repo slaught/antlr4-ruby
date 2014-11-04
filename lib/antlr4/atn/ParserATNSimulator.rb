@@ -225,24 +225,6 @@
 # both SLL and LL parsing. Erroneous input will therefore require 2 passes over
 # the input.</p>
 #
-require 'dfa/DFA'
-require 'PredictionContext'
-require 'TokenStream'
-require 'Parser'
-require 'ParserRuleContext'
-require 'RuleContext'
-require 'Token'
-require 'atn/ATN'
-require 'atn/ATNConfig'
-require 'atn/ATNConfigSet'
-require 'atn/ATNSimulator'
-require 'atn/ATNState'
-require 'atn/PredictionMode'
-require 'atn/SemanticContext'
-require 'atn/Transition'
-require 'dfa/DFAState'
-require 'error'
-
 
 class ParserATNSimulator < ATNSimulator
     include PredictionContextFunctions

@@ -49,13 +49,6 @@
 # this situation occurs.</li>
 # </ul>
 
-require 'stringio'
-require 'set'
-#jfrom antlr4 import Parser, DFA
-#from antlr4.atn.ATNConfigSet import ATNConfigSet
-require 'error/ErrorListener'
-#from antlr4.error.ErrorListener mport ErrorListener
-
 class DiagnosticErrorListener < ErrorListener
 
     attr_accessor :exactOnly

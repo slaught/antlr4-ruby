@@ -2,15 +2,6 @@
 # info about the set, with support for combining similar configurations using a
 # graph-structured stack.
 
-require 'stringio'
-require 'PredictionContext'
-require 'atn/ATN'
-require 'atn/ATNConfig'
-#require 'atn/SemanticContext'
-require 'error'
-
-require 'forwardable'
-
 class ATNConfigSet
     # The reason that we need this is because we don't want the hash map to use
     # the standard hash code and equals. We need all configurations with the same

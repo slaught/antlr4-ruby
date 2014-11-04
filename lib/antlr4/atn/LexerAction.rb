@@ -1,9 +1,5 @@
 
-#from enum import IntEnum
-# need forward declaration
-require 'java_symbols'
-
-class LexerActionType #(IntEnum):
+class LexerActionType 
     include JavaSymbols
     CHANNEL = 0     #The type of a {@link LexerChannelAction} action.
     CUSTOM = 1      #The type of a {@link LexerCustomAction} action.

@@ -1,11 +1,3 @@
-require 'IntervalSet'
-require 'RuleContext'
-
-require 'Token'
-require 'atn/ATNType'
-require 'atn/ATNState' 
-
-require 'java_symbols'
 
 class ATN
     include JavaSymbols
@@ -46,8 +38,7 @@ class ATN
     #  the rule surrounding {@code s}. In other words, the set will be
     #  restricted to tokens reachable staying within {@code s}'s rule.
     def nextTokensInContext(s, ctx)
-        # from antlr4.LL1Analyzer import LL1Analyzer
-        require 'LL1Analyzer'
+        require 'antlr4/LL1Analyzer'
         anal = LL1Analyzer.new(self)
         return anal.LOOK(s, ctx=ctx)
     end

@@ -1,10 +1,4 @@
-
 # Represents the result of matching a {@link ParseTree} against a tree pattern.
-#from io import StringIO
-#from antlr4.tree.ParseTreePattern import ParseTreePattern
-#from antlr4.tree.Tree import ParseTree
-require 'stringio'
-
 
 class ParseTreeMatch
     # Constructs a new instance of {@link ParseTreeMatch} from the specified
