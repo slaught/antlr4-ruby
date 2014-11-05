@@ -1,8 +1,6 @@
 require 'PjmInvoiceListener'
 require 'PjmInvoiceLexer'
 require 'PjmInvoiceParser'
-require 'PjmInvoiceLexer'
-require 'PjmInvoiceParser'
 require 'antlr4'
 
 class TreeShapeListener < ParseTreeListener
