@@ -117,7 +117,7 @@ end
 def load_grammar_file(grammar_name, suffix)
     n = "#{grammar_name}#{suffix}"
     require n
-    puts "#{n.inspect} -> #{n.to_sym.inspect}"
+    puts "#{n.inspect} -> #{n.to_sym.inspect}" if $DEBUG
     kls = Object.const_get n.to_sym
 end
 
@@ -129,7 +129,7 @@ def main(args)
   puts "#{grammar_name}: #{in_file}"
   
   input = File.open(in_file)
-  puts parse_example(grammar_name, start_rule, input) 
+  parse_example(grammar_name, start_rule, input) 
   input.close
 end
 
