@@ -46,12 +46,12 @@ rubyTypeInitMap ::= [
 	default:"nil" // anything other than a primitive type is an object
 ]
 
+
 // args must be <object-model-object>, <fields-resulting-in-STs>
 
 ParserFile(file, parser, namedActions) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
 require 'antlr4'
-require 'stringio'
 <if(file.genListener || file.genVisitor)>
 # how to handle package names?
 # package = globals().get("__package__", None)
@@ -254,8 +254,9 @@ def <r.name>_sempred(localctx, predIndex)
 <elseif(rest(actions))>
     elsif predIndex == <index> then
         return <actions.(index)>
-<endif> }; separator="\n">
+<endif> 
     end
+    }; separator="\n">
 end
 >>
 
