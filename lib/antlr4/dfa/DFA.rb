@@ -62,7 +62,7 @@ class DFA
         edges = self.s0.edges.length
         if precedence >= edges
             ext = [nil] * (precedence + 1 - edges)
-            self.s0.edges.extend(ext)
+            self.s0.edges.concat(ext)
         end
         self.s0.edges[precedence] = startState
     end
