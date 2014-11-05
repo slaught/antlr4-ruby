@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2014 Chad Slaughter
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -39,35 +40,30 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-/**
- *
- * @author Chad Slaughter
- * @author Eric Vergnaud
- */
+
 public class RubyTarget extends Target {
+
 	protected static final String[] rubyKeywords = {
-"BEGIN",   "END",   "__ENCODING__",   "__END__",   "__FILE__",   "__LINE__",   "alias",   "and",
-"begin",   "break",   "case",   "class",   "def",   "defined?",   "do",   "else",   "elsif",   "end",
-"ensure",   "false",   "for",   "if",   "in",   "module",   "next",   "nil",   "not",   "or",   "redo",
-"rescue",   "retry",   "return",   "self",   "super",   "then",   "true",   "undef",   "unless",   "until",
-"when",   "while",   "yield",
-"Object", "Class", "Module", "Kernel", "Rubinius"
+    "BEGIN", "END", "__ENCODING__", "__END__", "__FILE__", "__LINE__", "alias",
+    "and", "begin", "break", "case", "class", "def", "defined?", "do", "else",
+    "elsif", "end", "ensure", "false", "for", "if", "in", "module", "next", "nil",
+    "not", "or", "redo", "rescue", "retry", "return", "self", "super", "then",
+    "true", "undef", "unless", "until", "when", "while", "yield",
+    "Object", "Class", "Module", "Kernel", "Rubinius"
 	};
+
 	/** Avoid grammar symbols in this set to prevent conflicts in gen'd code. */
 	protected final Set<String> badWords;  
-	public Set<String> getBadWords() { return badWords; }
 
 	public RubyTarget(CodeGenerator gen) {
 		super(gen, "Ruby");
     targetCharValueEscape['#'] = "\\#";
-	  badWords  = new HashSet<String>();
+	  badWords = new HashSet<String>();
 		badWords.addAll(Arrays.asList(rubyKeywords));
 	}
 
-	@Override
-	public int getSerializedATNSegmentLimit() {
-		// set to something stupid to avoid segmentation
-		return Integer.MAX_VALUE ;
+	public Set<String> getBadWords() { 
+		return badWords;
 	}
 
 	@Override
@@ -83,7 +79,6 @@ public class RubyTarget extends Target {
 	}
 
 	protected static class RubyStringRenderer extends StringRenderer {
-
 		@Override
 		public String toString(Object o, String formatString, Locale locale) {
 			return super.toString(o, formatString, locale);
@@ -109,5 +104,4 @@ public class RubyTarget extends Target {
 	public String getVersion() {
 		return "4.4";
 	}
-
 }
