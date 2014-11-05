@@ -1227,12 +1227,12 @@ class ParserATNSimulator < ATNSimulator
                     end
                     closureBusy.add(c)
 
-                    if @_dfa && @_dfa.isPrecedenceDfa() then
-                      outermostPrecedenceReturn = t.outermostPrecedenceReturn()
-                      if outermostPrecedenceReturn == @_dfa.atnStartState.ruleIndex then
-                         c.setPrecedenceFilterSuppressed(true)
-                      end
-                    end
+#                    if @_dfa && @_dfa.isPrecedenceDfa() then
+#                      outermostPrecedenceReturn = t.outermostPrecedenceReturn()
+#                     if outermostPrecedenceReturn == @_dfa.atnStartState.ruleIndex then
+#                        c.setPrecedenceFilterSuppressed(true)
+#                     end
+#                   end
 #          if (_dfa != null && _dfa.isPrecedenceDfa()) {
 #            int outermostPrecedenceReturn = ((EpsilonTransition)t).outermostPrecedenceReturn();
 #            if (outermostPrecedenceReturn == _dfa.atnStartState.ruleIndex) {
