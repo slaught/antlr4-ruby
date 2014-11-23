@@ -567,8 +567,8 @@ LocalRef(a) ::= "localctx.<a.name>"
 RetValueRef(a) ::= "localctx.<a.name>"
 QRetValueRef(a) ::= "<ctx(a)>.<a.dict>.<a.name>"
 /** How to translate $tokenLabel */
-TokenRef(t) ::= "<ctx(t)>.<t.name>"
-LabelRef(t) ::= "<ctx(t)>.<t.name>"
+TokenRef(t) ::= "<ctx(t)>::<t.name>"
+LabelRef(t) ::= "<ctx(t)>::<t.name>"
 ListLabelRef(t) ::= "<ctx(t)>.<ListLabelName(t.name)>"
 SetAttr(s,rhsChunks) ::= "<ctx(s)>.<s.name> = <rhsChunks>"
 
@@ -606,7 +606,7 @@ RuleContextListDecl(rdecl) ::= "self.<rdecl.name> = Array.new # of <rdecl.ctxNam
 
 ContextTokenGetterDecl(t)      ::= <<
 def <t.name>()
-    getToken(<parser.name>.<t.name>, 0)
+    getToken(<parser.name>::<t.name>, 0)
 end
 >>
 
@@ -619,9 +619,9 @@ ContextTokenListGetterDecl(t)  ::= <<
 ContextTokenListIndexedGetterDecl(t)  ::= <<
 def <t.name>(i=nil)
     if i.nil? then 
-        getTokens(<parser.name>.<t.name>)
+        getTokens(<parser.name>::<t.name>)
     else
-        getToken(<parser.name>.<t.name>, i)
+        getToken(<parser.name>::<t.name>, i)
     end
 end
 >>
