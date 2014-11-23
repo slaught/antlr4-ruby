@@ -37,7 +37,7 @@ ARG_DEF= <<EOF
                                    [required]
          -s <start_rule>           Start rule to use
                                    [required]
-         -i <input_file>           Example file to parser 
+         <input_files>...          Example file to parser 
                                    [required]
          -tokens                   Print Tokens 
          
@@ -65,18 +65,38 @@ class TreeShapeListener < ParseTreeListener
 end
 
 
-def print_tokens(parser)
-  atn = parser.interp.atn
-  puts "ATN States"
-  atn.states.each {|s| 
-      puts "(#{s}) : #{s.class}"
+# def print_tokens(parser, tokenstream)
+def print_tokens(grammar_name, start_rule, input)
+  parserClass, lexerClass = load_grammar(grammar_name,:lexer)
+  inputstream = InputStream.new(input.read)
+  lexer = lexerClass.new(inputstream)
+
+#  puts lexer.atn.decisionToState.inspect
+  stream = CommonTokenStream.new(lexer)
+  stream.fill();
+
+  stream.tokens.each {|tok|
+      puts tok
   }
-  puts "Tokens"
-  atn.states.each {|s| 
-      nexttokens = atn.nextTokens(s).toString(parser.tokenNames)
-      n = parser.tokenNames[s]
-      puts "(#{s}) : #{nexttokens}"
-  }
+#  puts "Debug DFA & ATN"
+#  puts lexer.decisionsToDFA.map{|dfa| dfa.toLexerString }.join("\n")
+#  puts lexer.atn.decisionToState.to_s
+  
+
+#
+#  parser = parserClass.new(stream)
+#  atn = parser.interp.atn
+#  puts "ATN States"
+#  atn.states.each {|s| 
+#      puts "(#{s}) : #{s.class}"
+#  }
+#  puts "Tokens"
+#  atn.states.each {|s| 
+#      nexttokens = atn.nextTokens(s).toString(parser.tokenNames)
+#      n = parser.tokenNames[s]
+#      puts "(#{s}) : #{nexttokens}"
+#  }
+##################################################################
 end
 def create_token_stream(fn)
   input = File.open(fn) 
@@ -84,6 +104,54 @@ def create_token_stream(fn)
   lexer = Lexer.new(inputstream)
   stream = CommonTokenStream.new(lexer)
 end
+def parse_example(grammar_name, start_rule, input) 
+  parserClass, lexerClass = load_grammar(grammar_name)
+  inputstream = InputStream.new(input.read)
+  lexer = lexerClass.new(inputstream)
+
+  stream = CommonTokenStream.new(lexer)
+  parser = parserClass.new(stream)
+  parser.setTrace($TRACE)
+  parser.buildParseTrees = true 
+  tree = parser.send(start_rule.to_sym) 
+  ParseTreeWalker.DEFAULT.walk(TreeShapeListener.new(), tree)
+end
+
+def load_grammar(grammar_name,selection=:all)
+  if selection == :all then
+   [ load_grammar_file(grammar_name, 'Parser'), load_grammar_file(grammar_name, 'Lexer') ]
+  elsif selection == :lexer then
+   [ nil, load_grammar_file(grammar_name, 'Lexer') ]
+  end
+end
+def load_grammar_file(grammar_name, suffix)
+    n = "#{grammar_name}#{suffix}"
+    require n
+    puts "#{n.inspect} -> #{n.to_sym.inspect}" if $DEBUG
+    kls = Object.const_get n.to_sym
+end
+
+def main(args)
+  grammar_name = args['-g']
+  start_rule = args['-s']
+
+#  puts args.inspect
+
+  args['<input_files>'].each do |in_file|
+      puts "#{grammar_name}: #{in_file}"
+      input = File.open(in_file)
+      if args['-tokens'] then
+        print_tokens(grammar_name, start_rule, input)
+      else
+        parse_example(grammar_name, start_rule, input) 
+      end
+      input.close
+  end
+end
+
+main(Getopt::Declare.new(ARG_DEF))
+
+__END__
 #def test1(fn)
 #  input = File.open(fn)
 #  inputstream = InputStream.new(input.read)
@@ -98,39 +166,3 @@ end
 #  ParseTreeWalker.DEFAULT.walk(TreeShapeListener.new(), tree)
 #end
 
-def parse_example(grammar_name, start_rule, input) 
-  parserClass, lexerClass = load_grammar(grammar_name)
-  inputstream = InputStream.new(input.read)
-  lexer = lexerClass.new(inputstream)
-
-  stream = CommonTokenStream.new(lexer)
-  parser = parserClass.new(stream)
-  parser.setTrace($TRACE)
-  parser.buildParseTrees = true 
-  tree = parser.send(start_rule.to_sym) 
-  ParseTreeWalker.DEFAULT.walk(TreeShapeListener.new(), tree)
-end
-
-def load_grammar(grammar_name)
- [ load_grammar_file(grammar_name, 'Parser'), load_grammar_file(grammar_name, 'Lexer') ]
-end
-def load_grammar_file(grammar_name, suffix)
-    n = "#{grammar_name}#{suffix}"
-    require n
-    puts "#{n.inspect} -> #{n.to_sym.inspect}" if $DEBUG
-    kls = Object.const_get n.to_sym
-end
-
-def main(args)
-  grammar_name = args['-g']
-  in_file = args['-i']
-  start_rule = args['-s']
-
-  puts "#{grammar_name}: #{in_file}"
-  
-  input = File.open(in_file)
-  parse_example(grammar_name, start_rule, input) 
-  input.close
-end
-
-main(Getopt::Declare.new(ARG_DEF))
