@@ -106,7 +106,8 @@ class DFAState
     end
     def ==(other)
       # compare set of ATN configurations in this set with other
-      (other.class == self.class or other.kind_of? DFAState) and self.configs==other.configs
+      return true if self.equal?(other)
+      other.kind_of?(DFAState) and self.configs==other.configs
     end
 
     def to_s

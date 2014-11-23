@@ -77,7 +77,7 @@ class PredictionContextCache
     #  Protect shared cache from unsafe thread access.
     #
     def add(ctx)
-        if ctx==PredictionContext.EMPTY
+        if ctx.equal? PredictionContext.EMPTY then
             return PredictionContext.EMPTY
         end
         existing = self.cache[ctx]
@@ -136,7 +136,7 @@ class SingletonPredictionContext < PredictionContext
     end
     def ==(other)
         return false if self.class != other.class
-        return true if self.object_id == other.object_id
+        return true if self.equal?(other)
         if self.hash != other.hash
             false #      can't be same if hash is different
         else
@@ -183,7 +183,7 @@ class EmptyPredictionContext < SingletonPredictionContext
     end
 
     def ==(other)
-        self.object_id ==  other.object_id
+        self.equal? other
     end
 
     def to_s
@@ -225,8 +225,8 @@ class ArrayPredictionContext < PredictionContext
     end
     def ==(other)
         return false if self.class != other.class
-        return true if self.object_id == other.object_id
-        if self.hash() != other.hash
+        return true if self.equal?(other)
+        if self.hash != other.hash
             false # can't be same if hash is different
         else
             self.returnStates==other.returnStates and self.parents==other.parents
@@ -379,7 +379,7 @@ def mergeSingletons(a, b, rootIsWildcard, mergeCache)
     else # a != b payloads differ
         # see if we can collapse parents due to $+x parents if local ctx
         singleParent = nil
-        if a.object_id == b.object_id or (not a.parentCtx.nil? and a.parentCtx==b.parentCtx) # ax + bx = [a,b]x
+        if a.equal?(b) or (a.parentCtx and a.parentCtx==b.parentCtx) # ax + bx = [a,b]x
             singleParent = a.parentCtx
         end
         if not singleParent.nil? # parents are same

@@ -121,7 +121,7 @@ class Predicate < SemanticContext
       self == other
     end
     def ==(other)
-        self.equal? other or other.kind_of?(Predicate) and \
+        self.equal?(other)or other.kind_of?(Predicate) and \
               self.ruleIndex == other.ruleIndex and \
                self.predIndex == other.predIndex and \
                self.isCtxDependent == other.isCtxDependent
@@ -161,7 +161,7 @@ class PrecedencePredicate < SemanticContext
         self == other
     end
     def ==(other)
-        self.equal? other or other.kind_of?(PrecedencePredicate) and self.precedence == other.precedence
+        self.equal?(other) or other.kind_of?(PrecedencePredicate) and self.precedence == other.precedence
     end
 end
 # A semantic context which is true whenever none of the contained contexts
@@ -194,8 +194,8 @@ class AND < SemanticContext
       self == other
     end
     def ==(other)
-        self.equal? other or \
-        other.kind_of? AND and self.opnds == other.opnds
+        self.equal?(other) or \
+        other.kind_of?(AND) and self.opnds == other.opnds
     end
     
     def hash 
@@ -291,7 +291,7 @@ class OR < SemanticContext
         self == other
     end
     def ==(other)
-        self.equal? other or other.kind_of? OR and self.opnds == other.opnds
+        self.equal?(other) or other.kind_of?(OR) and self.opnds == other.opnds
     end
     def hash
         "#{self.opnds}/OR".hash

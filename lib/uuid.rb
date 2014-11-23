@@ -81,8 +81,7 @@ class UUID
        self == other
     end
     def ==(other)
-        self.equal?(other) or other.kind_of? self.class and
-          self.value == other.value 
+        self.equal?(other) or (other.kind_of?(UUID) and self.value == other.value )
     end
 end
 
