@@ -334,7 +334,7 @@ class Parser < Recognizer
     #
     def consume()
         o = self.getCurrentToken()
-        if o.type != Token.EOF then
+        if o.type != Token::EOF then
             self.getInputStream().consume()
         end
         hasListener = self.parseListeners and @parseListeners.length>0 

@@ -112,7 +112,7 @@ class ParseTreePatternMatcher
         end
 
         # Make sure tree pattern compilation checks for a complete parse
-        if tokens.LA(1)!=Token.EOF then
+        if tokens.LA(1)!=Token::EOF then
             raise StartRuleDoesNotConsumeFullPattern.new()
         end
 
@@ -237,7 +237,7 @@ class ParseTreePatternMatcher
             else
                 self.lexer.setInputStream(InputStream.new(chunk.text))
                 t = self.lexer.nextToken()
-                while t.type!=Token.EOF do 
+                while t.type!=Token::EOF do 
                     tokens.push(t)
                     t = self.lexer.nextToken()
                 end

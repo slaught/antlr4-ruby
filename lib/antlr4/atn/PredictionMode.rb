@@ -442,7 +442,7 @@ class PredictionMode
         if all.length==1
             return all[0]
         else
-            return ATN.INVALID_ALT_NUMBER
+            return ATN::INVALID_ALT_NUMBER
         end
     end
     # Gets the complete set of represented alternatives for a collection of
@@ -517,7 +517,7 @@ class PredictionMode
             minAlt = alts.min
             viableAlts.add(minAlt)
             if viableAlts.length>1  # more than 1 viable alt
-                return ATN.INVALID_ALT_NUMBER
+                return ATN::INVALID_ALT_NUMBER
             end
         }
         return min(viableAlts)

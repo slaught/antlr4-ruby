@@ -32,7 +32,7 @@ class LL1Analyzer
                   look[alt], lookBusy, Set.new(), seeThruPreds, false)
             # Wipe out lookahead for this alternative if we found nothing
             # or we had a predicate when we !seeThruPreds
-            if look[alt].length==0 or look[alt].member? self.HIT_PRED then
+            if look[alt].length==0 or look[alt].member? LL1Analyzer::HIT_PRED then
                 look[alt] = nil
             end
         end
@@ -113,7 +113,7 @@ class LL1Analyzer
                 look.addOne(Token.EPSILON)
                 return
             elsif ctx.isEmpty() and addEOF
-                look.addOne(Token.EOF)
+                look.addOne(Token::EOF)
                 return
             end
         end
@@ -123,7 +123,7 @@ class LL1Analyzer
                 look.addOne(Token.EPSILON)
                 return
             elsif ctx.isEmpty() and addEOF
-                look.addOne(Token.EOF)
+                look.addOne(Token::EOF)
                 return
             end
             if ctx != PredictionContext.EMPTY
@@ -157,7 +157,7 @@ class LL1Analyzer
                 if seeThruPreds
                     self._LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF)
                 else
-                    look.addOne(self.HIT_PRED)
+                    look.addOne(LL1Analyzer::HIT_PRED)
                 end
             elsif t.isEpsilon
                 self._LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF)

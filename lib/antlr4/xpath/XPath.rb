@@ -163,7 +163,7 @@ class XPath
             elsif [XPathLexer.TOKEN_REF, XPathLexer.RULE_REF, XPathLexer.WILDCARD].member? el.type then
                     elements.push( self.getXPathElement(el, false) )
                     i = i + 1
-            elsif el.type==Token.EOF then
+            elsif el.type==Token::EOF then
                     break
             else
                     raise Exception.new("Unknown path element #{el}")
@@ -178,7 +178,7 @@ class XPath
     # word.
     #
     def getXPathElement(wordToken, anywhere)
-        if wordToken.type==Token.EOF then
+        if wordToken.type==Token::EOF then
             raise Exception.new("Missing path element at end of path")
         end
         word = wordToken.text

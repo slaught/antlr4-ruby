@@ -117,7 +117,7 @@ class Lexer < TokenSource
                         self.notifyListeners(e)		# report error
                         self.recover(e)
                     end
-                    if self.input.LA(1)==Token.EOF then
+                    if self.input.LA(1)==Token::EOF then
                         self.hitEOF = true
                     end
                     if self.type == Token.INVALID_TYPE

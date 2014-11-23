@@ -21,7 +21,7 @@ class InputStream
 
     def consume()
         if self.index >= self.size then
-            # assert self.LA(1) == Token.EOF
+            # assert self.LA(1) == Token::EOF
             raise Exception.new("cannot consume EOF")
         end
         self.index = self.index + 1
@@ -35,7 +35,7 @@ class InputStream
         end
         pos = @index + offset - 1
         if pos < 0 or pos >= @size then # invalid
-            return Token.EOF
+            return Token::EOF
         end
         return self.data[pos]
     end

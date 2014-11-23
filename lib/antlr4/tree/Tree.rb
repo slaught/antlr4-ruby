@@ -130,7 +130,7 @@ module NodeImpl
     end
 
     def to_s
-        if self.symbol.type == Token.EOF then
+        if self.symbol.type == Token::EOF then
             "<EOF>"
         else
             self.symbol.text

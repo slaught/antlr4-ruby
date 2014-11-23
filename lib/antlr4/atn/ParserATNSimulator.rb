@@ -416,7 +416,7 @@ class ParserATNSimulator < ATNSimulator
                 e = self.noViableAlt(input, outerContext, previousD.configs, startIndex)
                 input.seek(startIndex)
                 alt = self.getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(previousD.configs, outerContext)
-                if alt!=ATN.INVALID_ALT_NUMBER
+                if alt!=ATN::INVALID_ALT_NUMBER
                     return alt
                 end
                 raise e
@@ -475,7 +475,7 @@ class ParserATNSimulator < ATNSimulator
             end
             previousD = cD
 
-            if t != Token.EOF
+            if t != Token::EOF
                 input.consume()
                 t = input.LA(1)
             end
@@ -531,7 +531,7 @@ class ParserATNSimulator < ATNSimulator
                 }, allSubsetsConflict=#{PredictionMode.allSubsetsConflict(altSubSets)
                 }, conflictingAlts=#{self.getConflictingAlts(reach)}"
         end
-        if predictedAlt!=ATN.INVALID_ALT_NUMBER
+        if predictedAlt!=ATN::INVALID_ALT_NUMBER
             # NO CONFLICT, UNIQUELY PREDICTED ALT
             cD.isAcceptState = true
             cD.configs.uniqueAlt = predictedAlt
@@ -547,7 +547,7 @@ class ParserATNSimulator < ATNSimulator
         if cD.isAcceptState and cD.configs.hasSemanticContext
             self.predicateDFAState(cD, self.atn.getDecisionState(dfa.decision))
             if cD.predicates then
-                cD.prediction = ATN.INVALID_ALT_NUMBER
+                cD.prediction = ATN::INVALID_ALT_NUMBER
             end
         end
 
@@ -565,7 +565,7 @@ class ParserATNSimulator < ATNSimulator
         altToPred = self.getPredsForAmbigAlts(altsToCollectPredsFrom, dfaState.configs, nalts)
         if altToPred 
             dfaState.predicates = self.getPredicatePredictions(altsToCollectPredsFrom, altToPred)
-            dfaState.prediction = ATN.INVALID_ALT_NUMBER # make sure we use preds
+            dfaState.prediction = ATN::INVALID_ALT_NUMBER # make sure we use preds
         else
             # There are preds in configs but they might go away
             # when OR'd together like {p}? || NONE == NONE. If neither
@@ -601,7 +601,7 @@ class ParserATNSimulator < ATNSimulator
                 e = self.noViableAlt(input, outerContext, previous, startIndex)
                 input.seek(startIndex)
                 alt = self.getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(previous, outerContext)
-                if alt!=ATN.INVALID_ALT_NUMBER
+                if alt!=ATN::INVALID_ALT_NUMBER
                     return alt
                 else
                     raise e
@@ -614,12 +614,12 @@ class ParserATNSimulator < ATNSimulator
             end
             reach.uniqueAlt = self.getUniqueAlt(reach)
             # unique prediction?
-            if reach.uniqueAlt!=ATN.INVALID_ALT_NUMBER
+            if reach.uniqueAlt!=ATN::INVALID_ALT_NUMBER then
                 predictedAlt = reach.uniqueAlt
                 break
             elsif self.predictionMode != PredictionMode.LL_EXACT_AMBIG_DETECTION
                 predictedAlt = PredictionMode.resolvesToJustOneViableAlt(altSubSets)
-                if predictedAlt != ATN.INVALID_ALT_NUMBER
+                if predictedAlt != ATN::INVALID_ALT_NUMBER
                     break
                 end
             else
@@ -635,7 +635,7 @@ class ParserATNSimulator < ATNSimulator
                 # So, keep going.
             end
             previous = reach
-            if t != Token.EOF
+            if t != Token::EOF
                 input.consume()
                 t = input.LA(1)
             end
@@ -643,7 +643,7 @@ class ParserATNSimulator < ATNSimulator
         # If the configuration set uniquely predicts an alternative,
         # without conflict, then we know that it's a full LL decision
         # not SLL.
-        if reach.uniqueAlt != ATN.INVALID_ALT_NUMBER 
+        if reach.uniqueAlt != ATN::INVALID_ALT_NUMBER 
             self.reportContextSensitivity(dfa, predictedAlt, reach, startIndex, input.index)
             return predictedAlt
         end
@@ -709,7 +709,7 @@ class ParserATNSimulator < ATNSimulator
 
             if c.state.kind_of? RuleStopState then
                 #assert c.context.isEmpty()
-                if fullCtx or t == Token.EOF
+                if fullCtx or t == Token::EOF
                     if skippedStopStates.nil?
                         skippedStopStates = Array.new
                     end
@@ -745,7 +745,7 @@ class ParserATNSimulator < ATNSimulator
                 # Also don't pursue the closure if there is unique alternative
                 # among the configurations.
                 reach = intermediate
-            elsif self.getUniqueAlt(intermediate)!=ATN.INVALID_ALT_NUMBER
+            elsif self.getUniqueAlt(intermediate)!=ATN::INVALID_ALT_NUMBER
                 # Also don't pursue the closure if there is unique alternative
                 # among the configurations.
                 reach = intermediate
@@ -757,12 +757,12 @@ class ParserATNSimulator < ATNSimulator
         if reach.nil? 
             reach = ATNConfigSet.new(fullCtx)
             closureBusy = Set.new()
-            treatEofAsEpsilon = t == Token.EOF
+            treatEofAsEpsilon = t == Token::EOF
             intermediate.each {|c|
                 self.closure(c, reach, closureBusy, false, fullCtx, treatEofAsEpsilon)
             }
         end
-        if t == Token.EOF
+        if t == Token::EOF
             # After consuming EOF no additional input is possible, so we are
             # only interested in configurations which reached the end of the
             # decision rule (local context) or end of the start rule (full
@@ -1057,17 +1057,17 @@ class ParserATNSimulator < ATNSimulator
     def getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(configs, outerContext)
         semValidConfigs, semInvalidConfigs = self.splitAccordingToSemanticValidity(configs, outerContext)
         alt = self.getAltThatFinishedDecisionEntryRule(semValidConfigs)
-        if alt!=ATN.INVALID_ALT_NUMBER # semantically/syntactically viable path exists
+        if alt!=ATN::INVALID_ALT_NUMBER # semantically/syntactically viable path exists
             return alt
         end
         # Is there a syntactically valid path with a failed pred?
         if semInvalidConfigs.length>0
             alt = self.getAltThatFinishedDecisionEntryRule(semInvalidConfigs)
-            if alt!=ATN.INVALID_ALT_NUMBER  # syntactically viable path exists
+            if alt!=ATN::INVALID_ALT_NUMBER  # syntactically viable path exists
                 return alt
             end
         end
-        return ATN.INVALID_ALT_NUMBER
+        return ATN::INVALID_ALT_NUMBER
     end
     def getAltThatFinishedDecisionEntryRule(configs)
         alts = Set.new()
@@ -1077,7 +1077,7 @@ class ParserATNSimulator < ATNSimulator
             end
         end
         if alts.empty?
-            return ATN.INVALID_ALT_NUMBER
+            return ATN::INVALID_ALT_NUMBER
         else
             return alts.min
         end
@@ -1283,7 +1283,7 @@ class ParserATNSimulator < ATNSimulator
             # EOF transitions act like epsilon transitions after the first EOF
             # transition is traversed
             if treatEofAsEpsilon
-                if t.matches(Token.EOF, 0, 1)
+                if t.matches(Token::EOF, 0, 1)
                     return ATNConfig.createConfigState(config, t.target)
                 end
             end
@@ -1416,7 +1416,7 @@ class ParserATNSimulator < ATNSimulator
 
     def getConflictingAltsOrUniqueAlt(configs)
         conflictingAlts = nil
-        if configs.uniqueAlt!= ATN.INVALID_ALT_NUMBER
+        if configs.uniqueAlt!= ATN::INVALID_ALT_NUMBER
             conflictingAlts = Set.new()
             conflictingAlts.add(configs.uniqueAlt)
         else
@@ -1425,7 +1425,7 @@ class ParserATNSimulator < ATNSimulator
         return conflictingAlts
     end
     def getTokenName(t)
-        if t==Token.EOF
+        if t==Token::EOF
             return "EOF"
         end
         if self.parser and self.parser.tokenNames then
@@ -1471,12 +1471,12 @@ class ParserATNSimulator < ATNSimulator
     end
 
     def getUniqueAlt(configs)
-        alt = ATN.INVALID_ALT_NUMBER
+        alt = ATN::INVALID_ALT_NUMBER
         configs.each do |c|
-            if alt == ATN.INVALID_ALT_NUMBER
+            if alt == ATN::INVALID_ALT_NUMBER
                 alt = c.alt # found first alt
             elsif c.alt!=alt
-                return ATN.INVALID_ALT_NUMBER
+                return ATN::INVALID_ALT_NUMBER
             end
         end
         return alt

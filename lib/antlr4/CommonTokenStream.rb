@@ -2,9 +2,9 @@
 class CommonTokenStream < BufferedTokenStream
 
     attr_accessor :channel
-    def initialize(lexer, channel=Token.DEFAULT_CHANNEL)
+    def initialize(lexer, _channel=Token::DEFAULT_CHANNEL)
         super(lexer)
-        self.channel = channel
+        @channel = _channel
     end
 
     def adjustSeekIndex(i)
@@ -49,7 +49,7 @@ class CommonTokenStream < BufferedTokenStream
             if t.channel==self.channel
                 n = n + 1
             end
-            break if t.type==Token.EOF
+            break if t.type==Token::EOF
         end
         return n
     end

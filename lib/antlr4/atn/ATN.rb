@@ -125,7 +125,7 @@ class ATN
             ctx = ctx.parentCtx
         end
         if following.member?(Token.EPSILON) then
-            expected.addOne(Token.EOF)
+            expected.addOne(Token::EOF)
         end
         return expected
     end

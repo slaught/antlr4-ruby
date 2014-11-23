@@ -142,7 +142,7 @@ class IntervalSet
        end
     end
     def elementName(tokenNames, a)
-        if a==Token.EOF then
+        if a==Token::EOF then
             return "<EOF>"
         elsif a==Token.EPSILON
             return "<EPSILON>"

@@ -173,12 +173,12 @@ class LexerATNSimulator < ATNSimulator
 
             if target.isAcceptState
                 self.captureSimState(self.prevAccept, input, target)
-                if t == Token.EOF
+                if t == Token::EOF
                     break
                 end
             end
 
-            if t != Token.EOF
+            if t != Token::EOF
                 self.consume(input)
                 t = input.LA(1)
             end
@@ -248,8 +248,8 @@ class LexerATNSimulator < ATNSimulator
             return prevAccept.dfaState.prediction
         else
             # if no accept and EOF is first char, return EOF
-            if t==Token.EOF and input.index==self.startIndex
-                return Token.EOF
+            if t==Token::EOF and input.index==self.startIndex
+                return Token::EOF
             end
             raise LexerNoViableAltException.new(self.recog, input, self.startIndex, reach)
         end
@@ -278,7 +278,7 @@ class LexerATNSimulator < ATNSimulator
                     if lexerActionExecutor 
                         lexerActionExecutor = lexerActionExecutor.fixOffsetBeforeMatch(input.index - self.startIndex)
                     end
-                    treatEofAsEpsilon = (t == Token.EOF)
+                    treatEofAsEpsilon = (t == Token::EOF)
                     config = LexerATNConfig.new(target, nil, nil, nil, lexerActionExecutor, cfg)
                     if self.closure(input, config, reach, currentAltReachedAcceptState, true, treatEofAsEpsilon)
                         # any remaining configs for this alt have a lower priority than
@@ -299,7 +299,7 @@ class LexerATNSimulator < ATNSimulator
         input.seek(index)
         self.line = _line
         self.column = charPos
-        if input.LA(1) != Token.EOF
+        if input.LA(1) != Token::EOF
             self.consume(input)
         end
         if lexerActionExecutor and self.recog 
@@ -445,7 +445,7 @@ class LexerATNSimulator < ATNSimulator
               c = LexerATNConfig.new(t.target,nil,nil,nil,nil, config)
         elsif [ Transition.ATOM, Transition.RANGE, Transition.SET ].member? t.serializationType 
             if treatEofAsEpsilon
-                if t.matches(Token.EOF, 0, 0xFFFF)
+                if t.matches(Token::EOF, 0, 0xFFFF)
                     c = LexerATNConfig.new(t.target,nil,nil,nil,nil, config)
                 end
             end

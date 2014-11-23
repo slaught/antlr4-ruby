@@ -232,7 +232,7 @@ class DefaultErrorStrategy < ErrorStrategy
         s = recognizer.interp.atn.states[recognizer.state]
         la = recognizer.getTokenStream().LA(1)
         # try cheaper subset first; might get lucky. seems to shave a wee bit off
-        if la==Token.EOF or recognizer.atn.nextTokens(s).member? la
+        if la==Token::EOF or recognizer.atn.nextTokens(s).member? la
             return
         end
 
@@ -269,7 +269,7 @@ class DefaultErrorStrategy < ErrorStrategy
     def reportNoViableAlternative(recognizer, e)
         tokens = recognizer.getTokenStream()
         if not tokens.nil? then
-            if e.startToken.type==Token.EOF then
+            if e.startToken.type==Token::EOF then
                 input = "<EOF>"
             else
                 input = tokens.getText([e.startToken, e.offendingToken])
@@ -531,7 +531,7 @@ class DefaultErrorStrategy < ErrorStrategy
         end
         current = currentSymbol
         lookback = recognizer.getTokenStream().LT(-1)
-        if current.type==Token.EOF and not lookback.nil? then 
+        if current.type==Token::EOF and not lookback.nil? then 
             current = lookback
         end
         return recognizer.getTokenFactory().create(current.source,
@@ -554,7 +554,7 @@ class DefaultErrorStrategy < ErrorStrategy
         return "<no token>" if token.nil?
         s = token.text
         if s.nil? then
-            if token.type==Token.EOF then
+            if token.type==Token::EOF then
                 s = "<EOF>"
             else
                 s = "<#{token.class}>"
@@ -680,7 +680,7 @@ class DefaultErrorStrategy < ErrorStrategy
     # Consume tokens until one matches the given token set.#
     def consumeUntil(recognizer, set_)
         ttype = recognizer.getTokenStream().LA(1)
-        while ttype != Token.EOF and not set_.member? ttype do
+        while ttype != Token::EOF and not set_.member? ttype do
             recognizer.consume()
             ttype = recognizer.getTokenStream().LA(1)
         end

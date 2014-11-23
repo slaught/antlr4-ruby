@@ -50,7 +50,7 @@ class Recognizer
         result = self.tokenTypeMapCache.get(tokenNames)
         if result.nil? 
             result = tokenNames.zip(0..tokenNames.length) 
-            result["EOF"] = Token.EOF
+            result["EOF"] = Token::EOF
             self.tokenTypeMapCache[tokenNames] = result
         end
         return result
@@ -106,7 +106,7 @@ class Recognizer
         return "<no token>" if t.nil? 
         s = t.text
         if s.nil? 
-            if t.type==Token.EOF
+            if t.type==Token::EOF
                 s = "<EOF>"
             else
                 s = "<" + str(t.type) + ">"

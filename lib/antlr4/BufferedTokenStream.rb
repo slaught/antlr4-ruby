@@ -69,7 +69,7 @@ class BufferedTokenStream < TokenStream
             # not yet initialized
             skipEofCheck = false
         end
-        if not skipEofCheck and self.LA(1) == Token.EOF then
+        if not skipEofCheck and self.LA(1) == Token::EOF then
             raise IllegalStateException.new("cannot consume EOF")
         end
         if self.sync(self.index + 1) then
@@ -101,7 +101,7 @@ class BufferedTokenStream < TokenStream
             t = self.tokenSource.nextToken()
             t.tokenIndex = self.tokens.length
             self.tokens.push(t)
-            if t.type==Token.EOF then
+            if t.type==Token::EOF then
                 self.fetchedEOF = true
                 return i + 1
             end
@@ -121,7 +121,7 @@ class BufferedTokenStream < TokenStream
         end
         for i in start..stop-1 do
             t = self.tokens[i]
-            if t.type==Token.EOF
+            if t.type==Token::EOF
                 break
             end
             if types.nil? or types.member? t.type then
@@ -194,7 +194,7 @@ class BufferedTokenStream < TokenStream
         return -1 if i>=self.tokens.length 
         token = self.tokens[i]
         while token.channel!=self.channel do
-            return -1 if token.type==Token.EOF
+            return -1 if token.type==Token::EOF
             i = i + 1
             self.sync(i)
             token = self.tokens[i]
@@ -290,7 +290,7 @@ class BufferedTokenStream < TokenStream
         StringIO.open  do |buf|
             for i in start..stop do
                 t = self.tokens[i]
-                break if t.type==Token.EOF
+                break if t.type==Token::EOF
                 buf.write(t.text)
             end
             return buf.string()
