@@ -4,21 +4,21 @@ class ATNDeserializationOptions
 
     @@defaultOptions = nil
     def self.defaultOptions 
-      if @@defaultOptions.nil?
+#      if @@defaultOptions.nil?
          @@defaultOptions = new 
          @@defaultOptions.makeReadOnly() 
-      end
+#      end
      @@defaultOptions  
     end
 
     attr_accessor :readonly, :verifyATN ,:generateRuleBypassTransitions
     def initialize(options=nil )
         if options.nil?
-          self.verifyATN = true 
-          self.generateRuleBypassTransitions = false
+          @verifyATN = true 
+          @generateRuleBypassTransitions = false
         else
-          self.verifyATN = options.verifyATN
-          self.generateRuleBypassTransitions = options.generateRuleBypassTransitions
+          @verifyATN = options.verifyATN
+          @generateRuleBypassTransitions = options.generateRuleBypassTransitions
         end
 
     end

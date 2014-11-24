@@ -132,7 +132,7 @@ class LL1Analyzer
                     returnState = self.atn.states[ctx.getReturnState(i)]
                     removed = calledRuleStack.member? returnState.ruleIndex 
                     begin
-                        calledRuleStack.discard(returnState.ruleIndex)
+                        calledRuleStack.delete(returnState.ruleIndex)
                         self._LOOK(returnState, stopState, ctx.getParent(i), look, lookBusy, calledRuleStack, seeThruPreds, addEOF)
                     ensure 
                         calledRuleStack.add(returnState.ruleIndex) if removed

@@ -78,7 +78,7 @@ class LexerTypeAction < LexerAction
     end
 
     def ==(other) 
-        self.equal? other or other.kind_of? LexerTypeAction and self.type == other.type
+        self.equal?(other) or other.kind_of?(LexerTypeAction) and self.type == other.type
     end
     def to_s
         return "type(#{self.type})"
@@ -106,7 +106,7 @@ class LexerPushModeAction < LexerAction
     end
 
     def ==(other)
-        self.equal? other or other.kind_of?  LexerPushModeAction and self.mode == other.mode
+        self.equal?(other) or other.kind_of?(LexerPushModeAction) and self.mode == other.mode
     end
 
     def to_s
@@ -186,7 +186,7 @@ class LexerModeAction < LexerAction
     end
 
     def ==(other)
-        self.equal? other or other.kind_of? LexerModeAction and self.mode == other.mode
+        self.equal?(other)or other.kind_of?(LexerModeAction)and self.mode == other.mode
     end
 
     def to_s
@@ -229,7 +229,7 @@ class LexerCustomAction < LexerAction
     end
 
     def ==( other)
-        self.equal? other or other.kind_of?  LexerCustomAction \
+        self.equal?(other) or other.kind_of?( LexerCustomAction) \
         and self.ruleIndex == other.ruleIndex and self.actionIndex == other.actionIndex
     end
 end
@@ -255,7 +255,7 @@ class LexerChannelAction < LexerAction
     end
 
     def ==(other)
-        self.equal? other or other.kind_of? LexerChannelAction \
+        self.equal?(other) or other.kind_of?(LexerChannelAction) \
           and self.channel == other.channel
     end
 
@@ -304,7 +304,7 @@ class LexerIndexedCustomAction < LexerAction
     end
 
     def ==(other)
-        self.equal? other or other.kind_of? LexerIndexedCustomAction \
+        self.equal?(other) or other.kind_of?(LexerIndexedCustomAction) \
             and self.offset == other.offset and self.action == other.action
     end
 end

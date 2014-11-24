@@ -11,7 +11,7 @@ class DFASerializer
     def to_s
         return nil if self.dfa.s0.nil? 
         StringIO.open do |buf|
-            for s in self.dfa.sortedStates()
+            self.dfa.sortedStates().each do |s|
                 n = 0
                 if not s.edges.nil? 
                     n = s.edges.length
@@ -72,6 +72,6 @@ class LexerDFASerializer < DFASerializer
     end
 
     def getEdgeLabel(i)
-        return "'#{i.pack('U')}'"
+        return "'#{[i].pack('U')}'"
     end
 end

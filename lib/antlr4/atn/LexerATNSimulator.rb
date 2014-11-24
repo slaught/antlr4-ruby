@@ -45,12 +45,6 @@ class LexerATNSimulator < ATNSimulator
     MIN_DFA_EDGE = 0
     MAX_DFA_EDGE = 127 # forces unicode to stay in ATN
 
-    @@ERROR = nil
-    def self.ERROR
-      @@ERROR = DFAState.new(0x7FFFFFFF, ATNConfigSet.new) if @@ERROR.nil?
-      @@ERROR
-    end
-
     attr_accessor :decisionToDFA, :recog, :startIndex, :line, :column 
     attr_accessor :mode, :prevAccept 
 
@@ -60,7 +54,7 @@ class LexerATNSimulator < ATNSimulator
         if decision_to_dfa.nil?  then
           raise Exception.new("Error: #{self.class} decisionToDFA is nil.")
         end
-        self.decisionToDFA = decision_to_dfa
+        @decisionToDFA = decision_to_dfa
         @recog = _recog
         # The current token's starting index into the character stream.
         #  Shared across DFA to ATN simulation in case the ATN fails and the
@@ -91,7 +85,8 @@ class LexerATNSimulator < ATNSimulator
             self.startIndex = input.index
             self.prevAccept.reset()
             dfa = self.decisionToDFA[mode]
-            if dfa && dfa.s0.nil? 
+            type_check(dfa, DFA)
+            if dfa and dfa.s0.nil?  then
                 return self.matchATN(input)
             else
                 return self.execATN(input, dfa.s0)
@@ -107,10 +102,13 @@ class LexerATNSimulator < ATNSimulator
         @column = 0
         @mode = Lexer.DEFAULT_MODE
     end
+    def clearDFA()
+      raise Exception.new("not implemented")
+    end
     def matchATN(input)
         startState = self.atn.modeToStartState[self.mode]
 
-        if self.debug
+        if self.debug then
             print "matchATN mode #{self.mode} start: #{startState}"
         end
 
@@ -120,29 +118,31 @@ class LexerATNSimulator < ATNSimulator
         s0_closure.hasSemanticContext = false
 
         nxt = self.addDFAState(s0_closure)
-        if not suppressEdge
+        if not suppressEdge then
             self.decisionToDFA[self.mode].s0 = nxt
         end
 
         predict = self.execATN(input, nxt)
 
-        if self.debug
+        if self.debug then
             print  "DFA after matchATN: #{self.decisionToDFA[old_mode].toLexerString()}"
         end
 
         return predict
     end
     def execATN(input, ds0)
-        if self.debug
-            print "start state closure=#{ds0.configs}"
+        if self.debug then
+            puts "start state closure=#{ds0.configs.to_s}"
         end
 
         t = input.LA(1)
         s = ds0 # s is current/from DFA state
 
+        raise Exception.new("s is nil") if s.nil?
+
         while true do # while more work
-            if self.debug
-                print "execATN loop starting closure: #{s.configs}\n"
+            if self.debug then
+                puts "execATN loop starting closure: #{s.configs}"
             end
 
             # As we move src->trg, src->trg, we keep track of the previous trg to
@@ -165,11 +165,11 @@ class LexerATNSimulator < ATNSimulator
             # print("Target for:" + str(s) + " and:" + str(t))
             target = self.getExistingTargetState(s, t)
             # print("Existing:" + str(target))
-            if target.nil? 
+            if target.nil? then
                 target = self.computeTargetState(input, s, t)
             end
                 # print("Computed:" + str(target))
-            break if target == LexerATNSimulator.ERROR
+            break if target.equal? ATNSimulator::ERROR
 
             if target.isAcceptState
                 self.captureSimState(self.prevAccept, input, target)
@@ -205,7 +205,7 @@ class LexerATNSimulator < ATNSimulator
 
         target = s.edges[t - LexerATNSimulator.MIN_DFA_EDGE]
         if self.debug and not target.nil? 
-            print "reuse state #{s.stateNumber} edge to #{target.stateNumber}"
+            puts  "reuse state #{s.stateNumber} edge to #{target.stateNumber}"
         end
 
         return target
@@ -232,10 +232,10 @@ class LexerATNSimulator < ATNSimulator
             if not reach.hasSemanticContext
                 # we got nowhere on t, don't throw out this knowledge; it'd
                 # cause a failover from DFA later.
-               self.addDFAEdge(s, t, LexerATNSimulator.ERROR)
+               self.addDFAEdge(s, t, ATNSimulator::ERROR)
             end
             # stop when we can't match any more char
-            return LexerATNSimulator.ERROR
+            return ATNSimulator::ERROR
         end
 
         # Add an edge from s to target DFA found/created for reach
@@ -260,7 +260,7 @@ class LexerATNSimulator < ATNSimulator
     def getReachableConfigSet(input, closure, reach, t)
         # this is used to skip processing for configs which have a lower priority
         # than a config that already reached an accept state for the same rule
-        skipAlt = ATN.INVALID_ALT_NUMBER
+        skipAlt = ATN::INVALID_ALT_NUMBER
         for cfg in closure do
             currentAltReachedAcceptState = ( cfg.alt == skipAlt )
             if currentAltReachedAcceptState and cfg.passedThroughNonGreedyDecision
@@ -284,6 +284,7 @@ class LexerATNSimulator < ATNSimulator
                         # any remaining configs for this alt have a lower priority than
                         # the one that just reached an accept state.
                         skipAlt = cfg.alt
+                        break 
                     end
                end
 
@@ -381,7 +382,7 @@ class LexerATNSimulator < ATNSimulator
         #for t in config.state.transitions do
         config.state.transitions.each do |t|
           c = self.getEpsilonTarget(input, config, t, configs, speculative, treatEofAsEpsilon)
-          if c 
+          if c then
            currentAltReachedAcceptState = self.closure(input, c, configs, currentAltReachedAcceptState, speculative, treatEofAsEpsilon)
           end
         end
@@ -476,7 +477,7 @@ class LexerATNSimulator < ATNSimulator
         # assume true if no recognizer was provided
         return true if self.recog.nil? 
 
-        if not speculative
+        if not speculative then
             return self.recog.sempred(nil, ruleIndex, predIndex)
         end
 
@@ -520,7 +521,7 @@ class LexerATNSimulator < ATNSimulator
 
             to = self.addDFAState(cfgs)
 
-            if suppressEdge
+            if suppressEdge then
                 return to
             end
         end
@@ -531,12 +532,13 @@ class LexerATNSimulator < ATNSimulator
         end
 
         if self.debug
-            print "EDGE #{from_} -> #{to} upon #{tk.chr}"
+            puts  "EDGE #{from_} -> #{to} upon #{tk.chr}"
         end
 
         if from_.edges.nil? 
             #  make room for tokens 1..n and -1 masquerading as index 0
-            from_.edges = [nil] * (LexerATNSimulator.MAX_DFA_EDGE - LexerATNSimulator.MIN_DFA_EDGE + 1)
+            # from_.edges = [nil] * (LexerATNSimulator.MAX_DFA_EDGE - LexerATNSimulator.MIN_DFA_EDGE + 1)
+            from_.edges = Array.new 
         end
 
         from_.edges[tk - LexerATNSimulator.MIN_DFA_EDGE] = to # connect
@@ -556,13 +558,13 @@ class LexerATNSimulator < ATNSimulator
         firstConfigWithRuleStopState = nil
 #        for c in configs.each do |c|:
         configs.each do |c|
-            if c.state.kind_of? RuleStopState
+            if c.state.kind_of? RuleStopState then
                 firstConfigWithRuleStopState = c
                 break
             end
         end
 
-        if firstConfigWithRuleStopState 
+        if firstConfigWithRuleStopState then
             proposed.isAcceptState = true
             proposed.lexerActionExecutor = firstConfigWithRuleStopState.lexerActionExecutor
             proposed.prediction = self.atn.ruleToTokenType[firstConfigWithRuleStopState.state.ruleIndex]
@@ -570,7 +572,7 @@ class LexerATNSimulator < ATNSimulator
 
         dfa = self.decisionToDFA[self.mode]
         existing = dfa.states[proposed]
-        if existing 
+        if existing  then
             return existing
         end
 

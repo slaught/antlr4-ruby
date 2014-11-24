@@ -223,7 +223,7 @@ class Parser < Recognizer
 
 
     def getTokenFactory
-        return self.input.tokenSource._factory
+        return self.input.tokenSource.factory
     end
 
     # Tell our token source and error strategy about a new way to create tokens.#

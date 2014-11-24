@@ -1,8 +1,9 @@
 
 class ATN
-    include JavaSymbols
     INVALID_ALT_NUMBER = 0
-
+    def self.INVALID_ALT_NUMBER 
+      ATN::INVALID_ALT_NUMBER 
+    end
     # Used for runtime deserialization of ATNs from strings#/
     attr_accessor :grammarType, :maxTokenType, :states, :decisionToState
     attr_accessor :ruleToStartState, :ruleToStopState, :modeNameToStartState 

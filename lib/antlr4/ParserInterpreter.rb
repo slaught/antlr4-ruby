@@ -76,7 +76,7 @@ class ParserInterpreter < Parser
     end
     def enterRecursionRule(localctx, state, ruleIndex, precedence)
         self.parentContextStack.push([self.ctx, localctx.invokingState])
-        super.enterRecursionRule(localctx, state, ruleIndex, precedence)
+        super(localctx, state, ruleIndex, precedence)
     end
     def getATNState
         return self.atn.states[self.state]

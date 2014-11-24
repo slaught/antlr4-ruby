@@ -632,7 +632,7 @@ def getCachedPredictionContext(context, contextCache, visited)
     elsif parents.length == 1
         updated = SingletonPredictionContext.create(parents[0], context.getReturnState(0))
     else
-        updated = ArrayPredictionContext(parents, context.returnStates)
+        updated = ArrayPredictionContext.new(parents, context.returnStates)
     end
 
     contextCache.add(updated)

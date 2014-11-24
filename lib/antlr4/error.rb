@@ -33,8 +33,8 @@ class RecognitionException < Exception
         # {@link LexerNoViableAltException} exceptions, this is the
         # {@link DecisionState} number. For others, it is the state whose outgoing
         # edge we couldn't match.
-        self.offendingState = -1
-        if not recognizer.nil?  then
+        @offendingState = -1
+        if recognizer then
             @offendingState = recognizer.state
         end
     end
@@ -52,7 +52,8 @@ class RecognitionException < Exception
     # state in the ATN, or {@code null} if the information is not available.
     #/
     def getExpectedTokens()
-        if not self.recognizer.nil? then
+        if self.recognizer then
+            @offendingState = recognizer.state
             return self.recognizer.atn.getExpectedTokens(self.offendingState, self.ctx)
         else
             return nil

@@ -78,12 +78,12 @@ class ATNConfig
               buf.write(",")
               buf.write(self.alt.to_s)
             end
-            if not self.context.nil? 
+            if not self.context.nil? then
                 buf.write(",[")
                 buf.write(self.context.to_s)
                 buf.write("]")
             end
-            if self.semanticContext and self.semanticContext != SemanticContext.NONE
+            if self.semanticContext and (! self.semanticContext.equal?  SemanticContext.NONE) then
                 buf.write(",")
                 buf.write(self.semanticContext.to_s)
             end
@@ -101,16 +101,16 @@ end
 class LexerATNConfig < ATNConfig
 
     attr_accessor :passedThroughNonGreedyDecision, :lexerActionExecutor 
-    def initialize(state, alt=nil, context=nil, semantic=SemanticContext.NONE, lexerActionExecutor=nil, config=nil)
+    def initialize(state, alt=nil, context=nil, semantic=SemanticContext.NONE, _lexerActionExecutor=nil, config=nil)
         super(state, alt, context, semantic, config)
         if not config.nil? then 
-            lexerActionExecutor = config.lexerActionExecutor if lexerActionExecutor.nil? 
-            self.checkNonGreedyDecision(config, state)
+            _lexerActionExecutor = config.lexerActionExecutor if _lexerActionExecutor.nil? 
+            @passedThroughNonGreedyDecision = self.checkNonGreedyDecision(config, state)
         else
-           self.passedThroughNonGreedyDecision = false 
+           @passedThroughNonGreedyDecision = false 
         end
         # This is the backing field for {@link #getLexerActionExecutor}.
-        self.lexerActionExecutor = lexerActionExecutor
+        @lexerActionExecutor = _lexerActionExecutor
     end
 
     def hash
@@ -128,13 +128,13 @@ class LexerATNConfig < ATNConfig
         if self.passedThroughNonGreedyDecision != other.passedThroughNonGreedyDecision
             return false
         end
-        if self.lexerActionExecutor.equal? other.lexerActionExecutor
-            super == other
+        if self.lexerActionExecutor == other.lexerActionExecutor
+              super(other)
         else
             false
         end
     end
     def checkNonGreedyDecision(source, target)
-        source.passedThroughNonGreedyDecision || target.kind_of?(DecisionState) && target.nonGreedy 
+        source.passedThroughNonGreedyDecision or (target.kind_of?(DecisionState) and target.nonGreedy )
     end
 end

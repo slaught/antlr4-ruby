@@ -169,7 +169,7 @@ class Lexer < TokenSource
         if self.interp.debug then
             puts  "popMode back to #{self.modeStack.slice(0,self.modeStack.length-1)}"
         end
-        self.mode = self.odeStack.pop() 
+        self.mode = self.modeStack.pop() 
         return self.mode
     end
 

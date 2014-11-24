@@ -56,7 +56,7 @@ class ATNConfigSet
     #/
     def add(config, mergeCache=nil)
         raise Exception.new("This set is readonly") if self.readonly
-        if config.semanticContext != SemanticContext.NONE
+        if ! config.semanticContext.equal? SemanticContext.NONE
             self.hasSemanticContext = true
         end
         if config.reachesIntoOuterContext > 0
@@ -94,7 +94,7 @@ class ATNConfigSet
     def getPredicates
         preds = Array.new
         self.configs.each{|c|
-            if c.semanticContext!=SemanticContext.NONE
+            if ! c.semanticContext.equal? SemanticContext.NONE then
                 preds.pushd(c.semanticContext)
             end
         }
@@ -183,12 +183,14 @@ class ATNConfigSet
     end
     def to_s
         StringIO.open  do |buf|
-            buf.write("[ #{@configs.map{|x| x.class} } ]@#{@configs.length}")
+            buf.write("[")
+            buf.write( @configs.map {|x| x.to_s}.join(', ') )
+            buf.write(']')  # @#{@configs.length}")
             if self.hasSemanticContext
                 buf.write(",hasSemanticContext=")
                 buf.write(self.hasSemanticContext.to_s)
             end
-            if self.uniqueAlt!=ATN.INVALID_ALT_NUMBER
+            if self.uniqueAlt!=ATN::INVALID_ALT_NUMBER
                 buf.write(",uniqueAlt=")
                 buf.write(self.uniqueAlt.to_s())
             end

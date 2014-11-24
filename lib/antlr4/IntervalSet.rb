@@ -10,7 +10,16 @@ class IntervalSet
     end
     def_delegators :@intervals, :each, :map 
     include Enumerable
+    
+    def self.of(a,b)
+       s = IntervalSet.new
+       s.addRange(a..b)
+       s
+    end
 
+    def getMinElement
+        intervals.first
+    end
     def addOne(v)
         self.addRange(v..v)
     end

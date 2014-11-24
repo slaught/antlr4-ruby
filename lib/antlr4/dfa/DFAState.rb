@@ -38,9 +38,13 @@ end
 class DFAState
     attr_accessor :stateNumber, :configs, :edges, :isAcceptState, :prediction
     attr_accessor :lexerActionExecutor, :requiresFullContext, :predicates 
-    def initialize(stateNumber, configs=ATNConfigSet.new())
-        self.stateNumber = stateNumber
-        self.configs = configs
+    def initialize(state_number=nil, _configs=ATNConfigSet.new())
+        if state_number.nil? then
+          @stateNumber = -1
+        else
+          @stateNumber = state_number
+        end
+        self.configs = _configs
         # {@code edges[symbol]} points to target of symbol. Shift up by 1 so (-1)
         #  {@link Token#EOF} maps to {@code edges[0]}.
         self.edges = nil

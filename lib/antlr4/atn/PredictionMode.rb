@@ -173,9 +173,9 @@ class PredictionMode
             # since we'll often fail over anyway.
             if configs.hasSemanticContext
                 # dup configs, tossing out semantic predicates
-                dup = ATNConfigSet()
+                dup = ATNConfigSet.new()
                 configs.each {|c|
-                    c = ATNConfig(c,SemanticContext.NONE)
+                    c = ATNConfig.new(c,SemanticContext.NONE)
                     dup.add(c)
                 }
                 configs = dup
@@ -520,6 +520,6 @@ class PredictionMode
                 return ATN::INVALID_ALT_NUMBER
             end
         }
-        return min(viableAlts)
+        return viableAlts.min
     end
 end

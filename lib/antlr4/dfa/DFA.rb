@@ -83,19 +83,19 @@ class DFA
     # @param precedenceDfa {@code true} if this is a precedence DFA; otherwise,
     # {@code false}
 
-    def setPrecedenceDfa(precedenceDfa)
-        if self.precedenceDfa != precedenceDfa then
+    def setPrecedenceDfa(_precedenceDfa)
+        if self.precedenceDfa != _precedenceDfa then
             self._states = Hash.new
-            if precedenceDfa then
-                precedenceState = DFAState.new(ATNConfigSet.new())
-                precedenceState.edges = []
+            if _precedenceDfa then
+                precedenceState = DFAState.new(nil, ATNConfigSet.new())
+                precedenceState.edges = Array.new
                 precedenceState.isAcceptState = false
                 precedenceState.requiresFullContext = false
                 self.s0 = precedenceState
             else
                 self.s0 = nil
             end
-            self.precedenceDfa = precedenceDfa
+            self.precedenceDfa = _precedenceDfa
         end
     end
 
@@ -109,7 +109,10 @@ class DFA
     end
 
     def to_s
-       super.to_s # toString()
+       toString()
+    end
+    def inspect
+        "<DFA #{atnStartState.inspect} decision(#{@decision}) states(#{states.length}) >"
     end
 
     def toString(tokenNames=nil)

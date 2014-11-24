@@ -73,7 +73,9 @@ class ATNState
     def to_s 
         self.stateNumber.to_s
     end
-
+    def inspect
+      "<ATNState #{self.stateNumber.to_s} >"
+    end
     def addTransition(trans, index=-1)
         if self.transitions.length==0
             self.epsilonOnlyTransitions = trans.isEpsilon

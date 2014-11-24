@@ -403,7 +403,7 @@ class ParserATNSimulator < ATNSimulator
             if cD.nil? 
                 cD = self.computeTargetState(dfa, previousD, t)
             end
-            if cD ==  ATNSimulator.ERROR
+            if cD.equal? ATNSimulator::ERROR
                 # if any configs in previous dipped into outer context, that
                 # means that input up to t actually finished entry rule
                 # at least for SLL decision. Full LL doesn't dip into outer
@@ -515,8 +515,8 @@ class ParserATNSimulator < ATNSimulator
     def computeTargetState(dfa, previousD, t)
         reach = self.computeReachSet(previousD.configs, t, false)
         if reach.nil?
-            self.addDFAEdge(dfa, previousD, t, ATNSimulator.ERROR)
-            return ATNSimulator.ERROR
+            self.addDFAEdge(dfa, previousD, t, ATNSimulator::ERROR)
+            return ATNSimulator::ERROR
         end
 
         # create new target state; we'll add to DFA after it's complete
@@ -964,7 +964,7 @@ class ParserATNSimulator < ATNSimulator
         #
         # From this, it is clear that NONE||anything==NONE.
         #
-        altToPred = [nil] * (nalts + 1)
+        altToPred = Array.new(nalts + 1)
         configs.each do |c|
             if ambigAlts.member? c.alt 
                 altToPred[c.alt] = SemanticContext.orContext(altToPred[c.alt], c.semanticContext)
@@ -999,7 +999,7 @@ class ParserATNSimulator < ATNSimulator
             if ambigAlts and ambigAlts.member? i
                 pairs.push(PredPrediction.new(pred, i))
             end
-            if pred != SemanticContext.NONE
+            if ! pred.equal? SemanticContext.NONE
                 containsPredicate = true
             end
         end
@@ -1095,7 +1095,7 @@ class ParserATNSimulator < ATNSimulator
         succeeded = ATNConfigSet.new(configs.fullCtx)
         failed = ATNConfigSet.new(configs.fullCtx)
         configs.each do |c|
-            if c.semanticContext != SemanticContext.NONE
+            if ! c.semanticContext.equal? SemanticContext.NONE
                 predicateEvaluationResult = c.semanticContext.eval(self.parser, outerContext)
                 if predicateEvaluationResult
                     succeeded.add(c)
@@ -1516,7 +1516,7 @@ class ParserATNSimulator < ATNSimulator
         end
 
         if from_.edges.nil? then
-            from_.edges = [nil] * (self.atn.maxTokenType + 2)
+            from_.edges = Array.new(self.atn.maxTokenType + 2)
         end
         from_.edges[t+1] = to # connect
 
@@ -1546,7 +1546,7 @@ class ParserATNSimulator < ATNSimulator
     # state was not already present.
     #
     def addDFAState(dfa, cD)
-        if cD.equal? ParserATNSimulator.ERROR
+        if cD.equal? ATNSimulator::ERROR
             return cD
         end
 

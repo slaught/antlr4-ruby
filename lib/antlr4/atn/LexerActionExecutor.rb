@@ -8,15 +8,11 @@
 class LexerActionExecutor
 
     attr_accessor :hashCode, :lexerActions
-    def initialize(lexerActions=nil)
-        if lexerActions.nil? then
-         self.lexerActions = Array.new
-        else
-          self.lexerActions = lexerActions
-        end
+    def initialize(_lexerActions=Array.new)
+        @lexerActions = _lexerActions
         # Caches the result of {@link #hashCode} since the hash code is an element
         # of the performance-critical {@link LexerATNConfig#hashCode} operation.
-        self.hashCode = self.lexerActions.map(&:to_s).join('').hash
+        @hashCode = self.lexerActions.map(&:to_s).join('').hash
     end
 
     # Creates a {@link LexerActionExecutor} which executes the actions for
@@ -71,8 +67,8 @@ class LexerActionExecutor
     def fixOffsetBeforeMatch(offset)
         updatedLexerActions = nil
         @lexerActions.each_index {|i|
-            if @lexerActions[i].isPositionDependent and not @lexerActions[i].kind_of? LexerIndexedCustomAction
-                if updatedLexerActions.nil? 
+            if @lexerActions[i].isPositionDependent and not @lexerActions[i].kind_of?(LexerIndexedCustomAction) then
+                if updatedLexerActions.nil? then
                     updatedLexerActions = @lexerActions.map{|x| x} 
                 end
                 updatedLexerActions[i] = LexerIndexedCustomAction.new(offset, @lexerActions[i])
@@ -132,7 +128,7 @@ class LexerActionExecutor
         self == other
     end
     def ==( other)
-        self.equal? other or other.kind_of? LexerActionExecutor and 
-            self.hashCode == other.hashCode and self.lexerActions == other.lexerActions
+        self.equal?(other) or (other.kind_of?(LexerActionExecutor) and 
+            self.hashCode == other.hashCode and self.lexerActions == other.lexerActions)
      end
 end

@@ -523,8 +523,8 @@ class DefaultErrorStrategy < ErrorStrategy
     def getMissingSymbol(recognizer)
         currentSymbol = recognizer.getCurrentToken()
         expecting = self.getExpectedTokens(recognizer)
-        expectedTokenType = expecting[0] # get any element
-        if expectedTokenType==Token.EOF then
+        expectedTokenType = expecting.getMinElement # get any element
+        if expectedTokenType==Token::EOF then
             tokenText = "<missing EOF>"
         else
             tokenText = "<missing #{recognizer.tokenNames[expectedTokenType]}>"

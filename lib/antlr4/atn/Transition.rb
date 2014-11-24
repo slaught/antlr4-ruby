@@ -233,11 +233,11 @@ class NotSetTransition < SetTransition
     def matches( symbol, minVocabSymbol,  maxVocabSymbol)
         symbol >= minVocabSymbol \
             and symbol <= maxVocabSymbol \
-            and not super.matches(symbol, minVocabSymbol, maxVocabSymbol)
+            and not super(symbol, minVocabSymbol, maxVocabSymbol)
     end
 
     def to_s
-        return '~' + super.to_s
+        return '~' + super()
     end
 end
 

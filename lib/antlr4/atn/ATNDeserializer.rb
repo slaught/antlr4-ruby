@@ -150,10 +150,10 @@ class ATNDeserializer
     def readRules(atn)        
         nrules = self.readInt()
         if atn.grammarType == ATNType.LEXER
-            atn.ruleToTokenType = [0] * nrules
+            atn.ruleToTokenType = Array.new(nrules, 0) # [0] * nrules
         end
 
-        atn.ruleToStartState = [0] * nrules
+        atn.ruleToStartState = Array.new(nrules, 0) # [0] * nrules
         0.upto(nrules - 1) do |i| #for i in range(0, nrules)
             s = self.readInt()
             startState = atn.states[s]
@@ -161,14 +161,14 @@ class ATNDeserializer
             if atn.grammarType == ATNType.LEXER
                 tokenType = self.readInt()
                 if tokenType == 0xFFFF
-                    tokenType = Token.EOF
+                    tokenType = Token::EOF
                 end
                 atn.ruleToTokenType[i] = tokenType
             end
         end
-        atn.ruleToStopState = [0] * nrules
+        atn.ruleToStopState = Array.new(nrules, 0)  #[0] * nrules
         for state in atn.states do
-            if not state.kind_of? RuleStopState
+            if not state.kind_of? RuleStopState then
                 next
             end
             atn.ruleToStopState[state.ruleIndex] = state
@@ -287,7 +287,7 @@ class ATNDeserializer
     def readLexerActions(atn)
         if atn.grammarType == ATNType.LEXER
             count = self.readInt()
-            atn.lexerActions = [ nil ] * count
+            atn.lexerActions = Array.new # [ nil ] * count
             0.upto(count-1) do |i|  # for i in range(0, count)
                 actionType = self.readInt()
                 data1 = self.readInt()
@@ -305,7 +305,7 @@ class ATNDeserializer
     end
     def generateRuleBypassTransitions(atn)
         count = atn.ruleToStartState.length()
-        atn.ruleToTokenType = [ 0 ] * count
+        atn.ruleToTokenType = Array.new(count, 0)  #[ 0 ] * count
         0.upto(count-1) do |i| # for i in range(0, count)
             atn.ruleToTokenType[i] = atn.maxTokenType + i + 1
         end
@@ -433,7 +433,7 @@ class ATNDeserializer
                 if state.transitions[0].target.kind_of? StarBlockStartState then
                     self.checkCondition(state.transitions[1].target.kind_of?(LoopEndState))
                     self.checkCondition(!state.nonGreedy)
-                elsif state.transitions[0].target.kind_of? LoopEndState
+                elsif state.transitions[0].target.kind_of? LoopEndState then
                     self.checkCondition(state.transitions[1].target.kind_of?(StarBlockStartState))
                     self.checkCondition(state.nonGreedy)
                 else
@@ -444,7 +444,7 @@ class ATNDeserializer
                 self.checkCondition(state.transitions.length() == 1)
                 self.checkCondition(state.transitions[0].target.kind_of?(StarLoopEntryState))
             end
-            if state.kind_of? LoopEndState
+            if state.kind_of? LoopEndState then
                 self.checkCondition(! state.loopBackState.nil?) 
             end
 
@@ -461,9 +461,9 @@ class ATNDeserializer
             end
 
             if state.kind_of? DecisionState then
-                self.checkCondition(state.transitions.length() <= 1 || state.decision >= 0)
+                self.checkCondition( (( state.transitions.length() <= 1) || ( state.decision >= 0)))
             else
-                self.checkCondition(state.transitions.lenth() <= 1 || state.kind_of?(RuleStopState) )
+                self.checkCondition(((state.transitions.lenth() <= 1) || (state.kind_of?(RuleStopState) )))
             end
         end
       end
@@ -503,7 +503,7 @@ class ATNDeserializer
     def edgeFactory(atn, type, src, trg, arg1, arg2, arg3, sets)
       target = atn.states[trg]
       if self.edgeFactories.nil? then
-          ef = [nil] * 11
+          ef = Array.new(11)  # [nil] * 11
           ef[0] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target| raise Exception.new("The specified state type 0 is not valid.") }
           ef[Transition.EPSILON] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|  EpsilonTransition.new(target) }
           ef[Transition.RANGE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|
@@ -544,7 +544,7 @@ class ATNDeserializer
     end
     def stateFactory(type, ruleIndex)
         if self.stateFactories.nil? 
-            sf = [nil] * 13
+            sf = Array.new(13)  # [nil] * 13
             sf[ATNState::INVALID_TYPE] = lambda {  nil }
             sf[ATNState::BASIC] = lambda { BasicState.new } 
             sf[ATNState::RULE_START] = lambda { RuleStartState.new }
@@ -572,7 +572,7 @@ class ATNDeserializer
     end
     def lexerActionFactory(type, data1, data2)
         if self.actionFactories.nil? then
-            af = [ nil ] * 8
+            af = Array.new(8)  #[ nil ] * 8
             af[LexerActionType.CHANNEL] = lambda {|data1, data2| LexerChannelAction.new(data1) }
             af[LexerActionType.CUSTOM] = lambda {|data1, data2| LexerCustomAction.new(data1, data2) }
             af[LexerActionType.MODE] = lambda {|data1, data2| LexerModeAction.new(data1) } 
