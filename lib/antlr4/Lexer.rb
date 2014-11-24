@@ -16,13 +16,13 @@ class Lexer < TokenSource
 
     attr_accessor :input, :factory, :tokenFactorySourcePair #, :interp
     attr_accessor :token, :tokenStartCharIndex, :tokenStartLine, :tokenStartColumn 
-    attr_accessor  :hitEOF, :channel,:type, :modeStack, :mode, :text
+    attr_accessor :hitEOF, :channel,:type, :modeStack, :mode, :text
 
-    def initialize(input)
+    def initialize(_input)
         super()
-        @input = input
+        @input = _input
         @factory = CommonTokenFactory.DEFAULT
-        @tokenFactorySourcePair = [self, input]
+        @tokenFactorySourcePair = [self, _input]
 
         @interp = nil # child classes must populate this
         

@@ -105,7 +105,7 @@ class ATN
     #/
     def getExpectedTokens(stateNumber, ctx)
         if stateNumber < 0 or stateNumber >= self.states.length
-            raise Exception.new("Invalid state number.")
+            raise Exception.new("Invalid state number: #{stateNumber}.")
         end
         s = self.states[stateNumber]
         following = self.nextTokens(s)

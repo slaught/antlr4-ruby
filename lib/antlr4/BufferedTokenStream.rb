@@ -2,9 +2,9 @@
 class BufferedTokenStream < TokenStream
 
     attr_accessor :tokenSource, :tokens, :index,:fetchedEOF 
-    def initialize(tokenSource)
+    def initialize(_tokenSource)
         # The {@link TokenSource} from which tokens for this stream are fetched.
-        self.tokenSource = tokenSource
+        @tokenSource = _tokenSource
         # A collection of all tokens fetched from the token source. The list is
         # considered a complete view of the input once {@link #fetchedEOF} is set
         # to {@code true}.
@@ -97,13 +97,13 @@ class BufferedTokenStream < TokenStream
     #/
     def fetch(n)
         return 0 if self.fetchedEOF
-        for i in 0..n-1 do
+        1.upto(n) do |i| # for i in 0..n-1 do
             t = self.tokenSource.nextToken()
             t.tokenIndex = self.tokens.length
             self.tokens.push(t)
             if t.type==Token::EOF then
                 self.fetchedEOF = true
-                return i + 1
+                return i  #  i + 1
             end
         end
         return n
@@ -124,7 +124,7 @@ class BufferedTokenStream < TokenStream
             if t.type==Token::EOF
                 break
             end
-            if types.nil? or types.member? t.type then
+            if (types.nil? or types.member?(t.type)) then
                 subset.push(t)
             end
         end

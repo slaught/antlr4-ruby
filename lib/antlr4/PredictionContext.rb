@@ -40,8 +40,8 @@ class PredictionContext
     # </pre>
     #/
     attr_accessor :cachedHashCode 
-    def initialize(cachedHashCode)
-        self.cachedHashCode = cachedHashCode
+    def initialize(_cachedHashCode)
+        @cachedHashCode = _cachedHashCode
     end
 
     # This means only the {@link #EMPTY} context is in set.
@@ -96,7 +96,7 @@ end
 class SingletonPredictionContext < PredictionContext
 
     def self.create(parent, returnState)
-        if returnState == PredictionContext.EMPTY_RETURN_STATE and parent.nil? 
+        if returnState == PredictionContext.EMPTY_RETURN_STATE and parent.nil?  then
             # someone can pass in the bits of an array ctx that mean $
             return PredictionContext.EMPTY
         else
@@ -512,8 +512,8 @@ def mergeArrays(a, b, rootIsWildcard, mergeCache)
             # same payload (stack tops are equal), must yield merged singleton
             payload = a.returnStates[i]
             # $+$ = $
-            bothDollars = payload == PredictionContext.EMPTY_RETURN_STATE and \
-                            a_parent.nil? and b_parent.nil? 
+            bothDollars = (payload == PredictionContext.EMPTY_RETURN_STATE and \
+                            a_parent.nil? and b_parent.nil? )
             ax_ax = ( ! a_parent.nil? and ! b_parent.nil?) and a_parent==b_parent # ax+ax -> ax
             if bothDollars or ax_ax
                 mergedParents[k] = a_parent # choose left

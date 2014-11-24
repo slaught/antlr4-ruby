@@ -2,14 +2,7 @@
 class ATNSimulator
 
     # Must distinguish between missing edge and edge we know leads nowhere#/
-    @@ERROR = nil
-    def self.ERROR
-      if @@ERROR.nil?
-       @@ERROR = DFAState.new(ATNConfigSet.new()) 
-       @@ERROR.stateNumber = 0x7FFFFFFF
-      end
-      @@ERROR
-    end
+    ERROR = DFAState.new(0x7FFFFFFF,ATNConfigSet.new()) 
 
     # The context cache maps all PredictionContext objects that are ==
     #  to a single cached copy. This cache is shared across all contexts

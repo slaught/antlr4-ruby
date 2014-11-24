@@ -106,7 +106,7 @@ class CommonToken < Token
     end
 
     def to_s
-      txt = @text
+      txt = self.text()
       if txt.nil? then
         txt = "<no text>"
       else 
@@ -118,5 +118,8 @@ class CommonToken < Token
         c = ""
       end
       "[@#{tokenIndex},#{start}:#{stop}='#{txt}',<#{type}>#{c},#{line}:#{column}]"
+    end
+    def inspect
+      to_s
     end
 end

@@ -33,7 +33,7 @@ class InputStream
         if offset<0 then
             offset = offset + 1 # e.g., translate LA(-1) to use offset=0
         end
-        pos = @index + offset - 1
+        pos = self.index + offset - 1
         if pos < 0 or pos >= @size then # invalid
             return Token::EOF
         end

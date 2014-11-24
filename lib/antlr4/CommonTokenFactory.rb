@@ -16,7 +16,7 @@ class CommonTokenFactory < TokenFactory
     end
 
     attr_accessor :copyText
-    def initialize(copyText=false)
+    def initialize(_copyText=false)
         # Indicates whether {@link CommonToken#setText} should be called after
         # constructing tokens to explicitly set the text. This is useful for cases
         # where the input stream might not be able to provide arbitrary substrings
@@ -31,7 +31,7 @@ class CommonTokenFactory < TokenFactory
         # The default value is {@code false} to avoid the performance and memory
         # overhead of copying text for every token unless explicitly requested.</p>
         #
-        self.copyText = copyText
+        @copyText = _copyText
     end
     def create(source, type, text, channel, start, stop, line, column)
         t = CommonToken.new(source, type, channel, start, stop)

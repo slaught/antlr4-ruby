@@ -114,7 +114,8 @@ class LexerATNConfig < ATNConfig
     end
 
     def hash
-        b = self.passedThroughNonGreedyDecision ? 1 : 0 
+        b = 0
+        b = 1 if self.passedThroughNonGreedyDecision 
         [self.state.stateNumber, self.alt, self.context, 
           self.semanticContext, b, self.lexerActionExecutor
         ].map(&:to_s).join('').hash

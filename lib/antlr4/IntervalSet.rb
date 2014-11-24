@@ -140,7 +140,7 @@ class IntervalSet
             end
             x = intervals.map { |i|
                 i.map { |j| 
-                    self.elementName(tokenNames, j).inspect
+                    self.elementName(tokenNames, j).to_s
                 }.join(', ')
             }.join(", ")
             buf.write(x) 

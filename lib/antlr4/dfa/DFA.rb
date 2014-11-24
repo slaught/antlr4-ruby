@@ -1,12 +1,12 @@
 
 class DFA
     attr_accessor :atnStartState, :decision, :_states, :s0, :precedenceDfa 
-    def initialize(atnStartState, _decision=0)
-        raise Exception.new("atnStartState is nil") if atnStartState.nil?
+    def initialize(_atnStartState, _decision=0)
+        raise Exception.new("atnStartState is nil") if _atnStartState.nil?
         type_check(_decision, Fixnum)
-        type_check(atnStartState, ATNState)
+        type_check(_atnStartState, ATNState)
         # From which ATN state did we create this DFA?
-        @atnStartState = atnStartState
+        @atnStartState = _atnStartState
         @decision = _decision
         # A set of all DFA states. Use {@link Map} so we can get old state back
         #  ({@link Set} only allows you to see if it's there).
@@ -59,11 +59,6 @@ class DFA
         # synchronization on s0 here is ok. when the DFA is turned into a
         # precedence DFA, s0 will be initialized once and not updated again
         # s0.edges is never null for a precedence DFA
-        edges = self.s0.edges.length
-        if precedence >= edges
-            ext = [nil] * (precedence + 1 - edges)
-            self.s0.edges.concat(ext)
-        end
         self.s0.edges[precedence] = startState
     end
     #
@@ -117,7 +112,7 @@ class DFA
 
     def toString(tokenNames=nil)
         if self.s0.nil? then
-            return ""
+            return ''
         end
         serializer = DFASerializer.new(self,tokenNames)
         return serializer.to_s
@@ -125,7 +120,7 @@ class DFA
 
     def toLexerString
         if self.s0.nil? then
-            return ""
+            return ''
         end
         serializer = LexerDFASerializer.new(self)
         return serializer.to_s

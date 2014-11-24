@@ -1161,7 +1161,8 @@ class ParserATNSimulator < ATNSimulator
             # We hit rule end. If we have context info, use it
             # run thru all possible stack tops in ctx
             if not config.context.isEmpty() then
-                config.context.each_index do |i|
+#                for i in range(0, len(config.context)):
+                0.upto(config.context.length - 1).each do |i|
                     if config.context.getReturnState(i).equal? PredictionContext.EMPTY_RETURN_STATE
                         if fullCtx
                             configs.add(ATNConfig.new(config.state,nil,PredictionContext.EMPTY,nil,config), self.mergeCache)
