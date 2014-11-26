@@ -1,18 +1,29 @@
 class IntervalSet
     extend Forwardable
 
-    attr_accessor :intervals , :readonly 
-    attr_accessor :_internal 
-    def initialize 
+    attr_accessor :intervals , :readonly
+    attr_accessor :_internal
+    def initialize
         self.intervals = Array.new
         self.readonly = false
         @_internal = Set.new
     end
-    def_delegators :@intervals, :each, :map 
+    def_delegators :@intervals, :each, :map
     include Enumerable
-    
-    def self.of(a,b)
+
+    def self.copy(other)
+        s = IntervalSet.new
+        s.intervals = other.intervals.clone
+        s.readonly = other.readonly
+        s._internal = other._internal.clone
+        s
+    end
+
+    def self.of(a,b=nil)
        s = IntervalSet.new
+       if b.nil? then
+          b = a
+       end
        s.addRange(a..b)
        s
     end
@@ -26,7 +37,7 @@ class IntervalSet
 
     def addRange(v)
         type_check(v, Range)
-        if self.intervals.empty? then 
+        if self.intervals.empty? then
             self.intervals.push(v)
         else
             # find insert pos
@@ -37,7 +48,7 @@ class IntervalSet
                     self.intervals.insert(k, v)
                     return
                 # contiguous range -> adjust
-                elsif v.stop==i.start 
+                elsif v.stop==i.start
                     self.intervals[k] = v.start..i.stop
                     return
                 # overlapping range -> adjust and reduce
@@ -54,10 +65,12 @@ class IntervalSet
     end
 
     def addSet(other) # IntervalSet):
-        if other.class == self.class 
-          if other.intervals then
+        if other.kind_of?(IntervalSet) then
+          if other.intervals and not other.isNil then
             other.intervals.each {|i| self.addRange(i) }
           end
+        else
+            raise Exception.new("can't add a non-IntervalSet #{other.class}")
         end
         return self
     end
@@ -90,7 +103,7 @@ class IntervalSet
     def length
         xlen = 0
         self.intervals.each do |i|
-          xlen = xlen + i.length 
+          xlen = xlen + i.length
         end
         return xlen
     end
@@ -129,7 +142,7 @@ class IntervalSet
         end                  
     end
 
-    def toString(tokenNames)
+    def toString(tokenNames=nil)
         if self.intervals.nil? or self.intervals.empty? then
             return "{}"
         end
@@ -140,7 +153,11 @@ class IntervalSet
             end
             x = intervals.map { |i|
                 i.map { |j| 
-                    self.elementName(tokenNames, j).to_s
+                    if tokenNames then
+                        self.elementName(tokenNames, j).to_s
+                    else
+                        j.to_s
+                    end
                 }.join(', ')
             }.join(", ")
             buf.write(x) 
@@ -159,4 +176,117 @@ class IntervalSet
             return tokenNames[a]
         end
     end
+#IntervalSet implements IntSet {
+#  COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
+#	static { COMPLETE_CHAR_SET.setReadonly(true); }
+#	EMPTY_SET = new IntervalSet(); static { EMPTY_SET.setReadonly(true); }
+#
+#	public IntervalSet addAll(IntSet set) {
+#		if ( set==null ) { return this; }
+#		if (set instanceof IntervalSet) {
+#			IntervalSet other = (IntervalSet)set;
+#			int n = other.intervals.size();
+#			for (int i = 0; i < n; i++) {
+#				Interval I = other.intervals.get(i);
+#				this.add(I.a,I.b);
+#			}
+#		return this;
+#}
+    def isNil()
+       self.intervals.empty?
+    end
+#
+#   this.complement(IntervalSet.of(minElement,maxElement));
+#
+    def complement(vocabulary)
+      if vocabulary.nil? || vocabulary.isNil() then
+        return nil
+      end
+      vocabularyIS = vocabulary
+      vocabularyIS.subtract(self);
+    end
+
+    def subtract(a) 
+  		if (a.nil? || a.isNil()) then
+			  s = IntervalSet.new 
+        s.addSet(self) 
+        return s 
+		  end
+
+			return IntervalSet.subtract(self, a);
+    end
+    
+
+	 # Compute the set difference between two interval sets. The specific
+	 # operation is {@code left - right}. If either of the input sets is
+	 # {@code null}, it is treated as though it was an empty set.
+  def self.subtract(left,right)
+    if left.nil? or left.isNil() then
+        return IntervalSet.new()
+    end
+
+    result = IntervalSet.copy(left)
+		if right.nil? or right.isNil() then
+			# right set has no elements; just return the copy of the current set
+			return result
+		end
+
+		resultI = 0
+		rightI = 0
+		while (resultI < result.intervals.size() && rightI < right.intervals.size()) do
+			resultInterval = result.intervals[resultI]
+			rightInterval = right.intervals[rightI]
+
+			# operation: (resultInterval - rightInterval) and update indexes
+			if (rightInterval.b < resultInterval.a) then
+				rightI += 1
+				next
+			end
+			if (rightInterval.a > resultInterval.b) then
+				resultI += 1
+				next
+			end	
+
+			beforeCurrent = nil
+			afterCurrent = nil
+			if (rightInterval.a > resultInterval.a) then
+				beforeCurrent = (resultInterval.a .. rightInterval.a - 1)
+			end
+
+			if (rightInterval.b < resultInterval.b) then
+				afterCurrent =  (rightInterval.b + 1  .. resultInterval.b)
+			end
+
+			if not beforeCurrent.nil? then
+				if not afterCurrent.nil? then
+					# split the current interval into two
+					result.intervals[resultI] =  beforeCurrent
+					result.intervals[resultI + 1] =  afterCurrent
+					resultI += 1
+					rightI += 1
+				else
+					# replace the current interval
+					result.intervals[resultI]= beforeCurrent
+					resultI += 1
+				end
+			  next
+			else
+				if not afterCurrent.nil?  then
+					# replace the current interval
+					result.intervals[resultI] =  afterCurrent
+					rightI += 1
+				else
+					# remove the current interval (thus no need to increment resultI)
+					result.intervals.delete_at(resultI)
+				end
+			  next
+			end
+		end
+
+		# If rightI reached right.intervals.size(), no more intervals to subtract from result.
+		# If resultI reached result.intervals.size(), we would be subtracting from an empty set.
+		# Either way, we are done.
+		result
+	end
+
 end

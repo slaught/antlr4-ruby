@@ -165,9 +165,9 @@ class LL1Analyzer
                 look.addRange( Token.MIN_USER_TOKEN_TYPE..self.atn.maxTokenType )
             else
                 set = t.label
-                if not set.nil? 
+                if not set.nil? then
                     if t.kind_of? NotSetTransition then
-                        set = Set.complement(Token.MIN_USER_TOKEN_TYPE, self.atn.maxTokenType)
+                        set = set.complement IntervalSet.of(Token.MIN_USER_TOKEN_TYPE, self.atn.maxTokenType)
                     end
                     look.addSet(set)
                 end
