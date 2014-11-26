@@ -148,19 +148,14 @@ class SingletonPredictionContext < PredictionContext
     end
 
     def to_s 
-        if self.parentCtx.nil? then
-            up = "" 
-        else 
-            up = self.parentCtx.to_s
-        end
-        if up.length==0
-            if self.returnState == PredictionContext::EMPTY_RETURN_STATE 
+        if @parentCtx.nil? then
+            if @returnState == PredictionContext::EMPTY_RETURN_STATE 
                 return "$"
             else
-                return self.returnState.to_s
+                return @returnState.to_s
             end
         else
-            return "#{self.returnState} #{up}"
+            return "#{@returnState} #{@parentCtx}" 
         end
     end
 end
