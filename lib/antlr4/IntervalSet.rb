@@ -107,7 +107,21 @@ class IntervalSet
         end
         return xlen
     end
-  
+#    public int size() {
+#		int n = 0;
+#		int numIntervals = intervals.size();
+#		if ( numIntervals==1 ) {
+#			Interval firstInterval = this.intervals.get(0);
+#			return firstInterval.b-firstInterval.a+1;
+#		}
+#		for (int i = 0; i < numIntervals; i++) {
+#			Interval I = intervals.get(i);
+#			n += (I.b-I.a+1);
+#		}
+#		return n;
+#    }
+
+
     def remove(v)
         if not self.intervals.empty? then
             k = 0
@@ -290,3 +304,38 @@ class IntervalSet
 	end
 
 end
+# Returns the maximum value contained in the set.
+# If the set is empty, this method returns {@link Token#INVALID_TYPE}.
+#	def getMaxElement()
+#		if ( isNil() ) { return Token.INVALID_TYPE; }
+#		Interval last = intervals.get(intervals.size()-1);
+#		return last.b;
+#	end
+#
+## Returns the minimum value contained in the set.
+#	def getMinElement()
+#		if ( isNil() ) { return Token.INVALID_TYPE; }
+#		return intervals.get(0).a;
+# end
+
+
+#	/** Get the ith element of ordered set.  Used only by RandomPhrase so
+#	 *  don't bother to implement if you're not doing that for a new
+#	 *  ANTLR code gen target.
+#	public int get(int i) {
+#		int n = intervals.size();
+#		int index = 0;
+#		for (int j = 0; j < n; j++) {
+#			Interval I = intervals.get(j);
+#			int a = I.a;
+#			int b = I.b;
+#			for (int v=a; v<=b; v++) {
+#				if ( index==i ) {
+#					return v;
+#				}
+#				index++;
+#			}
+#		}
+#		return -1;
+#	}
+
