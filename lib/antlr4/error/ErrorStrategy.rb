@@ -293,8 +293,9 @@ class DefaultErrorStrategy < ErrorStrategy
         if e.recognizer.nil? then
           e.recognizer = recognizer
         end
-        msg = "mismatched input " + self.getTokenErrorDisplay(e.offendingToken) \
-              + " expecting " + e.getExpectedTokens().toString(recognizer.tokenNames)
+        t = self.getTokenErrorDisplay(e.offendingToken) 
+        expecting = e.getExpectedTokens().toString(recognizer.tokenNames)
+        msg = "mismatched input #{t} expecting #{ escapeWSAndQuote(expecting) }"
         recognizer.notifyErrorListeners(msg, e.offendingToken, e)
     end
 
