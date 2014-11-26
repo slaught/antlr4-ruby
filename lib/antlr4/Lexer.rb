@@ -291,13 +291,18 @@ class Lexer < TokenSource
         end
     end
     def getErrorDisplayForChar(c)
-        if c[0].ord==Token.EOF then
+        begin
+          cc = c[0].ord 
+        rescue ArgumentError
+          cc = "\ufffd".ord
+        end
+        if cc==Token.EOF then
             return "<EOF>"
-        elsif c=='\n'
+        elsif c == "\n"
             return "\\n"
-        elsif c=='\t'
+        elsif c=="\t"
             return "\\t"
-        elsif c=='\r'
+        elsif c=="\r"
             return "\\r"
         else
             return c
