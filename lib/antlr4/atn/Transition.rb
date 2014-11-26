@@ -49,15 +49,17 @@ class Transition
         @@serializationTypes = newhash
     end
 
-    attr_accessor :target, :isEpsilon, :label, :serializationType, :ruleIndex
+    attr_accessor :target, :isEpsilon, :serializationType, :ruleIndex
     def initialize(target)
         # The target of this transition.
         raise Exception.new("target cannot be null.") if target.nil?
         self.target = target
         # Are we epsilon, action, sempred?
         self.isEpsilon = false
-        self.label = nil
         @ruleIndex = 0
+    end
+    def label
+        nil
     end
 end
 
@@ -69,11 +71,10 @@ class AtomTransition < Transition
     def initialize(_target, _label)
         super(_target)
         @label_ = _label # The token type or character value; or, signifies special label.
-        @label = self.makeLabel()
         @serializationType = Transition.ATOM
     end
 
-    def makeLabel
+    def label
         s = IntervalSet.new()
         s.addOne(self.label_)
         return s
@@ -95,8 +96,8 @@ class RuleTransition < Transition
         self.ruleIndex = rule_index # ptr to the rule definition object for this rule ref
         self.precedence = _precedence
         self.followState = follow_state # what node to begin computations following ref to rule
-        self.serializationType = Transition.RULE
-        self.isEpsilon = true
+        @serializationType = Transition.RULE
+        @isEpsilon = true
     end
 
     def matches( symbol, minVocabSymbol,  maxVocabSymbol)
@@ -130,10 +131,9 @@ class RangeTransition < Transition
         self.serializationType = Transition.RANGE
         self.start = _start
         self.stop = _stop
-        self.label = self.makeLabel()
     end
 
-    def makeLabel()
+    def label()
         s = IntervalSet.new()
         s.addRange(self.start..self.stop)
         return s
@@ -204,29 +204,32 @@ end
 # A transition containing a set of values.
 class SetTransition < Transition
 
-    def initialize(_target, set)
+    attr_accessor :set
+    def initialize(_target, _set)
         super(_target)
         self.serializationType = Transition.SET
-        if not set.nil? 
-            self.label = set
+        if _set then
+           @set = _set
         else
-            self.label = IntervalSet.new()
-            self.label.addRange(Token.INVALID_TYPE..Token.INVALID_TYPE)
+            @set = IntervalSet.of(Token.INVALID_TYPE)
         end
     end
+    def label
+        self.set
+    end
     def matches(symbol, minVocabSymbol,  maxVocabSymbol)
-        self.label.member? symbol
+        self.set.member? symbol
     end
 
     def to_s
-        self.label.to_s
+        self.set.to_s
     end
 end
 
 class NotSetTransition < SetTransition
 
-    def initialize(_target, set)
-        super(_target, set)
+    def initialize(_target, _set)
+        super(_target, _set)
         self.serializationType = Transition.NOT_SET
     end
 
