@@ -359,8 +359,7 @@ class LexerATNSimulator < ATNSimulator
                 end
             end
             if config.context and not config.context.isEmpty() then
-                #for i in range(0,len(config.context)):
-                config.context.each_index do |i| 
+                0.upto(config.context.length - 1) do |i| 
                     if config.context.getReturnState(i) != PredictionContext.EMPTY_RETURN_STATE
                         newContext = config.context.getParent(i) # "pop" return state
                         returnState = self.atn.states[config.context.getReturnState(i)]
