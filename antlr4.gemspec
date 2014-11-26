@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/slaught/antlr4-ruby"
   s.summary     = %q{Ruby implementation of the Antlr4 runtime}
   s.description = %q{Ruby implementation of the Antlr4 runtime.
-This is needed by any parser/lexer written in Antlr4 and generated with
+This is needed by any parser/lexer written in Antlr4 using the target 
 langague=Ruby.  }
 
 #  s.add_dependency ""

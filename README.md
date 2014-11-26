@@ -26,6 +26,7 @@ java org.antlr.v4.Tool -Dlanguage=Ruby input.g4
 Missing Features
 ----------------
 * Ruby runtime is not in a proper module and library setup
-* The Ruby test for integration with antlr4 are missin
+* Ruby MRI encoding causes fails with some generated ATNs.
+* The Ruby test for integration with antlr4 are missing
 * Proper attribution of all code
 
