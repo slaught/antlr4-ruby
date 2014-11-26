@@ -13,6 +13,12 @@ class Range
   def length
       size
   end
+  def a
+    first
+  end
+  def b
+    last
+  end
 end
 
 
