@@ -24,14 +24,14 @@ class ATNConfig
         #if not isinstance(state, ATNState):
         #    pass
         # The ATN state associated with this configuration#/
-        self.state = state
+        @state = state
         # What alt (or lexer rule) is predicted by this configuration#/
-        self.alt = alt
+        @alt = alt
         # The stack of invoking states leading to the rule/states associated
         #  with this config.  We track only those contexts pushed during
         #  execution of the ATN simulator.
-        self.context = context
-        self.semanticContext = semantic
+        @context = context
+        @semanticContext = semantic
         # We cannot execute predicates dependent upon local context unless
         # we know for sure we are in the correct context. Because there is
         # no way to do this efficiently, we simply cannot evaluate
@@ -42,9 +42,9 @@ class ATNConfig
         # outer context: depth &gt; 0.  Note that it may not be totally
         # accurate depth since I don't ever decrement. TODO: make it a boolean then
         if config.nil? then
-          self.reachesIntoOuterContext = 0 
+          @reachesIntoOuterContext = 0 
         else 
-          self.reachesIntoOuterContext = config.reachesIntoOuterContext
+          @reachesIntoOuterContext = config.reachesIntoOuterContext
         end
     end
 
@@ -56,12 +56,11 @@ class ATNConfig
         self == other
     end
     def ==(other)
-        return true if self.equal? other
-        return false unless other.kind_of? ATNConfig
-
-        return (self.state.stateNumber==other.state.stateNumber      and  
-              self.alt==other.alt and (self.context==other.context) and 
-              self.semanticContext==other.semanticContext )
+#        return true if self.equal? other
+#        other.kind_of?(ATNConfig) and \
+        (@state.stateNumber==other.state.stateNumber      and  
+              @alt==other.alt and (@context==other.context) and 
+              @semanticContext==other.semanticContext )
     end
 
     def hash
