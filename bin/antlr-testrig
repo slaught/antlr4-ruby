@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# encoding: ASCII-8BIT
+# encoding: binary
 
 #alias grun "java -cp $CLASSPATH org.antlr.v4.runtime.misc.TestRig"
 
@@ -81,8 +83,6 @@ def print_tokens(grammar_name, start_rule, input)
 #  puts "Debug DFA & ATN"
 #  puts lexer.decisionsToDFA.map{|dfa| dfa.toLexerString }.join("\n")
 #  puts lexer.atn.decisionToState.to_s
-  
-
 #
 #  parser = parserClass.new(stream)
 #  atn = parser.interp.atn
@@ -137,15 +137,22 @@ def main(args)
 
 #  puts args.inspect
 
+  
+  input = nil
   args['<input_files>'].each do |in_file|
-      puts "#{grammar_name}: #{in_file}"
       input = File.open(in_file)
-      if args['-tokens'] then
-        print_tokens(grammar_name, start_rule, input)
-      else
-        parse_example(grammar_name, start_rule, input) 
+      begin 
+        puts "#{grammar_name}: #{in_file}"
+        if args['-tokens'] then
+          print_tokens(grammar_name, start_rule, input)
+        else
+           parse_example(grammar_name, start_rule, input) 
+        end
+      ensure
+      #  if input and !input.closed?
+          input.close 
+      #  end
       end
-      input.close
   end
 end
 
