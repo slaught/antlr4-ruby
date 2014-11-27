@@ -73,8 +73,10 @@ class ATNDeserializer
        #for (int i = 1; i < data.length; i++) {
        #     data[i] = (char)(data[i] - 2);
        # don't adjust the first value since that's the version number
-       temp  = _data.map{|c| c.ord - 2 }
-       temp[0] = _data[0].ord
+       temp = Array.new(_data.length)
+       temp = _data
+       ver = _data[1]
+       temp[1] = (_data[1].ord + 2)
        self.data = temp
        @pos = 0
        #puts "idx =1288 <573>: #{temp[1288].inspect} : #{_data[1288].ord.inspect} | len #{temp.length}, #{_data.length}"
@@ -476,10 +478,20 @@ class ATNDeserializer
             raise Exception.new(message)
         end
     end
-    def readInt()
+    def readByte()
         i = @data[self.pos]
+        begin
+        ii = i.ord
+        rescue
+          puts "#{i.class} #{i} #{i.encoding}"
+        end
         @pos = @pos + 1
-        return i
+        return ii
+    end
+    def readInt()
+        high = readByte()
+        low = readByte()
+        return (low | (high << 8)) - 2
     end
 
     def readInt32()

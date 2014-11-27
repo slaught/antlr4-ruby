@@ -104,4 +104,35 @@ public class RubyTarget extends Target {
 	public String getVersion() {
 		return "4.4";
 	}
+
+  /** Assume 16-bit char */
+	@Override
+	public String encodeIntAsCharEscape(int v) {
+		if (v < Character.MIN_VALUE || v > Character.MAX_VALUE) {
+			throw new IllegalArgumentException(String.format("Cannot encode the specified value: %d", v));
+		}
+/*
+		if (v >= 0 && v < targetCharValueEscape.length 
+							 && targetCharValueEscape[v] != null) {
+			return targetCharValueEscape[v];
+		}
+
+		if (v >= 0x20 && v < 127 && 
+				(!Character.isDigit(v) || v == '8' || v == '9')) {
+			return String.valueOf((char)v);
+		}
+
+		if ( v>=0 && v<=127 ) {
+			String oct = Integer.toOctalString(v);
+			return "\\"+ oct;
+		}
+*/
+		String hex = Integer.toHexString(v|0x10000) ;
+    StringBuffer sb = new StringBuffer(hex) ;
+    sb.deleteCharAt(0);
+		sb.insert(2,"\\x");
+		sb.insert(0,"\\x");
+		return sb.toString();
+  }
+
 }

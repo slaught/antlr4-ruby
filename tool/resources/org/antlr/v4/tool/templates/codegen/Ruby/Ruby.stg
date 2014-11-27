@@ -119,6 +119,7 @@ end
 
 
 fileHeader(grammarFileName, ANTLRVersion) ::= <<
+# encoding: binary
 # Generated from <grammarFileName; format="java-escape"> by ANTLR <ANTLRVersion>
 >>
 
@@ -838,7 +839,7 @@ end
 SerializedATN(model) ::= <<
 <! only one segment, can be inlined !>
   def self.serializedATN()
-  "<model.serialized; wrap={"\\<\n>  "}>".chars
+  "<model.serialized; wrap={"\\<\n>  "}>".bytes
   end		
 >>
 
