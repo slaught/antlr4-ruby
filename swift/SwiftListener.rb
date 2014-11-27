@@ -1859,4 +1859,3 @@ class SwiftListener < ParseTreeListener
 
 
 end
-# footer?
