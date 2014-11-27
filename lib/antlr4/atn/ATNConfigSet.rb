@@ -79,11 +79,7 @@ class ATNConfigSet
         return true
     end
     def getOrAdd(config)
-        # how is this not just# self.configLookup.add(config);return config ?
-        for c in self.configLookup do
-            return c if c == config
-        end
-        self.configLookup.add(config)
+        c = self.configLookup.add?(config)
         return config
     end
     def getStates
