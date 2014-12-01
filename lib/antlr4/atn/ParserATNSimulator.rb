@@ -1270,27 +1270,31 @@ class ParserATNSimulator < ATNSimulator
 
     def getEpsilonTarget(config, t, collectPredicates, inContext, fullCtx, treatEofAsEpsilon)
         tt = t.serializationType
-        if tt==Transition.RULE
+        case tt
+        when  Transition::RULE
             return self.ruleTransition(config, t)
-        elsif tt==Transition.PRECEDENCE
+        when  Transition::PRECEDENCE
             return self.precedenceTransition(config, t, collectPredicates, inContext, fullCtx)
-        elsif tt==Transition.PREDICATE
+        when Transition::PREDICATE
             return self.predTransition(config, t, collectPredicates, inContext, fullCtx)
-        elsif tt==Transition.ACTION
+        when Transition::ACTION
             return self.actionTransition(config, t)
-        elsif tt==Transition.EPSILON
+        when Transition::EPSILON
             return ATNConfig.new(t.target,nil,nil,nil, config)
-        elsif [ Transition.ATOM, Transition.RANGE, Transition.SET ].member? tt
+        else 
+          if [ Transition::ATOM, Transition::RANGE, Transition::SET ].member?(tt) then
             # EOF transitions act like epsilon transitions after the first EOF
             # transition is traversed
-            if treatEofAsEpsilon
-                if t.matches(Token::EOF, 0, 1)
-                    return ATNConfig.createConfigState(config, t.target)
-                end
+#            if treatEofAsEpsilon then
+#                if t.matches(Token::EOF, 0, 1) then
+#                    return ATNConfig.createConfigState(config, t.target)
+#                end
+#            end
+            if treatEofAsEpsilon and t.matches(Token::EOF, 0, 1) then
+               return ATNConfig.createConfigState(config, t.target)
             end
-            return nil
-        else
-            return nil
+          end
+          return nil
         end
     end
     def actionTransition(config, t)
