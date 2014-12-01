@@ -11,7 +11,6 @@
 #  ATN transitions.</p>
 
 class Transition 
-    include JavaSymbols
     # constants for serialization
     EPSILON			= 1
     RANGE			= 2
@@ -71,7 +70,7 @@ class AtomTransition < Transition
     def initialize(_target, _label)
         super(_target)
         @label_ = _label # The token type or character value; or, signifies special label.
-        @serializationType = Transition.ATOM
+        @serializationType = Transition::ATOM
     end
 
     def label
@@ -96,7 +95,7 @@ class RuleTransition < Transition
         self.ruleIndex = rule_index # ptr to the rule definition object for this rule ref
         self.precedence = _precedence
         self.followState = follow_state # what node to begin computations following ref to rule
-        @serializationType = Transition.RULE
+        @serializationType = Transition::RULE
         @isEpsilon = true
     end
 
@@ -110,7 +109,7 @@ class EpsilonTransition < Transition
 
     def initialize(_target)
         super(_target)
-        self.serializationType = Transition.EPSILON
+        self.serializationType = Transition::EPSILON
         self.isEpsilon = true
     end
 
@@ -128,7 +127,7 @@ class RangeTransition < Transition
     attr_accessor :start, :stop
     def initialize(_target, _start, _stop)
         super(_target)
-        self.serializationType = Transition.RANGE
+        self.serializationType = Transition::RANGE
         self.start = _start
         self.stop = _stop
     end
@@ -161,7 +160,7 @@ class PredicateTransition < AbstractPredicateTransition
     attr_accessor :ruleIndex, :predIndex, :isCtxDependent 
     def initialize(_target, rule_index, pred_index, is_ctx_dependent)
         super(_target)
-        self.serializationType = Transition.PREDICATE
+        self.serializationType = Transition::PREDICATE
         self.ruleIndex = rule_index
         self.predIndex = pred_index
         self.isCtxDependent = is_ctx_dependent # e.g., $i ref in pred
@@ -187,7 +186,7 @@ class ActionTransition < Transition
     attr_accessor :ruleIndex, :actionIndex, :isCtxDependent 
     def initialize(_target, rule_index, action_index=-1, is_ctx_dependent=false)
         super(_target)
-        self.serializationType = Transition.ACTION
+        self.serializationType = Transition::ACTION
         self.ruleIndex = rule_index
         self.actionIndex = action_index
         self.isCtxDependent = is_ctx_dependent # e.g., $i ref in pred
@@ -207,11 +206,11 @@ class SetTransition < Transition
     attr_accessor :set
     def initialize(_target, _set)
         super(_target)
-        self.serializationType = Transition.SET
+        self.serializationType = Transition::SET
         if _set then
            @set = _set
         else
-            @set = IntervalSet.of(Token.INVALID_TYPE)
+            @set = IntervalSet.of(Token::INVALID_TYPE)
         end
     end
     def label
@@ -230,7 +229,7 @@ class NotSetTransition < SetTransition
 
     def initialize(_target, _set)
         super(_target, _set)
-        self.serializationType = Transition.NOT_SET
+        self.serializationType = Transition::NOT_SET
     end
 
     def matches( symbol, minVocabSymbol,  maxVocabSymbol)
@@ -248,7 +247,7 @@ class WildcardTransition < Transition
 
     def initialize(_target)
         super(_target)
-        self.serializationType = Transition.WILDCARD
+        self.serializationType = Transition::WILDCARD
     end
 
     def matches( symbol, minVocabSymbol,  maxVocabSymbol)
@@ -265,7 +264,7 @@ class PrecedencePredicateTransition < AbstractPredicateTransition
     attr_accessor :precedence 
     def initialize(_target, precedence)
         super(_target)
-        self.serializationType = Transition.PRECEDENCE
+        self.serializationType = Transition::PRECEDENCE
         self.precedence = precedence
         self.isEpsilon = true
     end
@@ -285,14 +284,14 @@ class PrecedencePredicateTransition < AbstractPredicateTransition
 end
 
 Transition.serializationTypes = {
-             EpsilonTransition => Transition.EPSILON,
-             RangeTransition => Transition.RANGE,
-             RuleTransition => Transition.RULE,
-             PredicateTransition => Transition.PREDICATE,
-             AtomTransition => Transition.ATOM,
-             ActionTransition => Transition.ACTION,
-             SetTransition => Transition.SET,
-             NotSetTransition => Transition.NOT_SET,
-             WildcardTransition => Transition.WILDCARD,
-             PrecedencePredicateTransition => Transition.PRECEDENCE
+             EpsilonTransition => Transition::EPSILON,
+             RangeTransition => Transition::RANGE,
+             RuleTransition => Transition::RULE,
+             PredicateTransition => Transition::PREDICATE,
+             AtomTransition => Transition::ATOM,
+             ActionTransition => Transition::ACTION,
+             SetTransition => Transition::SET,
+             NotSetTransition => Transition::NOT_SET,
+             WildcardTransition => Transition::WILDCARD,
+             PrecedencePredicateTransition => Transition::PRECEDENCE
 }

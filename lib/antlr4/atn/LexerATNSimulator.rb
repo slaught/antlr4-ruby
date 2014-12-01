@@ -30,7 +30,7 @@ end
 
 
 class LexerATNSimulator < ATNSimulator
-    include JavaSymbols
+    #include JavaSymbols
 
     class << self
       attr_reader :debug, :dfa_debug, :match_calls
@@ -65,7 +65,7 @@ class LexerATNSimulator < ATNSimulator
         @line = 1
         # The index of the character relative to the beginning of the line 0..n-1#/
         @column = 0
-        @mode = Lexer.DEFAULT_MODE
+        @mode = Lexer::DEFAULT_MODE
         # Used during DFA/ATN exec to record the most recent accept configuration info
         self.prevAccept = SimState.new()
     end
@@ -100,7 +100,7 @@ class LexerATNSimulator < ATNSimulator
         @startIndex = -1
         @line = 1
         @column = 0
-        @mode = Lexer.DEFAULT_MODE
+        @mode = Lexer::DEFAULT_MODE
     end
     def clearDFA()
       raise Exception.new("not implemented")
@@ -199,11 +199,11 @@ class LexerATNSimulator < ATNSimulator
     # {@code t}, or {@code null} if the target state for this edge is not
     # already cached
     def getExistingTargetState(s, t)
-        if s.edges.nil?  or t < LexerATNSimulator.MIN_DFA_EDGE or t > LexerATNSimulator.MAX_DFA_EDGE
+        if s.edges.nil?  or t < LexerATNSimulator::MIN_DFA_EDGE or t > LexerATNSimulator::MAX_DFA_EDGE
             return nil
         end
 
-        target = s.edges[t - LexerATNSimulator.MIN_DFA_EDGE]
+        target = s.edges[t - LexerATNSimulator::MIN_DFA_EDGE]
         if self.debug and not target.nil? 
             puts  "reuse state #{s.stateNumber} edge to #{target.stateNumber}"
         end
@@ -360,7 +360,7 @@ class LexerATNSimulator < ATNSimulator
             end
             if config.context and not config.context.isEmpty() then
                 0.upto(config.context.length - 1) do |i| 
-                    if config.context.getReturnState(i) != PredictionContext.EMPTY_RETURN_STATE
+                    if config.context.getReturnState(i) != PredictionContext::EMPTY_RETURN_STATE
                         newContext = config.context.getParent(i) # "pop" return state
                         returnState = self.atn.states[config.context.getReturnState(i)]
                         c = LexerATNConfig.new(returnState,nil,newContext, nil, nil, config )
@@ -390,12 +390,12 @@ class LexerATNSimulator < ATNSimulator
     # side-effect: can alter configs.hasSemanticContext
     def getEpsilonTarget(input, config, t, configs, speculative, treatEofAsEpsilon)
         c = nil
-        if t.serializationType==Transition.RULE then
+        if t.serializationType==Transition::RULE then
            newContext = SingletonPredictionContext.create(config.context, t.followState.stateNumber)
            c = LexerATNConfig.new(t.target, nil, newContext, nil,nil, config)
-        elsif t.serializationType==Transition.PRECEDENCE
+        elsif t.serializationType==Transition::PRECEDENCE
             raise UnsupportedOperationException.new("Precedence predicates are not supported in lexers.")
-        elsif t.serializationType==Transition.PREDICATE
+        elsif t.serializationType==Transition::PREDICATE
                 #  Track traversing semantic predicates. If we traverse,
                 # we cannot add a DFA state for this "reach" computation
                 # because the DFA would not test the predicate again in the
@@ -420,7 +420,7 @@ class LexerATNSimulator < ATNSimulator
                 if self.evaluatePredicate(input, t.ruleIndex, t.predIndex, speculative)
                     c = LexerATNConfig(t.target,nil,nil,nil,nil, config)
                 end
-        elsif t.serializationType==Transition.ACTION
+        elsif t.serializationType==Transition::ACTION
                 if config.context.nil? or config.context.hasEmptyPath()
                     # execute actions anywhere in the start rule for a token.
                     #
@@ -441,9 +441,9 @@ class LexerATNSimulator < ATNSimulator
                     # ignore actions in referenced rules
                     c = LexerATNConfig.new(t.target,nil,nil,nil,nil, config)
                 end
-        elsif t.serializationType==Transition.EPSILON
+        elsif t.serializationType==Transition::EPSILON
               c = LexerATNConfig.new(t.target,nil,nil,nil,nil, config)
-        elsif [ Transition.ATOM, Transition.RANGE, Transition.SET ].member? t.serializationType 
+        elsif [ Transition::ATOM, Transition::RANGE, Transition::SET ].member? t.serializationType 
             if treatEofAsEpsilon
                 if t.matches(Token::EOF, 0, 0xFFFF)
                     c = LexerATNConfig.new(t.target,nil,nil,nil,nil, config)
@@ -525,7 +525,7 @@ class LexerATNSimulator < ATNSimulator
             end
         end
         # add the edge
-        if tk < LexerATNSimulator.MIN_DFA_EDGE or tk > LexerATNSimulator.MAX_DFA_EDGE
+        if tk < LexerATNSimulator::MIN_DFA_EDGE or tk > LexerATNSimulator::MAX_DFA_EDGE
             # Only track edges within the DFA bounds
             return to
         end
@@ -540,7 +540,7 @@ class LexerATNSimulator < ATNSimulator
             from_.edges = Array.new 
         end
 
-        from_.edges[tk - LexerATNSimulator.MIN_DFA_EDGE] = to # connect
+        from_.edges[tk - LexerATNSimulator::MIN_DFA_EDGE] = to # connect
 
         return to
     end

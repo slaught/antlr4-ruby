@@ -109,23 +109,23 @@ class ATN
         end
         s = self.states[stateNumber]
         following = self.nextTokens(s)
-        if not following.member? Token.EPSILON 
+        if not following.member? Token::EPSILON 
             return following
         end
         expected = IntervalSet.new()
         expected.addSet(following)
         #puts expected.to_s
-        expected.remove(Token.EPSILON)
+        expected.remove(Token::EPSILON)
         #puts expected.to_s
-        while ( ctx and ctx.invokingState >= 0 and following.member?(Token.EPSILON) ) do
+        while ( ctx and ctx.invokingState >= 0 and following.member?(Token::EPSILON) ) do
             invokingState = self.states[ctx.invokingState]
             rt = invokingState.transitions[0]
             following = self.nextTokens(rt.followState)
             expected.addSet(following)
-            expected.remove(Token.EPSILON)
+            expected.remove(Token::EPSILON)
             ctx = ctx.parentCtx
         end
-        if following.member?(Token.EPSILON) then
+        if following.member?(Token::EPSILON) then
             expected.addOne(Token::EOF)
         end
         return expected

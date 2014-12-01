@@ -4,13 +4,13 @@
 #  of speed.
 
 class Lexer < TokenSource
-    include JavaSymbols
+
     DEFAULT_MODE = 0
     MORE = -2
     SKIP = -3
 
-    DEFAULT_TOKEN_CHANNEL = Token.DEFAULT_CHANNEL
-    HIDDEN = Token.HIDDEN_CHANNEL
+    DEFAULT_TOKEN_CHANNEL = Token::DEFAULT_CHANNEL
+    HIDDEN = Token::HIDDEN_CHANNEL
     MIN_CHAR_VALUE = "\u0000"
     MAX_CHAR_VALUE = "\uFFFE"
 
@@ -51,13 +51,13 @@ class Lexer < TokenSource
         @hitEOF = false
 
         # The channel number for the current token#/
-        @channel = Token.DEFAULT_CHANNEL
+        @channel = Token::DEFAULT_CHANNEL
 
         # The token type for the current token#/
-        @type = Token.INVALID_TYPE
+        @type = Token::INVALID_TYPE
 
         @modeStack = Array.new
-        @mode = Lexer.DEFAULT_MODE
+        @mode = Lexer::DEFAULT_MODE
 
         # You can set the text for the current token to override what is in
         #  the input char buffer.  Use setText() or can set self instance var.
@@ -71,15 +71,15 @@ class Lexer < TokenSource
             self.input.seek(0) # rewind the input
         end
         self.token = nil
-        self.type = Token.INVALID_TYPE
-        self.channel = Token.DEFAULT_CHANNEL
+        self.type = Token::INVALID_TYPE
+        self.channel = Token::DEFAULT_CHANNEL
         self.tokenStartCharIndex = -1
         self.tokenStartColumn = -1
         self.tokenStartLine = -1
         self.text = nil
 
         self.hitEOF = false
-        self.mode = Lexer.DEFAULT_MODE
+        self.mode = Lexer::DEFAULT_MODE
         self.modeStack = Array.new
 
         self.interp.reset()
@@ -102,14 +102,14 @@ class Lexer < TokenSource
                     return self.token
                 end
                 self.token = nil
-                self.channel = Token.DEFAULT_CHANNEL
+                self.channel = Token::DEFAULT_CHANNEL
                 self.tokenStartCharIndex = self.input.index
                 self.tokenStartColumn = self.interp.column
                 self.tokenStartLine = self.interp.line
                 self.text = nil
                 continueOuter = false
                 while true do 
-                    self.type = Token.INVALID_TYPE
+                    self.type = Token::INVALID_TYPE
                     ttype = Lexer::SKIP
                     begin
                         ttype = self.interp.match(self.input, self.mode)
@@ -120,7 +120,7 @@ class Lexer < TokenSource
                     if self.input.LA(1)==Token::EOF then
                         self.hitEOF = true
                     end
-                    if self.type == Token.INVALID_TYPE
+                    if self.type == Token::INVALID_TYPE
                         self.type = ttype
                   
                     end
@@ -220,7 +220,7 @@ class Lexer < TokenSource
             n = self.token.stop - self.token.start + 1
             cpos = self.token.column + n
         end
-        eof = self.factory.create(self.tokenFactorySourcePair, Token.EOF, nil, Token.DEFAULT_CHANNEL, self.input.index,
+        eof = self.factory.create(self.tokenFactorySourcePair, Token::EOF, nil, Token::DEFAULT_CHANNEL, self.input.index,
                                    self.input.index-1, self.line, cpos)
         self.emitToken(eof)
         return eof
@@ -269,7 +269,7 @@ class Lexer < TokenSource
     def getAllTokens
         tokens = Array.new
         t = self.nextToken()
-        while t.type!=Token.EOF do
+        while t.type!=Token::EOF do
             tokens.push(t)
             t = self.nextToken()
         end
@@ -296,7 +296,7 @@ class Lexer < TokenSource
         rescue ArgumentError
           cc = "\ufffd".ord
         end
-        if cc==Token.EOF then
+        if cc==Token::EOF then
             return "<EOF>"
         elsif c == "\n"
             return "\\n"
@@ -318,7 +318,7 @@ class Lexer < TokenSource
     #  to do sophisticated error recovery if you are in a fragment rule.
     #/
     def recover(re) # :RecognitionException):
-        if self.input.LA(1) != Token.EOF then
+        if self.input.LA(1) != Token::EOF then
             if re.kind_of?  LexerNoViableAltException then
                     # skip a char and try again
                     self.interp.consume(self.input)

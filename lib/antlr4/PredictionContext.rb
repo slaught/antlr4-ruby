@@ -96,7 +96,7 @@ end
 class SingletonPredictionContext < PredictionContext
 
     def self.create(parent, returnState)
-        if returnState == PredictionContext.EMPTY_RETURN_STATE and parent.nil?  then
+        if returnState == PredictionContext::EMPTY_RETURN_STATE and parent.nil?  then
             # someone can pass in the bits of an array ctx that mean $
             return PredictionContext.EMPTY
         else
@@ -202,7 +202,7 @@ class ArrayPredictionContext < PredictionContext
     def isEmpty
         # since EMPTY_RETURN_STATE can only appear in the last position, we
         # don't need to verify that size==1
-        return self.returnStates[0]==PredictionContext.EMPTY_RETURN_STATE
+        return self.returnStates[0]==PredictionContext::EMPTY_RETURN_STATE
     end
 
     def length
@@ -236,7 +236,7 @@ class ArrayPredictionContext < PredictionContext
             buf.write("[")
             for i in 0..self.returnStates.length-1 do
                 buf.write(", ") if i>0
-                if self.returnStates[i]==PredictionContext.EMPTY_RETURN_STATE
+                if self.returnStates[i]==PredictionContext::EMPTY_RETURN_STATE
                     buf.write("$")
                     next
                 end
@@ -507,7 +507,7 @@ def mergeArrays(a, b, rootIsWildcard, mergeCache)
             # same payload (stack tops are equal), must yield merged singleton
             payload = a.returnStates[i]
             # $+$ = $
-            bothDollars = (payload == PredictionContext.EMPTY_RETURN_STATE and \
+            bothDollars = (payload == PredictionContext::EMPTY_RETURN_STATE and \
                             a_parent.nil? and b_parent.nil? )
             ax_ax = ( ! a_parent.nil? and ! b_parent.nil?) and a_parent==b_parent # ax+ax -> ax
             if bothDollars or ax_ax

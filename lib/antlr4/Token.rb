@@ -3,7 +3,6 @@
 # we obtained this token.
 
 class Token
-    include JavaSymbols
 
     INVALID_TYPE = 0
     # During lookahead operations, this "token" signifies we hit rule end ATN state
@@ -56,7 +55,7 @@ class CommonToken < Token
     # {@link #source} for tokens that do not have a source.
     EMPTY_SOURCE = [nil, nil]
 
-    def initialize(source = EMPTY_SOURCE, type = nil, channel=Token.DEFAULT_CHANNEL, start=-1, stop=-1)
+    def initialize(source = EMPTY_SOURCE, type = nil, channel=Token::DEFAULT_CHANNEL, start=-1, stop=-1)
         super()
         self.source = source
         self.type = type

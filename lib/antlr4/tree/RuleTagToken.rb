@@ -19,7 +19,7 @@ class RuleTagToken < Token
         end
         self.source = nil
         self.type = bypassTokenType # token type of the token
-        self.channel = Token.DEFAULT_CHANNEL # The parser ignores everything not on DEFAULT_CHANNEL
+        self.channel = Token::DEFAULT_CHANNEL # The parser ignores everything not on DEFAULT_CHANNEL
         self.start = -1 # optional; return -1 if not implemented.
         self.stop = -1  # optional; return -1 if not implemented.
         self.tokenIndex = -1 # from 0..n-1 of the token object in the input stream

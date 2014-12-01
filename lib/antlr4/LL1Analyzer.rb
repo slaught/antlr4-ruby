@@ -2,7 +2,7 @@
 class LL1Analyzer 
     #  Special value added to the lookahead sets to indicate that we hit
     #  a predicate during analysis if {@code seeThruPreds==false}.
-    HIT_PRED = Token.INVALID_TYPE
+    HIT_PRED = Token::INVALID_TYPE
 
     attr_accessor :atn
     def initialize(atn)
@@ -110,7 +110,7 @@ class LL1Analyzer
 
         if s == stopState then
             if ctx.nil?  then
-                look.addOne(Token.EPSILON)
+                look.addOne(Token::EPSILON)
                 return
             elsif ctx.isEmpty() and addEOF
                 look.addOne(Token::EOF)
@@ -120,7 +120,7 @@ class LL1Analyzer
 
         if s.kind_of? RuleStopState then
             if ctx.nil? then 
-                look.addOne(Token.EPSILON)
+                look.addOne(Token::EPSILON)
                 return
             elsif ctx.isEmpty() and addEOF
                 look.addOne(Token::EOF)
@@ -162,12 +162,12 @@ class LL1Analyzer
             elsif t.isEpsilon
                 self._LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF)
             elsif t.class == WildcardTransition
-                look.addRange( Token.MIN_USER_TOKEN_TYPE..self.atn.maxTokenType )
+                look.addRange( Token::MIN_USER_TOKEN_TYPE..self.atn.maxTokenType )
             else
                 set = t.label
                 if not set.nil? then
                     if t.kind_of? NotSetTransition then
-                        set = set.complement IntervalSet.of(Token.MIN_USER_TOKEN_TYPE, self.atn.maxTokenType)
+                        set = set.complement IntervalSet.of(Token::MIN_USER_TOKEN_TYPE, self.atn.maxTokenType)
                     end
                     look.addSet(set)
                 end

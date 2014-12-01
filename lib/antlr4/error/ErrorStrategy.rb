@@ -536,7 +536,7 @@ class DefaultErrorStrategy < ErrorStrategy
             current = lookback
         end
         return recognizer.getTokenFactory().create(current.source,
-            expectedTokenType, tokenText, Token.DEFAULT_CHANNEL,
+            expectedTokenType, tokenText, Token::DEFAULT_CHANNEL,
             -1, -1, current.line, current.column)
     end
     def getExpectedTokens(recognizer)
@@ -674,7 +674,7 @@ class DefaultErrorStrategy < ErrorStrategy
             recoverSet.addSet(follow)
             ctx = ctx.parentCtx
         end
-        recoverSet.remove(Token.EPSILON)
+        recoverSet.remove(Token::EPSILON)
         return recoverSet
     end
 

@@ -184,14 +184,14 @@ class IntervalSet
     def elementName(tokenNames, a)
         if a==Token::EOF then
             return "<EOF>"
-        elsif a==Token.EPSILON
+        elsif a==Token::EPSILON
             return "<EPSILON>"
         else
             return tokenNames[a]
         end
     end
 #IntervalSet implements IntSet {
-#  COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
+#  COMPLETE_CHAR_SET = IntervalSet.of(Lexer::MIN_CHAR_VALUE, Lexer::MAX_CHAR_VALUE);
 #	static { COMPLETE_CHAR_SET.setReadonly(true); }
 #	EMPTY_SET = new IntervalSet(); static { EMPTY_SET.setReadonly(true); }
 #
@@ -307,14 +307,14 @@ end
 # Returns the maximum value contained in the set.
 # If the set is empty, this method returns {@link Token#INVALID_TYPE}.
 #	def getMaxElement()
-#		if ( isNil() ) { return Token.INVALID_TYPE; }
+#		if ( isNil() ) { return Token::INVALID_TYPE; }
 #		Interval last = intervals.get(intervals.size()-1);
 #		return last.b;
 #	end
 #
 ## Returns the minimum value contained in the set.
 #	def getMinElement()
-#		if ( isNil() ) { return Token.INVALID_TYPE; }
+#		if ( isNil() ) { return Token::INVALID_TYPE; }
 #		return intervals.get(0).a;
 # end
 

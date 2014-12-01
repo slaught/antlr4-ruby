@@ -218,7 +218,7 @@ class BufferedTokenStream < TokenStream
         if self.tokenIndex<0 or tokenIndex>=self.tokens.length then
             raise Exception.new("#{tokenIndex} not in 0..#{self.tokens.length-1}")
         end
-        nextOnChannel = self.nextTokenOnChannel(tokenIndex + 1, Lexer.DEFAULT_TOKEN_CHANNEL)
+        nextOnChannel = self.nextTokenOnChannel(tokenIndex + 1, Lexer::DEFAULT_TOKEN_CHANNEL)
         from_ = tokenIndex+1
         # if none onchannel to right, nextOnChannel=-1 so set to = last token
         if nextOnChannel==-1 
@@ -237,7 +237,7 @@ class BufferedTokenStream < TokenStream
         if tokenIndex<0 or tokenIndex>=self.tokens.length
             raise Exception.new("#{tokenIndex} not in 0..#{self.tokens.length-1}")
         end
-        prevOnChannel = self.previousTokenOnChannel(tokenIndex - 1, Lexer.DEFAULT_TOKEN_CHANNEL)
+        prevOnChannel = self.previousTokenOnChannel(tokenIndex - 1, Lexer::DEFAULT_TOKEN_CHANNEL)
         return nil if prevOnChannel == tokenIndex - 1
         
         # if none on channel to left, prevOnChannel=-1 then from=0
@@ -251,7 +251,7 @@ class BufferedTokenStream < TokenStream
         for i in left..right do
             t = self.tokens[i]
             if channel==-1 then
-                if t.channel!= Lexer.DEFAULT_TOKEN_CHANNEL
+                if t.channel!= Lexer::DEFAULT_TOKEN_CHANNEL
                     hidden.push(t)
                 end
             elsif t.channel==channel then

@@ -517,34 +517,34 @@ class ATNDeserializer
       if self.edgeFactories.nil? then
           ef = Array.new(11)  # [nil] * 11
           ef[0] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target| raise Exception.new("The specified state type 0 is not valid.") }
-          ef[Transition.EPSILON] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|  EpsilonTransition.new(target) }
-          ef[Transition.RANGE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|
+          ef[Transition::EPSILON] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|  EpsilonTransition.new(target) }
+          ef[Transition::RANGE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|
               if arg3 != 0 
-                  RangeTransition.new(target, Token.EOF, arg2) 
+                  RangeTransition.new(target, Token::EOF, arg2) 
               else 
                 RangeTransition.new(target, arg1, arg2)
               end
           }
-          ef[Transition.RULE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target | 
+          ef[Transition::RULE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target | 
                 RuleTransition.new(atn.states[arg1], arg2, arg3, target) }
-          ef[Transition.PREDICATE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |
+          ef[Transition::PREDICATE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |
                 PredicateTransition.new(target, arg1, arg2, arg3 != 0) }
-          ef[Transition.PRECEDENCE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |
+          ef[Transition::PRECEDENCE] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |
                 PrecedencePredicateTransition.new(target, arg1) }
-          ef[Transition.ATOM] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target | 
+          ef[Transition::ATOM] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target | 
                 if arg3 != 0 
-                    AtomTransition.new(target, Token.EOF) 
+                    AtomTransition.new(target, Token::EOF) 
                 else 
                     AtomTransition.new(target, arg1)
                 end
           }
-          ef[Transition.ACTION] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |
+          ef[Transition::ACTION] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |
                 ActionTransition.new(target, arg1, arg2, arg3 != 0)  }
-          ef[Transition.SET] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|
+          ef[Transition::SET] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target|
                 SetTransition.new(target, sets[arg1]) }
-          ef[Transition.NOT_SET] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |  
+          ef[Transition::NOT_SET] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |  
                 NotSetTransition.new(target, sets[arg1]) }
-          ef[Transition.WILDCARD] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |
+          ef[Transition::WILDCARD] = lambda {|atn, src, trg, arg1, arg2, arg3, sets, target |
                 WildcardTransition.new(target) }
           self.edgeFactories = ef
         end
@@ -585,14 +585,14 @@ class ATNDeserializer
     def lexerActionFactory(type, data1, data2)
         if self.actionFactories.nil? then
             af = Array.new(8)  #[ nil ] * 8
-            af[LexerActionType.CHANNEL] = lambda {|data1, data2| LexerChannelAction.new(data1) }
-            af[LexerActionType.CUSTOM] = lambda {|data1, data2| LexerCustomAction.new(data1, data2) }
-            af[LexerActionType.MODE] = lambda {|data1, data2| LexerModeAction.new(data1) } 
-            af[LexerActionType.MORE] = lambda {|data1, data2| LexerMoreAction.INSTANCE } 
-            af[LexerActionType.POP_MODE] = lambda {|data1, data2| LexerPopModeAction.INSTANCE }
-            af[LexerActionType.PUSH_MODE] = lambda {|data1, data2| LexerPushModeAction.new(data1) }
-            af[LexerActionType.SKIP] = lambda {|data1, data2| LexerSkipAction.INSTANCE }
-            af[LexerActionType.TYPE] = lambda {|data1, data2| LexerTypeAction.new(data1) }
+            af[LexerActionType::CHANNEL] = lambda {|data1, data2| LexerChannelAction.new(data1) }
+            af[LexerActionType::CUSTOM] = lambda {|data1, data2| LexerCustomAction.new(data1, data2) }
+            af[LexerActionType::MODE] = lambda {|data1, data2| LexerModeAction.new(data1) } 
+            af[LexerActionType::MORE] = lambda {|data1, data2| LexerMoreAction.INSTANCE } 
+            af[LexerActionType::POP_MODE] = lambda {|data1, data2| LexerPopModeAction.INSTANCE }
+            af[LexerActionType::PUSH_MODE] = lambda {|data1, data2| LexerPushModeAction.new(data1) }
+            af[LexerActionType::SKIP] = lambda {|data1, data2| LexerSkipAction.INSTANCE }
+            af[LexerActionType::TYPE] = lambda {|data1, data2| LexerTypeAction.new(data1) }
             self.actionFactories = af
         end
         if type> self.actionFactories.length() or self.actionFactories[type].nil?

@@ -75,7 +75,7 @@ class ListTokenSource < TokenSource
                 end
                 stop = [-1, start - 1].max
                 self.eofToken = self.factory.create([self, self.getInputStream()],
-                            Token::EOF, "EOF", Token.DEFAULT_CHANNEL, start, stop, self.line, self.column)
+                            Token::EOF, "EOF", Token::DEFAULT_CHANNEL, start, stop, self.line, self.column)
                 stop = [-1, start - 1].max
             end
             return self.eofToken

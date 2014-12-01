@@ -93,23 +93,23 @@ class ParserInterpreter < Parser
 
         transition = p.transitions[edge - 1]
         tt = transition.serializationType
-        if tt==Transition.EPSILON then
+        if tt==Transition::EPSILON then
 
             if self.pushRecursionContextStates[p.stateNumber] and not transition.target.kind_of? LoopEndState
                 t = self.parentContextStack[-1]
                 ctx = InterpreterRuleContext.new(t[0], t[1], self.ctx.ruleIndex)
                 self.pushNewRecursionContext(ctx, self.atn.ruleToStartState[p.ruleIndex].stateNumber, self.ctx.ruleIndex)
             end
-        elsif tt==Transition.ATOM
+        elsif tt==Transition::ATOM
             self.match(transition.label)
-        elsif [ Transition.RANGE, Transition.SET, Transition.NOT_SET].member? tt 
-            if not transition.matches(self.input.LA(1), Token.MIN_USER_TOKEN_TYPE, 0xFFFF)
+        elsif [ Transition::RANGE, Transition::SET, Transition::NOT_SET].member? tt 
+            if not transition.matches(self.input.LA(1), Token::MIN_USER_TOKEN_TYPE, 0xFFFF)
                 self.errHandler.recoverInline(self)
             end
             self.matchWildcard()
-        elsif tt==Transition.WILDCARD
+        elsif tt==Transition::WILDCARD
             self.matchWildcard()
-        elsif tt==Transition.RULE
+        elsif tt==Transition::RULE
             ruleStartState = transition.target
             ruleIndex = ruleStartState.ruleIndex
             ctx = InterpreterRuleContext(self.ctx, p.stateNumber, ruleIndex)
@@ -118,13 +118,13 @@ class ParserInterpreter < Parser
             else
                 self.enterRule(ctx, transition.target.stateNumber, ruleIndex)
             end
-        elsif tt==Transition.PREDICATE
+        elsif tt==Transition::PREDICATE
             if not self.sempred(self.ctx, transition.ruleIndex, transition.predIndex)
                 raise FailedPredicateException.new(self)
             end
-        elsif tt==Transition.ACTION
+        elsif tt==Transition::ACTION
             self.action(self.ctx, transition.ruleIndex, transition.actionIndex)
-        elsif tt==Transition.PRECEDENCE
+        elsif tt==Transition::PRECEDENCE
             if not self.precpred(self.ctx, transition.precedence)
                 msg = "precpred(ctx, #{transition.precedence})"
                 raise FailedPredicateException.new(self, msg)

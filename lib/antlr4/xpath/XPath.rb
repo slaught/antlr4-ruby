@@ -147,11 +147,11 @@ class XPath
         while i < n do 
             el = tokens[i]
             next_token = nil
-            if [XPathLexer.ROOT, XPathLexer.ANYWHERE].member? el.type then
-                    anywhere = el.type == XPathLexer.ANYWHERE
+            if [XPathLexer::ROOT, XPathLexer::ANYWHERE].member? el.type then
+                    anywhere = el.type == XPathLexer::ANYWHERE
                      i = i + 1
                     next_token = tokens[i]
-                    invert = next_token.type==XPathLexer.BANG
+                    invert = next_token.type==XPathLexer::BANG
                     if invert then
                         i = i + 1
                         next_token = tokens[i]
@@ -160,7 +160,7 @@ class XPath
                     pathElement.invert = invert
                     elements.push(pathElement)
                     i = i + 1
-            elsif [XPathLexer.TOKEN_REF, XPathLexer.RULE_REF, XPathLexer.WILDCARD].member? el.type then
+            elsif [XPathLexer::TOKEN_REF, XPathLexer::RULE_REF, XPathLexer::WILDCARD].member? el.type then
                     elements.push( self.getXPathElement(el, false) )
                     i = i + 1
             elsif el.type==Token::EOF then
@@ -185,14 +185,14 @@ class XPath
         ttype = self.parser.getTokenType(word)
         ruleIndex = self.parser.getRuleIndex(word)
 
-        if wordToken.type==XPathLexer.WILDCARD then
+        if wordToken.type==XPathLexer::WILDCARD then
             if anywhere then
               return XPathWildcardAnywhereElement.new() 
             else  
               return XPathWildcardElement.new()
             end
-        elsif [XPathLexer.TOKEN_REF, XPathLexer.STRING].member?  wordToken.type 
-            if ttype==Token.INVALID_TYPE then
+        elsif [XPathLexer::TOKEN_REF, XPathLexer::STRING].member?  wordToken.type 
+            if ttype==Token::INVALID_TYPE then
                 raise Exception.new("#{word} at index #{wordToken.startIndex} isn't a valid token name")
             end
             if anywhere then 

@@ -138,7 +138,7 @@ class <parser.name> \< <if(superClass)><superClass><else>Parser<endif>
 
     <atn>
 
-    EOF = <TokenLabelType()>.EOF
+    EOF = <TokenLabelType()>::EOF
 	<if(parser.tokens)>
     <parser.tokens:{k | <k>=<parser.tokens.(k)>}; separator="\n", wrap, anchor>
 	<endif>
@@ -205,7 +205,7 @@ def action(localctx, ruleIndex, actionIndex)
 		
 <endif>
 <if(sempredFuncs)>
-def sempred(self, localctx, ruleIndex, predIndex)
+def sempred(localctx, ruleIndex, predIndex)
     if self.predicates.nil? then 
         preds = Hash.new
 <recog.sempredFuncs.values:{f|
@@ -269,7 +269,7 @@ RuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,namedActions,fina
 
 def <currentRule.name>(<currentRule.args:{a | <a.name>, } >)
     localctx = <parser.name>::<currentRule.ctxType>.new(self, self.ctx, self.state<currentRule.args:{a | , <a.name>}>)
-    self.enterRule(localctx, <currentRule.startState>, <parser.name>.RULE_<currentRule.name>)
+    self.enterRule(localctx, <currentRule.startState>, <parser.name>::RULE_<currentRule.name>)
     <namedActions.init>
     <locals; separator="\n">
     begin
@@ -306,7 +306,7 @@ def <currentRule.name>(_p=0<if(currentRule.args)>, <args:{a | , <a>}><endif>)
     localctx = <parser.name>::<currentRule.ctxType>.new(self, self.ctx, _parentState<args:{a | , <a.name>}>)
     _prevctx = localctx
     _startState = <currentRule.startState>
-    self.enterRecursionRule(localctx, <currentRule.startState>, <parser.name>.RULE_<currentRule.name>, _p)
+    self.enterRecursionRule(localctx, <currentRule.startState>, <parser.name>::RULE_<currentRule.name>, _p)
     <namedActions.init>
     <locals; separator="\n">
     begin
@@ -433,7 +433,7 @@ StarBlock(choice, alts, sync, iteration) ::= <<
 self.state = <choice.stateNumber>
 self.errHandler.sync(self)
 _alt = self.interp.adaptivePredict(self.input,<choice.decision>,self.ctx)
-while _alt!=<choice.exitAlt> and _alt!=ATN.INVALID_ALT_NUMBER do
+while _alt!=<choice.exitAlt> and _alt!=ATN::INVALID_ALT_NUMBER do
     if _alt==1<if(!choice.ast.greedy)>+1<endif> then
         <iteration>
         <alts> <! should only be one !>
@@ -448,7 +448,7 @@ PlusBlock(choice, alts, error) ::= <<
 self.state = <choice.blockStartStateNumber> <! alt block decision !>
 self.errHandler.sync(self)
 _alt = 1<if(!choice.ast.greedy)>+1<endif>
-while _alt!=<choice.exitAlt> and _alt!=ATN.INVALID_ALT_NUMBER do
+while _alt!=<choice.exitAlt> and _alt!=ATN::INVALID_ALT_NUMBER do
     <alts:{alt|
 if _alt == <i><if(!choice.ast.greedy)>+1<endif> then
     <alt>
@@ -491,16 +491,16 @@ offsetShiftVar(shiftAmount, offset) ::= <%
 %>
 
 offsetShiftType(shiftAmount, offset) ::= <%
-<if(!isZero.(offset))>(self.<shiftAmount> - <offset>)<else>self.<shiftAmount><endif>
+<if(!isZero.(offset))>(<parser.name>::<shiftAmount> - <offset>)<else><parser.name>::<shiftAmount><endif>
 %>
 
 // produces more efficient bytecode when bits.ttypes contains at most two items
 bitsetInlineComparison(s, bits) ::= <%
-<bits.ttypes:{ttype | <s.varName>==<parser.name>.<ttype>}; separator=" or ">
+<bits.ttypes:{ttype | <s.varName>==<parser.name>::<ttype>}; separator=" or ">
 %>
 
 cases(ttypes) ::= <<
-if [<ttypes:{t | self.<t>}; separator=", ">].member? token then 
+if [<ttypes:{t | <parser.name>::<t>}; separator=", ">].member? token then 
 >>
 
 InvokeRule(r, argExprsChunks) ::= <<
@@ -698,7 +698,7 @@ class <struct.name> \< <superClass>
     <getters:{g | <g>}; separator="\n\n">
 
     def ruleIndex # getRuleIndex()
-        <parser.name>.RULE_<struct.derivedFromName>
+        <parser.name>::RULE_<struct.derivedFromName>
     end	
 
 <if(struct.provideCopyFrom)> <! don't need copy unless we have subclasses !>
@@ -763,13 +763,13 @@ recRuleSetStopToken()                 ::= "self.ctx.stop = self.input.LT(-1)"
 recRuleAltStartAction(ruleName, ctxName, label) ::= <<
 localctx = <parser.name>::<ctxName>Context.new(self, _parentctx, _parentState)
 <if(label)>localctx.<label> = _prevctx<endif>
-self.pushNewRecursionContext(localctx, _startState, <parser.name>.RULE_<ruleName>)
+self.pushNewRecursionContext(localctx, _startState, <parser.name>::RULE_<ruleName>)
 >>
 
 recRuleLabeledAltStartAction(ruleName, currentAltLabel, label) ::= <<
 localctx = <parser.name>::<currentAltLabel; format="cap">Context.new(self, <parser.name>::<ruleName; format="cap">Context.new(self, _parentctx, _parentState))
 <if(label)>localctx.<label> = _prevctx<endif>
-self.pushNewRecursionContext(localctx, _startState, <parser.name>.RULE_<ruleName>)
+self.pushNewRecursionContext(localctx, _startState, <parser.name>::RULE_<ruleName>)
 >>
 
 recRuleReplaceContext(ctxName) ::= <<

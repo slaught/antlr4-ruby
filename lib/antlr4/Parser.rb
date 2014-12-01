@@ -27,7 +27,8 @@ end
 # self is all the parsing support code essentially; most of it is error recovery stuff.#
 class Parser < Recognizer
 
-    include JavaSymbols
+    # needed by generated parser for now.
+    #include JavaSymbols
     # self field maps from the serialized ATN string to the deserialized {@link ATN} with
     # bypass alternatives.
     #
@@ -488,18 +489,18 @@ class Parser < Recognizer
 #            puts " true "
             return true
         end
-        if not following.member? Token.EPSILON then
+        if not following.member? Token::EPSILON then
 #            puts " FAIL "
             return false
         end
-        while ctx and ctx.invokingState >= 0 and following.member?(Token.EPSILON) do
+        while ctx and ctx.invokingState >= 0 and following.member?(Token::EPSILON) do
             invokingState = atn.states[ctx.invokingState]
             rt = invokingState.transitions[0]
             following = atn.nextTokens(rt.followState)
             return true if following.member?(symbol)
             ctx = ctx.parentCtx
         end
-        if following.member?( Token.EPSILON) and symbol == Token.EOF
+        if following.member?( Token::EPSILON) and symbol == Token::EOF
             return true
         else
             return false

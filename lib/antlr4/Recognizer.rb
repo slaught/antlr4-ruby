@@ -77,7 +77,7 @@ class Recognizer
         if not ttype.nil? then
             return ttype
         else
-            return Token.INVALID_TYPE
+            return Token::INVALID_TYPE
         end
     end
 

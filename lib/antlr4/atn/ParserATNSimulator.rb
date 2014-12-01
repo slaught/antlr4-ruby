@@ -832,7 +832,7 @@ class ParserATNSimulator < ATNSimulator
             end
             if lookToEndOfRule and config.state.epsilonOnlyTransitions
                 nextTokens = self.atn.nextTokens(config.state)
-                if nextTokens.member? Token.EPSILON then
+                if nextTokens.member? Token::EPSILON then
                     endOfRuleState = self.atn.ruleToStopState[config.state.ruleIndex]
                     result.add(ATNConfig.new(endOfRuleState, nil, nil, nil, config), self.mergeCache)
                 end
@@ -1163,7 +1163,7 @@ class ParserATNSimulator < ATNSimulator
             if not config.context.isEmpty() then
 #                for i in range(0, len(config.context)):
                 0.upto(config.context.length - 1).each do |i|
-                    if config.context.getReturnState(i).equal? PredictionContext.EMPTY_RETURN_STATE
+                    if config.context.getReturnState(i) == PredictionContext::EMPTY_RETURN_STATE
                         if fullCtx
                             configs.add(ATNConfig.new(config.state,nil,PredictionContext.EMPTY,nil,config), self.mergeCache)
                             next

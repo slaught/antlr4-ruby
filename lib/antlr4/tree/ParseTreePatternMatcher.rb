@@ -220,7 +220,7 @@ class ParseTreePatternMatcher
                 # add special rule token or conjure up new token from name
                 if chunk.tag[0].isupper() then
                     ttype = self.parser.getTokenType(chunk.tag)
-                    if ttype==Token.INVALID_TYPE then
+                    if ttype==Token::INVALID_TYPE then
                         raise Exception.new("Unknown token #{chunk.tag} in pattern: #{pattern}")
                     end
                     tokens.push(TokenTagToken(chunk.tag, ttype, chunk.label))

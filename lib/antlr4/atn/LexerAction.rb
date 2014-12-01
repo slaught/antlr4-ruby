@@ -1,6 +1,6 @@
 
 class LexerActionType 
-    include JavaSymbols
+    # include JavaSymbols
     CHANNEL = 0     #The type of a {@link LexerChannelAction} action.
     CUSTOM = 1      #The type of a {@link LexerCustomAction} action.
     MODE = 2        #The type of a {@link LexerModeAction} action.
@@ -48,7 +48,7 @@ class LexerSkipAction < LexerAction
         @@INSTANCE 
     end
     def initialize() 
-        super(LexerActionType.SKIP)
+        super(LexerActionType::SKIP)
     end
 
     def execute(lexer)
@@ -66,7 +66,7 @@ class LexerTypeAction < LexerAction
 
     attr_accessor :type
     def initialize(_type)
-        super(LexerActionType.TYPE)
+        super(LexerActionType::TYPE)
         self.type = _type
     end
     def execute(lexer)
@@ -91,7 +91,7 @@ class LexerPushModeAction < LexerAction
 
     attr_accessor :mode
     def initialize(_mode)
-        super(LexerActionType.PUSH_MODE)
+        super(LexerActionType::PUSH_MODE)
         self.mode = _mode
     end
 
@@ -127,7 +127,7 @@ class LexerPopModeAction < LexerAction
     end
 
     def initialize 
-        super(LexerActionType.POP_MODE)
+        super(LexerActionType::POP_MODE)
     end
 
     # <p>This action is implemented by calling {@link Lexer#popMode}.</p>
@@ -153,7 +153,7 @@ class LexerMoreAction < LexerAction
     end
 
     def initialize 
-        super(LexerActionType.MORE)
+        super(LexerActionType::MORE)
     end
 
     # <p>This action is implemented by calling {@link Lexer#popMode}.</p>
@@ -171,7 +171,7 @@ end
 class LexerModeAction < LexerAction
 
     def initialize(_mode)
-        super(LexerActionType.MODE)
+        super(LexerActionType::MODE)
         self.mode = _mode
     end
 
@@ -214,7 +214,7 @@ class LexerCustomAction < LexerAction
     #/
     attr_accessor :ruleIndex, :actionIndex, :isPositionDependent 
     def initialize(rule_index, action_index)
-        super(LexerActionType.CUSTOM)
+        super(LexerActionType::CUSTOM)
         @ruleIndex = rule_index
         @actionIndex = action_index
         @isPositionDependent = true
@@ -241,7 +241,7 @@ class LexerChannelAction < LexerAction
     # @param channel The channel value to pass to {@link Lexer#setChannel}.
     attr_accessor :channel
     def initialize(_channel)
-        super(LexerActionType.CHANNEL)
+        super(LexerActionType::CHANNEL)
         self.channel = _channel
     end
 
