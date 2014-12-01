@@ -174,7 +174,7 @@ class DefaultErrorStrategy < ErrorStrategy
 
         self.lastErrorIndex = recognizer.input.index
         if self.lastErrorStates.nil? then 
-            self.lastErrorStates = []
+            self.lastErrorStates = Array.new(32)
         end
         self.lastErrorStates.push(recognizer.state)
         followSet = self.getErrorRecoverySet(recognizer)

@@ -73,7 +73,7 @@ class ParseTreeMatch
     # is returned.
     #
     def getAll(label)
-        self.labels.get(label, [])
+        self.labels.get(label, Array.new)
     end
 
     #

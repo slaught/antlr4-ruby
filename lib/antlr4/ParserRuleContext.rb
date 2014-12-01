@@ -112,25 +112,23 @@ class ParserRuleContext < RuleContext
         return nil
     end
     def getTokens(ttype)
-        return [] if self.getChildren().empty? 
-        tokens = self.getChildren().map do |child|
+        return Array.new if self.getChildren().empty? 
+        self.getChildren().map do |child|
             next if not child.kind_of? TerminalNode
             next if child.symbol.type != ttype
             child
         end.compact
-        return tokens
     end
 
     def getTypedRuleContext(ctxType, i)
         return self.getChild(i, ctxType)
     end
     def getTypedRuleContexts(ctxType)
-        return [] if self.getChildren().empty?
-        contexts = self.getChildren.map do |child| 
+        return Array.new if self.getChildren().empty?
+        self.getChildren.map do |child| 
             next if not child.kind_of? ctxType
             child
         end.compact
-        return contexts
     end
     def getChildCount
         return self.children.length

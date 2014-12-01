@@ -99,7 +99,7 @@ class RuleContext < RuleNode
     end
 
     def getChildren
-        [].map {|c| c } 
+       Array.new #  [].map {|c| c } 
     end
     def accept(visitor)
         return visitor.visitChildren(self)

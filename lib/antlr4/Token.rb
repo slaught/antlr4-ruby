@@ -63,7 +63,7 @@ class CommonToken < Token
         self.start = start
         self.stop = stop
         self.tokenIndex = -1
-        if not source[0].nil? then
+        if source[0] then
             self.line = source[0].line
             self.column = source[0].column
         else
