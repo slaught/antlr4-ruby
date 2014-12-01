@@ -49,6 +49,27 @@ ARG_DEF= <<EOF
                                     {$DEBUG = true }
 
 EOF
+
+class RawData
+
+  @@file_io = nil
+  @@raw_data =  nil
+  def self.start
+    @@raw_data = Array.new
+  end
+  def self.record
+    @@raw_data << Rubinius::Metrics.data.to_hash
+  end
+  def self.fini
+    require 'json'
+    File.open('rbx.raw.data','a') do |io|
+      io.puts @@raw_data.to_json
+    end
+  end
+
+end
+
+
 class TreeShapeListener < ParseTreeListener
   def visitTerminal(node)
   end
@@ -142,12 +163,14 @@ def main(args)
   args['<input_files>'].each do |in_file|
       input = File.open(in_file)
       begin 
+        RawData.start
         puts "#{grammar_name}: #{in_file}"
         if args['-tokens'] then
           print_tokens(grammar_name, start_rule, input)
         else
            parse_example(grammar_name, start_rule, input) 
         end
+        RawData.fini
       ensure
       #  if input and !input.closed?
           input.close 
