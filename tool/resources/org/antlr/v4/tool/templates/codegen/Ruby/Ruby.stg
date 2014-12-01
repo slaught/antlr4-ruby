@@ -237,16 +237,17 @@ end
  */
 RuleSempredFunction(r, actions) ::= <<
 def <r.name>_sempred(localctx, predIndex)
+    case predIndex
     <actions:{index|
 <if(first(actions))>
-    if predIndex == <index> then
+    when <index> then #if predIndex == <index> then
         return <actions.(index)>
 <elseif(rest(actions))>
-    elsif predIndex == <index> then
+    when <index> then # elsif predIndex == <index> then
         return <actions.(index)>
 <endif> 
-    end
     }; separator="\n">
+    end
 end
 >>
 
