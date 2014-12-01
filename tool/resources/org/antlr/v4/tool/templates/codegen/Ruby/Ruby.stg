@@ -54,23 +54,12 @@ ParserFile(file, parser, namedActions) ::= <<
 require 'antlr4'
 <if(file.genListener || file.genVisitor)>
 # how to handle package names?
-# package = globals().get("__package__", None)
-ischild = true # len(package)>0 if package is not None else False
-if ischild then 
     <if(file.genListener)>
-    require '<file.parser.grammarName>Listener'
+require '<file.parser.grammarName>Listener'
     <endif>
     <if(file.genVisitor)>
-    require '<file.parser.grammarName>Visitor'
+require '<file.parser.grammarName>Visitor'
     <endif>
-else
-    <if(file.genListener)>
-    require '<file.parser.grammarName>Listener'
-    <endif>
-    <if(file.genVisitor)>
-    require '<file.parser.grammarName>Visitor'
-    <endif>
-end
 <endif>
 
 <namedActions.header>
@@ -125,7 +114,7 @@ fileHeader(grammarFileName, ANTLRVersion) ::= <<
 
 Parser(parser, funcs, atn, sempredFuncs, superClass) ::= <<
 <if(superClass)>
-# Parser_ if(superclass)
+# Parser(superclass)
 require '<superClass>' 
 
 <endif>
@@ -510,7 +499,7 @@ self.state = <r.stateNumber>
 
 MatchToken(m) ::= <<
 self.state = <m.stateNumber>
-<if(m.labels)><m.labels:{l | <labelref(l)> = }><endif> match(<parser.name>::<m.name>)
+<if(m.labels)><m.labels:{l | <labelref(l)> = }><endif>match(<parser.name>::<m.name>)
 >>
 
 MatchSet(m, expr, capture) ::= "<CommonSetStuff(m, expr, capture, false)>"
