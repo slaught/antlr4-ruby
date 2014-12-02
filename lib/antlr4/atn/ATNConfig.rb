@@ -11,14 +11,27 @@ class ATNConfig
         new(state,nil,nil,nil,config)
     end
     attr_accessor :reachesIntoOuterContext
-    attr_accessor :state, :alt, :context, :semanticContext
+    attr_reader   :state, :alt, :context, :semanticContext
+    attr_reader   :hashcode
     def initialize(state=nil, alt=nil, context=nil, semantic=nil, config=nil)
-        if not config.nil?  then
+        if config  then
             state = config.state if state.nil?
             alt = config.alt if alt.nil?
             context = config.context if context.nil? 
             semantic = config.semanticContext if semantic.nil?
             semantic = SemanticContext.NONE if semantic.nil?
+            @reachesIntoOuterContext = config.reachesIntoOuterContext
+        else
+        # We cannot execute predicates dependent upon local context unless
+        # we know for sure we are in the correct context. Because there is
+        # no way to do this efficiently, we simply cannot evaluate
+        # dependent predicates unless we are in the rule that initially
+        # invokes the ATN simulator.
+        #
+        # closure() tracks the depth of how far we dip into the
+        # outer context: depth &gt; 0.  Note that it may not be totally
+        # accurate depth since I don't ever decrement. TODO: make it a boolean then
+            @reachesIntoOuterContext = 0 
         end
 
         #if not isinstance(state, ATNState):
@@ -32,40 +45,32 @@ class ATNConfig
         #  execution of the ATN simulator.
         @context = context
         @semanticContext = semantic
-        # We cannot execute predicates dependent upon local context unless
-        # we know for sure we are in the correct context. Because there is
-        # no way to do this efficiently, we simply cannot evaluate
-        # dependent predicates unless we are in the rule that initially
-        # invokes the ATN simulator.
-        #
-        # closure() tracks the depth of how far we dip into the
-        # outer context: depth &gt; 0.  Note that it may not be totally
-        # accurate depth since I don't ever decrement. TODO: make it a boolean then
-        if config.nil? then
-          @reachesIntoOuterContext = 0 
-        else 
-          @reachesIntoOuterContext = config.reachesIntoOuterContext
-        end
+        mk_hashcode 
     end
 
     # An ATN configuration is equal to another if both have
     #  the same state, they predict the same alternative, and
     #  syntactic/semantic contexts are the same.
-    #/
     def eql?(other)
         self == other
     end
     def ==(other)
-#        return true if self.equal? other
         self.equal?(other) or  \
         other.kind_of?(ATNConfig) and \
         (@state.stateNumber==other.state.stateNumber      and  
               @alt==other.alt and (@context==other.context) and 
               @semanticContext==other.semanticContext )
     end
+    def context=(o)
+      @context = o
+      mk_hashcode
+    end
 
+    def mk_hashcode
+        @hashcode = "#{@state.stateNumber}/#{@alt}/#{@context}/#{@semanticContext}".hash
+    end
     def hash
-        "#{@state.stateNumber}/#{@alt}/#{@context}/#{@semanticContext}".hash
+        @hashcode 
     end
     def toString(recog=nil, showAlt=true)
         to_s(recog,showAlt)
@@ -78,7 +83,7 @@ class ATNConfig
               buf.write(",")
               buf.write(self.alt.to_s)
             end
-            if not self.context.nil? then
+            if self.context then
                 buf.write(",[")
                 buf.write(self.context.to_s)
                 buf.write("]")
@@ -103,7 +108,7 @@ class LexerATNConfig < ATNConfig
     attr_accessor :passedThroughNonGreedyDecision, :lexerActionExecutor 
     def initialize(state, alt=nil, context=nil, semantic=SemanticContext.NONE, _lexerActionExecutor=nil, config=nil)
         super(state, alt, context, semantic, config)
-        if not config.nil? then 
+        if config then 
             _lexerActionExecutor = config.lexerActionExecutor if _lexerActionExecutor.nil? 
             @passedThroughNonGreedyDecision = self.checkNonGreedyDecision(config, state)
         else
