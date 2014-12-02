@@ -64,6 +64,7 @@ require 'antlr4/atn/ParserATNSimulator'
 require 'antlr4/atn/ATNDeserializer'
 
 require 'antlr4/Parser'
+require 'antlr4/TraceListener'
 require 'antlr4/ParserInterpreter'
 require 'antlr4/Lexer'
 
