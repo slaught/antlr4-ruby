@@ -79,8 +79,12 @@ class ATNConfigSet
         return true
     end
     def getOrAdd(config)
-        c = self.configLookup.add?(config)
-        return config
+        if self.configLookup.member?(config) then
+            self.configLookup.grep(config).first
+        else
+            self.configLookup.add(config)
+            config
+        end
     end
     def getStates
         states = Set.new()
@@ -91,7 +95,7 @@ class ATNConfigSet
         preds = Array.new
         self.configs.each{|c|
             if ! c.semanticContext.equal? SemanticContext.NONE then
-                preds.pushd(c.semanticContext)
+                preds.push(c.semanticContext)
             end
         }
         return preds

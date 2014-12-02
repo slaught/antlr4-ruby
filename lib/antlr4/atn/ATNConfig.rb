@@ -57,7 +57,8 @@ class ATNConfig
     end
     def ==(other)
 #        return true if self.equal? other
-#        other.kind_of?(ATNConfig) and \
+        self.equal?(other) or  \
+        other.kind_of?(ATNConfig) and \
         (@state.stateNumber==other.state.stateNumber      and  
               @alt==other.alt and (@context==other.context) and 
               @semanticContext==other.semanticContext )

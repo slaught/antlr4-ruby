@@ -318,11 +318,11 @@ class ATNDeserializer
     end
 
     def generateRuleBypassTransition(atn, idx)
-        bypassStart = BasicBlockStartState()
+        bypassStart = BasicBlockStartState.new()
         bypassStart.ruleIndex = idx
         atn.addState(bypassStart)
 
-        bypassStop = BlockEndState()
+        bypassStop = BlockEndState.new()
         bypassStop.ruleIndex = idx
         atn.addState(bypassStop)
 

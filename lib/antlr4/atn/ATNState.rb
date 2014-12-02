@@ -94,7 +94,7 @@ end
 class BasicState < ATNState
     def initialize 
         super()
-        self.stateNumber = ATNState::BASIC
+#        self.stateNumber = ATNState::BASIC
         self.stateType = ATNState::BASIC
     end
 end

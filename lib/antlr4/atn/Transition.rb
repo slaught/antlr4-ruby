@@ -235,7 +235,7 @@ class NotSetTransition < SetTransition
     def matches( symbol, minVocabSymbol,  maxVocabSymbol)
         symbol >= minVocabSymbol \
             and symbol <= maxVocabSymbol \
-            and not super(symbol, minVocabSymbol, maxVocabSymbol)
+            and not (self.set.member? symbol)
     end
 
     def to_s

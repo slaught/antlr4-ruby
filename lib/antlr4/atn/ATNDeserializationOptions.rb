@@ -4,10 +4,10 @@ class ATNDeserializationOptions
 
     @@defaultOptions = nil
     def self.defaultOptions 
-#      if @@defaultOptions.nil?
+      if @@defaultOptions.nil?
          @@defaultOptions = new 
          @@defaultOptions.makeReadOnly() 
-#      end
+      end
      @@defaultOptions  
     end
 
