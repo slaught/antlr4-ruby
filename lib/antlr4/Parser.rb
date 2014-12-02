@@ -62,7 +62,7 @@ class Parser < Recognizer
         @tracer = nil
         # The list of {@link ParseTreeListener} listeners registered to receive
         # events during the parse.
-        @parseListeners = []
+        @parseListeners = Array.new()
         # The number of syntax errors reported during parsing. self value is
         # incremented each time {@link #notifyErrorListeners} is called.
         @syntaxErrors = 0
@@ -147,7 +147,7 @@ class Parser < Recognizer
     end
 
     def getParseListeners
-        @parseListeners
+        self.parseListeners
     end
 
     # Registers {@code listener} to receive events during the parsing process.
@@ -180,7 +180,7 @@ class Parser < Recognizer
     #
     def addParseListener(listener)
         raise ReferenceError.new("listener is nil") if listener.nil? 
-        @parseListeners = [] if @parseListeners.nil? 
+#        @parseListeners = Array.new if @parseListeners.nil? 
         self.parseListeners.push(listener)
     end
 
@@ -192,8 +192,8 @@ class Parser < Recognizer
     # @param listener the listener to remove
     #
     def removeParseListener(listener)
-        return if @parseListeners.nil? 
-        @parseListeners.delete(listener)
+#        return if self.parseListeners.nil? 
+        self.parseListeners.delete(listener)
     end
 
     # Remove all parse listeners.
@@ -203,7 +203,7 @@ class Parser < Recognizer
 
     # Notify any parse listeners of an enter rule event.
     def triggerEnterRuleEvent
-        for listener in self.parseListeners do
+        self.parseListeners do |listener|
              listener.enterEveryRule(self.ctx)
              self.ctx.enterRule(listener)
         end
@@ -216,7 +216,7 @@ class Parser < Recognizer
     #
     def triggerExitRuleEvent
         # reverse order walk of listeners
-        for listener in self.parseListeners.reverse do
+        self.parseListeners.reverse do |listener|
             self.ctx.exitRule(listener)
             listener.exitEveryRule(self.ctx)
         end
@@ -338,14 +338,14 @@ class Parser < Recognizer
         if o.type != Token::EOF then
             self.getInputStream().consume()
         end
-        hasListener = self.parseListeners and @parseListeners.length>0 
+        hasListener = ! self.parseListeners.empty? 
         if self.buildParseTrees or hasListener then
             if self.errHandler.inErrorRecoveryMode(self) then
                 node = self.ctx.addErrorNode(o)
             else
                 node = self.ctx.addTokenNode(o)
             end
-            @parseListeners.each {|listener| listener.visitTerminal(node) }
+            self.parseListeners.each {|listener| listener.visitTerminal(node) }
         end
         return o
     end

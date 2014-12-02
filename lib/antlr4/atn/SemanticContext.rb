@@ -79,7 +79,9 @@ class SemanticContext
         result = OR.new(a, b)
         return result.simplify
     end
-
+    def  filterPrecedencePredicates(collection)
+        self.class.filterPrecedencePredicates(collection)
+    end
     def self.filterPrecedencePredicates(collection)
         collection.map {|context|
             if context.kind_of? PrecedencePredicate then
@@ -161,7 +163,7 @@ class PrecedencePredicate < SemanticContext
         self == other
     end
     def ==(other)
-        self.equal?(other) or other.kind_of?(PrecedencePredicate) and self.precedence == other.precedence
+        self.equal?(other) or (other.kind_of?(PrecedencePredicate) and self.precedence == other.precedence )
     end
 end
 # A semantic context which is true whenever none of the contained contexts
@@ -195,7 +197,7 @@ class AND < SemanticContext
     end
     def ==(other)
         self.equal?(other) or \
-        other.kind_of?(AND) and self.opnds == other.opnds
+        ( other.kind_of?(AND) and self.opnds == other.opnds )
     end
     
     def hash 
@@ -313,7 +315,7 @@ class OR < SemanticContext
 
     def evalPrecedence(parser, outerContext)
         differs = false
-        operands = []
+        operands = Array.new
         operands = self.opnds.map {|context|
             evaluated = context.evalPrecedence(parser, outerContext)
             if evaluated.equal? context then

@@ -58,7 +58,7 @@ class ATNState
 
     def ==(other)
         if other.kind_of? ATNState then
-            self.stateNumber==other.stateNumber
+            other and  self.stateNumber==other.stateNumber
         else
             false
         end

@@ -39,7 +39,7 @@ class PredictionContext
     #  }
     # </pre>
     #/
-    attr_accessor :cachedHashCode 
+    attr_reader :cachedHashCode 
     def initialize(_cachedHashCode)
         @cachedHashCode = _cachedHashCode
     end
@@ -67,9 +67,9 @@ end
 #  can be used for both lexers and parsers.
 class PredictionContextCache
 
-    attr_accessor :cache
+    attr_reader  :cache
     def initialize 
-        self.cache = Hash.new
+        @cache = Hash.new
     end
 
     #  Add a context to the cache and return it. If the context already exists,
@@ -81,7 +81,7 @@ class PredictionContextCache
             return PredictionContext.EMPTY
         end
         existing = self.cache[ctx]
-        return existing if not existing.nil? 
+        return existing if existing 
         self.cache[ctx] = ctx
         return ctx
     end
@@ -104,7 +104,8 @@ class SingletonPredictionContext < PredictionContext
         end
     end
 
-    attr_accessor :parentCtx, :returnState
+    attr_reader  :parentCtx, :returnState 
+    attr_accessor :cache_string
     def initialize( parent, returnState)
         #assert returnState!=ATNState.INVALID_STATE_NUMBER
         if parent.nil? then
@@ -135,12 +136,14 @@ class SingletonPredictionContext < PredictionContext
       self == other
     end
     def ==(other)
-        return false if self.class != other.class
-        return true if self.equal?(other)
+        return true  if self.equal?(other)
+        return false unless self.class == other.class
         if self.hash != other.hash
             false #      can't be same if hash is different
         else
-            self.returnState == other.returnState and self.parentCtx==other.parentCtx
+            self.returnState == other.returnState and \
+            (self.parentCtx.equal?(other.parentCtx) \
+                          or self.parentCtx==other.parentCtx )
         end
     end
     def hash
@@ -148,6 +151,10 @@ class SingletonPredictionContext < PredictionContext
     end
 
     def to_s 
+      @cache_string = mk_string if @cache_string.nil?
+      return @cache_string 
+    end
+    def mk_string
         if @parentCtx.nil? then
             if @returnState == PredictionContext::EMPTY_RETURN_STATE 
                 return "$"
@@ -163,6 +170,7 @@ class EmptyPredictionContext < SingletonPredictionContext
 
     def initialize(h=nil) 
         super(nil, PredictionContext::EMPTY_RETURN_STATE )
+        @cachedHashCode = "".hash
     end
 
     def isEmpty
@@ -174,12 +182,12 @@ class EmptyPredictionContext < SingletonPredictionContext
     end
 
     def getReturnState(index)
-        self.returnState
+        PredictionContext::EMPTY_RETURN_STATE # self.returnState
     end
 
-    def ==(other)
-        self.equal? other
-    end
+#    def ==(other)
+#        self.equal? other
+#    end
 
     def to_s
         "$"
@@ -268,7 +276,7 @@ def PredictionContextFromRuleContext(atn, outerContext=nil)
 
     # if we are in RuleContext of start rule, s, then PredictionContext
     # is EMPTY. Nobody called us. (if we are empty, return empty)
-    if outerContext.parentCtx.nil? or outerContext == RuleContext.EMPTY
+    if outerContext.parentCtx.nil? or RuleContext.EMPTY == outerContext 
         return PredictionContext.EMPTY
     end
 
@@ -447,17 +455,17 @@ end
 #def mergeRoot(a:SingletonPredictionContext, b:SingletonPredictionContext, rootIsWildcard:bool):
 def mergeRoot(a, b, rootIsWildcard)
     if rootIsWildcard
-        return PredictionContext.EMPTY if a == PredictionContext.EMPTY ## + b =#
-        return PredictionContext.EMPTY if b == PredictionContext.EMPTY # a +# =#
+        return PredictionContext.EMPTY if PredictionContext.EMPTY == a ## + b =#
+        return PredictionContext.EMPTY if PredictionContext.EMPTY == b # a +# =#
     else
-        if a == PredictionContext.EMPTY and b == PredictionContext.EMPTY
+        if PredictionContext.EMPTY == a and PredictionContext.EMPTY == b then
             return PredictionContext.EMPTY # $ + $ = $
-        elsif a == PredictionContext.EMPTY # $ + x = [$,x]
-            payloads = [ b.returnState, PredictionContext.EMPTY_RETURN_STATE ]
+        elsif PredictionContext.EMPTY == a # $ + x = [$,x]
+            payloads = [ b.returnState, PredictionContext::EMPTY_RETURN_STATE ]
             parents = [ b.parentCtx, nil ]
             return ArrayPredictionContext.new(parents, payloads)
-        elsif b == PredictionContext.EMPTY # x + $ = [$,x] ($ is always first if present)
-            payloads = [ a.returnState, PredictionContext.EMPTY_RETURN_STATE ]
+        elsif PredictionContext.EMPTY == b # x + $ = [$,x] ($ is always first if present)
+            payloads = [ a.returnState, PredictionContext::EMPTY_RETURN_STATE ]
             parents = [ a.parentCtx, nil ]
             return ArrayPredictionContext.new(parents, payloads)
         end

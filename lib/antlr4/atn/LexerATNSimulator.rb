@@ -536,7 +536,8 @@ class LexerATNSimulator < ATNSimulator
 
         if from_.edges.nil? 
             #  make room for tokens 1..n and -1 masquerading as index 0
-            # from_.edges = [nil] * (LexerATNSimulator.MAX_DFA_EDGE - LexerATNSimulator.MIN_DFA_EDGE + 1)
+            # from_.edges = [nil] * (LexerATNSimulator::MAX_DFA_EDGE -
+            # LexerATNSimulator::MIN_DFA_EDGE + 1)
             from_.edges = Array.new 
         end
 

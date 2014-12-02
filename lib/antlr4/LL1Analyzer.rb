@@ -126,7 +126,7 @@ class LL1Analyzer
                 look.addOne(Token::EOF)
                 return
             end
-            if ctx != PredictionContext.EMPTY
+            if PredictionContext.EMPTY != ctx
                 # run thru all possible stack tops in ctx
                 for i in 0..ctx.length-1  do
                     returnState = self.atn.states[ctx.getReturnState(i)]

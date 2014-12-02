@@ -999,7 +999,7 @@ class ParserATNSimulator < ATNSimulator
             if ambigAlts and ambigAlts.member? i
                 pairs.push(PredPrediction.new(pred, i))
             end
-            if ! pred.equal? SemanticContext.NONE
+            if ! pred.equal?(SemanticContext.NONE) then
                 containsPredicate = true
             end
         end
