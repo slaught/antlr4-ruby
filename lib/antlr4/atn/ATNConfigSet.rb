@@ -94,7 +94,7 @@ class ATNConfigSet
     def getPredicates
         preds = Array.new
         self.configs.each{|c|
-            if ! c.semanticContext.equal? SemanticContext.NONE then
+            if not c.semanticContext.equal?(SemanticContext.NONE) then
                 preds.push(c.semanticContext)
             end
         }

@@ -1,8 +1,6 @@
 # self is all the parsing support code essentially; most of it is error recovery stuff.#
 class Parser < Recognizer
 
-    # needed by generated parser for now.
-    #include JavaSymbols
     # self field maps from the serialized ATN string to the deserialized {@link ATN} with
     # bypass alternatives.
     #
@@ -20,14 +18,14 @@ class Parser < Recognizer
         # The error handling strategy for the parser. The default value is a new
         # instance of {@link DefaultErrorStrategy}.
         self.errHandler = DefaultErrorStrategy.new()
-        self.precedenceStack = Array.new
-        self.precedenceStack.push(0)
+        @precedenceStack = Array.new()
+        @precedenceStack.push(0)
         # The {@link ParserRuleContext} object for the currently executing rule.
         # self is always non-null during the parsing process.
-        self.ctx = nil
+        @ctx = nil
         # Specifies whether or not the parser should construct a parse tree during
         # the parsing process. The default value is {@code true}.
-        self.buildParseTrees = true
+        @buildParseTrees = true
         # When {@link #setTrace}{@code (true)} is called, a reference to the
         # {@link TraceListener} is stored here so it can be easily removed in a
         # later call to {@link #setTrace}{@code (false)}. The listener itself is
