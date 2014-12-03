@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 # encoding: ASCII-8BIT
 # encoding: binary
-
+#
+# Copyright (c) 2014 Chad Slaughter 
+# License: antlr4-ruby/LICENSE
 #alias grun "java -cp $CLASSPATH org.antlr.v4.runtime.misc.TestRig"
-
 # java org.antlr.v4.runtime.misc.TestRig GrammarName startRuleName
 #   [-tokens] [-tree] [-gui] [-ps file.ps] [-encoding encodingname]
 #   [-trace] [-diagnostics] [-SLL]
@@ -12,11 +13,8 @@
 
 require 'yaml'
 require 'pathname'
-#require "rubygems"
 
 require "bundler/setup"
-#require "bundler"
-#Bundler.setup
 
 def app_dir
   (Pathname.new(File.dirname($0)) + "..").realpath
@@ -172,9 +170,7 @@ def main(args)
         end
         RawData.fini
       ensure
-      #  if input and !input.closed?
           input.close 
-      #  end
       end
   end
 end
@@ -182,17 +178,3 @@ end
 main(Getopt::Declare.new(ARG_DEF))
 
 __END__
-#def test1(fn)
-#  input = File.open(fn)
-#  inputstream = InputStream.new(input.read)
-#  lexer = PjmInvoiceLexer.new(inputstream)
-#  stream = CommonTokenStream.new(lexer)
-#
-#	parser = PjmInvoiceParser.new(stream)
-# # parser.setTrace(true)
-#  parser.buildParseTrees = true 
-#  tree = parser.main() 
-#
-#  ParseTreeWalker.DEFAULT.walk(TreeShapeListener.new(), tree)
-#end
-
