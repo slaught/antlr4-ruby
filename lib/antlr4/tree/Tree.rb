@@ -125,6 +125,9 @@ module NodeImpl
         return visitor.visitTerminal(self)
     end
 
+    def text
+        return self.symbol.text
+    end      
     def getText()
         return self.symbol.text
     end

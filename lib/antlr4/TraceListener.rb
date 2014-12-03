@@ -8,7 +8,6 @@ class TraceListener < ParseTreeListener
         end
     end
     def enterEveryRule(ctx)
-        RawData.record
         puts "enter   #{parser.ruleNames[ctx.ruleIndex]}, LT(1)=#{parser.input.LT(1).text.to_s}"
     end
 
@@ -19,7 +18,6 @@ class TraceListener < ParseTreeListener
     end
 
     def exitEveryRule(ctx)
-        RawData.record
         puts "exit    #{parser.ruleNames[ctx.ruleIndex]}, LT(1)=#{parser.input.LT(1).text}"
     end
 end
