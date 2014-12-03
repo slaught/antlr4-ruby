@@ -4,7 +4,9 @@
 #
 # Copyright (c) 2014 Chad Slaughter 
 # License: antlr4-ruby/LICENSE
-#alias grun "java -cp $CLASSPATH org.antlr.v4.runtime.misc.TestRig"
+
+# Documenation 
+# Current Java TestRig command line interface 
 # java org.antlr.v4.runtime.misc.TestRig GrammarName startRuleName
 #   [-tokens] [-tree] [-gui] [-ps file.ps] [-encoding encodingname]
 #   [-trace] [-diagnostics] [-SLL]
@@ -21,8 +23,6 @@ def app_dir
 end
 $: << (Pathname.new(app_dir()) +"lib" ).realpath
 $: << (Pathname.new(app_dir()) +"vendor/bundle/rbx/2.1/gems/getopt-declare-1.32/lib" ).realpath
-
-
 
 $: << 'lib'
 $: << '.'
@@ -85,14 +85,10 @@ class TreeShapeListener < ParseTreeListener
   end
 end
 
-
-# def print_tokens(parser, tokenstream)
 def print_tokens(grammar_name, start_rule, input)
   parserClass, lexerClass = load_grammar(grammar_name,:lexer)
   inputstream = InputStream.new(input.read)
   lexer = lexerClass.new(inputstream)
-
-#  puts lexer.atn.decisionToState.inspect
   stream = CommonTokenStream.new(lexer)
   stream.fill();
 
@@ -154,8 +150,7 @@ def main(args)
   grammar_name = args['-g']
   start_rule = args['-s']
 
-#  puts args.inspect
-
+  puts args.inspect if $DEBUG
   
   input = nil
   args['<input_files>'].each do |in_file|
