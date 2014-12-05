@@ -693,7 +693,7 @@ class <struct.name> \< <superClass>
 
 <if(struct.provideCopyFrom)> <! don't need copy unless we have subclasses !>
     def copyFrom(ctx)  
-        super.copyFrom(ctx)
+        super(ctx)
         <struct.attrs:{a | self.<a.name> = ctx.<a.name>}; separator="\n">
     end
 
