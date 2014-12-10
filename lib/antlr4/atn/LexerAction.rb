@@ -170,6 +170,7 @@ end
 # the assigned mode.
 class LexerModeAction < LexerAction
 
+    attr_accessor :mode
     def initialize(_mode)
         super(LexerActionType::MODE)
         self.mode = _mode
