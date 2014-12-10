@@ -15,10 +15,13 @@ This is needed by any parser/lexer written in Antlr4 using the target
 langague=Ruby.  }
 
 #  s.add_dependency ""
-
-  s.files         = `git ls-files -- lib/* LICENSE README.md`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
+  s.files = Dir[ "lib/*.rb" ] +
+            Dir[ "lib/antlr4/*.rb" ] +
+            Dir[ "lib/antlr4/*/*.rb" ] +
+            Dir[ 'LICENSE' ] +
+            Dir[ 'README.md' ]
+  s.test_files = Dir[ 'test/*']
+  s.executables =  Dir['antlr_testrig' ]
 end
 
